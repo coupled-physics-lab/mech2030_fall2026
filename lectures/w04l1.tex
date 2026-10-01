@@ -1,0 +1,200 @@
+% Lecture notes: Week 4, Lecture 1 -- Axial Loading
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 4, LECTURE 1
+% ##################################################################
+\lecture{4}{1}{Axial Loading}
+
+\noindent
+$\rightarrow$ Recall some basic relations:
+\[
+  \epsilon = \frac{\Delta L}{L_0}, \qquad \sigma = \frac{P}{A}, \qquad \sigma = E\epsilon
+\]
+
+\noindent
+$\rightarrow$ Consider a generic beam under \emph{axial loading}:
+
+\begin{center}
+\begin{tikzpicture}
+  \lwall{0}{-1.2}{1.2}
+  \draw[beam] (0,0.9) -- (5,0.25) -- (5,-0.25) -- (0,-0.9) -- cycle;
+  \foreach \x in {0.3,1.3,2.3,3.3,4.2}
+    \draw[-{Stealth[length=2mm,width=1.6mm]}, semithick] (\x,0) -- (\x+0.6,0);
+  \draw[element] (2.95,-0.6) rectangle (3.2,0.6);
+  \draw[thin, dashed] (5,0.25) -- (5.4,0.25) -- (5.4,-0.25) -- (5,-0.25);
+  \draw[dimto] (5,-0.55) -- (5.4,-0.55) node[right] {$\delta$};
+  \draw[dim] (0,1.4) -- (5,1.4) node[midway, fill=white] {$L$};
+  \draw[dimto] (0,-1.6) -- (1,-1.6) node[right] {$x$};
+\end{tikzpicture}
+\hspace{1cm}
+\begin{minipage}[c]{0.4\textwidth}
+\begin{itemize}
+  \item $A(x)$ and $E(x)$ may vary with $x$.
+  \item The whole beam elongates a distance $\delta$.
+\end{itemize}
+\end{minipage}
+\end{center}
+
+\noindent
+Zoom in on a slice of width $dx$ (with properties $A(x)$, $E(x)$):
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (1.4,2);
+  \draw[thin, dashed] (1.4,0) -- (1.75,0) -- (1.75,2) -- (1.4,2);
+  \draw[force] (-0.05,1) -- (-1.1,1) node[left] {$N(x)$};
+  \draw[force] (1.8,1) -- (2.85,1) node[right] {$N(x)$};
+  \draw[dim] (0,-0.4) -- (1.4,-0.4) node[midway, below=2pt] {$dx$};
+  \draw[dimto] (1.4,-0.4) -- (1.75,-0.4) node[right] {$d\delta$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.45\textwidth}
+\begin{align*}
+  \text{Stress:} &\quad \sigma(x) = \frac{N(x)}{A(x)} \\
+  \text{Strain:} &\quad \epsilon(x) = \frac{d\delta}{dx} \\
+  \text{Elasticity:} &\quad \sigma(x) = E(x)\,\epsilon(x)
+\end{align*}
+\end{minipage}
+
+\begin{itemize}[label=$\rightarrow$]
+  \item Substituting:
+        $\displaystyle \frac{N(x)}{A(x)} = E(x)\,\frac{d\delta}{dx}$.
+        Solving for $d\delta$:
+        $\displaystyle d\delta = \frac{N(x)}{E(x)A(x)}\,dx$.
+  \item Integrate to find the \emph{total axial displacement}:
+        \[
+          \boxed{\delta = \int_0^L \frac{N(x)}{E(x)\,A(x)}\,dx}
+        \]
+\end{itemize}
+
+\subsection*{Beams with constant $N$, $E$, and $A$}
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-0.8}{0.8}
+  \draw[beam] (0,-0.3) rectangle (4,0.3);
+  \draw[force] (4.05,0) -- (5,0);
+  \node[above] at (2,0.3) {$N, E, A$};
+  \draw[dim] (0,-0.7) -- (4,-0.7) node[midway, fill=white] {$L$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.45\textwidth}
+\[
+  \delta = \int_0^L \frac{N}{EA}\,dx
+  \quad\Rightarrow\quad
+  \boxed{\delta = \frac{NL}{EA}}
+\]
+\end{minipage}
+
+\subsection*{Beams with $M$ sections, each with constant $N$, $E$, and $A$}
+
+\noindent
+\begin{minipage}[c]{0.65\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-1.1}{1.1}
+  \draw[beam] (0,-0.8) rectangle (3,0.8);
+  \draw[beam] (3,-0.4) rectangle (5.6,0.4);
+  \draw[beam] (5.6,-0.15) rectangle (7.4,0.15);
+  \draw[force] (2.3,0.6) -- (2.95,0.6);
+  \draw[force] (2.3,-0.6) -- (2.95,-0.6);
+  \draw[force] (6.3,0.3) -- (5.65,0.3);
+  \draw[force] (6.3,-0.3) -- (5.65,-0.3);
+  \draw[force] (7.45,0) -- (8.1,0);
+  \node[font=\small] at (1.3,0) {$N_1, E_1, A_1, L_1$};
+  \node[above, font=\small] at (4.3,0.4) {$N_2, E_2, A_2, L_2$};
+  \node[above, font=\small] at (6.7,0.45) {$N_3, E_3, A_3, L_3$};
+  \draw[decorate, decoration={brace, mirror, amplitude=5pt}] (0,-1.0) -- (3,-1.0)
+        node[midway, below=6pt] {$i=1$};
+  \draw[decorate, decoration={brace, mirror, amplitude=5pt}] (3,-1.0) -- (5.6,-1.0)
+        node[midway, below=6pt] {$i=2$};
+  \draw[decorate, decoration={brace, mirror, amplitude=5pt}] (5.6,-1.0) -- (7.4,-1.0)
+        node[midway, below=6pt] {$i=3$};
+  \node at (3.7,-2.0) {($M=3$ here)};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.32\textwidth}
+\[
+  \boxed{\delta = \sum_{i=1}^{M} \frac{N_i L_i}{E_i A_i}}
+\]
+\end{minipage}
+
+\section*{Example: Two aluminum cylinders ($E = \SI{69}{GPa}$)}
+
+\noindent
+\begin{minipage}[c]{0.58\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-1.0}{1.0}
+  \draw[beam] (0,-0.6) rectangle (3,0.6);
+  \draw[beam] (3,-0.3) rectangle (5,0.3);
+  \node[pin] at (0,0) {}; \node[left] at (-0.4,0) {$A$};
+  \node[pin] at (3,0) {}; \node[above left] at (3,0) {$B$};
+  \node[pin] at (5,0) {}; \node[above right] at (5,0.25) {$C$};
+  \draw[force] (5.05,0) -- (6.1,0) node[right] {$\SI{10}{kN}$};
+  \draw[thinarrow] (1.5,1.25) -- (1.5,0.62);
+  \draw[thinarrow] (1.5,-1.25) -- (1.5,-0.62);
+  \node[above] at (1.5,1.25) {\small$\SI{10}{mm}$};
+  \draw[thinarrow] (4,0.95) -- (4,0.32);
+  \draw[thinarrow] (4,-0.95) -- (4,-0.32);
+  \node[above] at (4,0.95) {\small$\SI{5}{mm}$};
+  \draw[dim] (0,-1.6) -- (3,-1.6) node[midway, fill=white] {$\SI{300}{mm}$};
+  \draw[dim] (3,-1.6) -- (5,-1.6) node[midway, fill=white] {$\SI{200}{mm}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.38\textwidth}
+\textbf{Q:} What is $\delta_{AC}$?\\
+(the displacement of $C$ relative to $A$)
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\textbf{``Cut'' in $AB$}\\[0.5em]
+\begin{tikzpicture}
+  \cutbar{0}{1.4}{0.6}{1}
+  \draw[beam] (1.4,-0.3) rectangle (3.2,0.3);
+  \draw[force] (-0.1,0) -- (-1.0,0) node[left] {$N_{AB}$};
+  \draw[force] (3.25,0) -- (4.1,0) node[right] {$\SI{10}{kN}$};
+\end{tikzpicture}\\[0.5em]
+$\boxed{N_{AB} = \SI{10}{kN}}$
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\textbf{``Cut'' in $BC$}\\[0.5em]
+\begin{tikzpicture}
+  \cutbar{0}{1.6}{0.3}{1}
+  \draw[force] (-0.1,0) -- (-1.0,0) node[left] {$N_{BC}$};
+  \draw[force] (1.65,0) -- (2.5,0) node[right] {$\SI{10}{kN}$};
+\end{tikzpicture}\\[0.5em]
+$\boxed{N_{BC} = \SI{10}{kN}}$
+\end{minipage}
+
+\bigskip
+\begin{align*}
+  \delta_{AB} &= \frac{N_{AB}L_{AB}}{E_{AB}A_{AB}}
+     = \frac{(\SI{10e3}{N})(\SI{0.3}{m})}{(\SI{69e9}{Pa})\left(\pi(\SI{0.005}{m})^2\right)}
+     = \SI{0.00055}{m} \\[4pt]
+  \delta_{BC} &= \frac{N_{BC}L_{BC}}{E_{BC}A_{BC}}
+     = \frac{(\SI{10e3}{N})(\SI{0.2}{m})}{(\SI{69e9}{Pa})\left(\pi(\SI{0.0025}{m})^2\right)}
+     = \SI{0.0015}{m} \\[4pt]
+  \delta_{AC} &= \delta_{AB} + \delta_{BC} = \SI{0.0020}{m}
+     \quad\Rightarrow\quad \boxed{\delta_{AC} = \SI{2.0}{mm}}
+\end{align*}
+
+\end{document}

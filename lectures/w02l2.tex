@@ -1,0 +1,158 @@
+% Lecture notes: Week 2, Lecture 2 -- Internal Forces: Example Problem
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 2, LECTURE 2
+% ##################################################################
+\lecture{2}{2}{Internal Forces: Example Problem}
+
+\subsection*{Logistics}
+\begin{itemize}
+  \item PDFs for in-class activities are on Canvas Modules.
+  \item 9/4 (this Friday): HW\,1 due by 11:59\,pm.
+  \item 9/11 (next Friday): Quiz\,1, in class.
+  \begin{itemize}[label=\then]
+    \item Covers the content on HW\,1 (distributed loads).
+    \item 2 problems, $\sim$20 minutes.
+  \end{itemize}
+\end{itemize}
+
+\section*{Example (Week 2, Lecture 1, Problem 3)}
+
+\noindent
+\begin{minipage}[c]{0.62\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 2.4 cm per m
+  \node[font=\bfseries] at (0.2,2.2) {FBD};
+  \draw[thick] (0,0) -- (5.4,0);
+  \draw[thick] (1.8,0) -- (1.8,1.2);
+  \draw[thick, fill=white] (1.8,1.2) circle (0.24);
+  \node[pin, inner sep=0.9pt] at (1.8,1.2) {};
+  \draw[thick] (0,0) -- (1.645,1.384);
+  \draw[thick] (1.645,1.384) arc (130.1:90:0.24);
+  \draw[thick] (1.8,1.44) -- (5.4,1.44);
+  \node[pin] at (0,0) {}; \node[pin] at (3.6,0) {}; \node[pin] at (5.4,0) {};
+  \node[pin] at (5.4,1.44) {};
+  \node[above] at (3.6,0) {$C$};
+  \draw[force] (5.45,1.44) -- (6.4,1.44) node[right] {$B_x$};
+  \draw[force] (5.45,0) -- (6.4,0) node[right] {$A_x$};
+  \draw[force] (5.4,-1.2) node[below] {$A_y$} -- (5.4,-0.08);
+  \draw[force] (0,-0.08) -- (0,-1.2) node[below] {$\SI{8}{kN}$};
+  \draw[thin] (2.06,1.2) -- (2.25,1.2);
+  \draw[dim] (2.15,0) -- (2.15,1.2);
+  \node[right] at (2.15,0.5) {\small$\SI{0.5}{m}$};
+  \draw[dim] (2.15,1.2) -- (2.15,1.44);
+  \node[right] at (2.2,1.08) {\scriptsize$\SI{0.1}{m}$};
+  \draw[dim] (0,-0.5) -- (1.8,-0.5) node[midway, fill=white] {\small$\SI{0.75}{m}$};
+  \draw[dim] (1.8,-0.5) -- (3.6,-0.5) node[midway, fill=white] {\small$\SI{0.75}{m}$};
+  \draw[dim] (3.6,-0.5) -- (5.4,-0.5) node[midway, fill=white] {\small$\SI{0.75}{m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.34\textwidth}
+\textbf{Note:} only \emph{external} forces are needed to solve for the reactions.
+\begin{itemize}
+  \item No need to consider, e.g., the tension in the rope.
+\end{itemize}
+\end{minipage}
+
+\begin{align*}
+  \textstyle\sum F_x = 0 &\;\rightarrow\; B_x + A_x = 0, \qquad A_x = -B_x \\
+  \textstyle\sum F_y = 0 &\;\rightarrow\; A_y - \SI{8}{kN} = 0, \qquad \boxed{A_y = \SI{8}{kN}} \\
+  \textstyle\sum M^{(A)} = 0 &\;\rightarrow\; (\SI{8}{kN})(\SI{2.25}{m}) - B_x(\SI{0.6}{m}) = 0 \\
+  &\;\phantom{\rightarrow}\;\; B_x = \frac{1}{\SI{0.6}{m}}(\SI{8}{kN})(\SI{2.25}{m}) \\
+  &\;\phantom{\rightarrow}\;\; \boxed{B_x = \SI{30.0}{kN}}, \qquad \boxed{A_x = -B_x = -\SI{30.0}{kN}}
+\end{align*}
+
+\subsection*{``Cut'' at $C$}
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (2.4,0);
+  \node[pin] at (0,0) {}; \node[pin] at (2.4,0) {};
+  \draw[force] (-0.1,0) -- (-1.0,0);
+  \node[below] at (-0.8,0) {$N_C$};
+  \draw[force] (-0.3,-0.6) -- (-0.3,0.6) node[left] {$V_C$};
+  \cwm{-1.4}{0}{$M_C$}
+  \draw[force] (2.45,0) -- (3.4,0) node[right] {$A_x$};
+  \draw[force] (2.4,-1.2) node[below] {$A_y$} -- (2.4,-0.08);
+  \draw[dim] (0,0.7) -- (2.4,0.7) node[midway, above] {$\SI{0.75}{m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.46\textwidth}
+\begin{align*}
+  \textstyle\sum F_x = 0 &\;\rightarrow\; A_x - N_C = 0 \\
+  &\boxed{N_C = A_x = -\SI{30}{kN}} \\
+  &\text{(compression)}
+\end{align*}
+\end{minipage}
+
+\begin{align*}
+  \textstyle\sum F_y = 0 &\;\rightarrow\; A_y + V_C = 0, \qquad
+     \boxed{V_C = -A_y = -\SI{8}{kN}} \\
+  \textstyle\sum M^{(C)} = 0 &\;\rightarrow\; -M_C + A_y(\SI{0.75}{m}) = 0, \qquad
+     \boxed{M_C = (\SI{0.75}{m})A_y = \SI{6}{kN.m}}
+\end{align*}
+
+\section*{What if the beam is not horizontal?}
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,-1.5);
+  \ceiling{-0.9}{0.9}{0}
+  \draw[beam] (-0.2,-3) rectangle (0.2,0);
+  \node[pin] at (0,0) {}; \node[above] at (0,0.3) {$A$};
+  \node[pin] at (0,-1.5) {}; \node[right] at (0.25,-1.5) {$C$};
+  \node[pin] at (0,-3) {}; \node[below] at (0,-3.05) {$B$};
+  \draw[force] (1.3,-3) node[right] {$F$} -- (0.25,-3);
+\end{tikzpicture}
+\hspace{2cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,-1.5);
+  \ceiling{-0.9}{0.9}{0}
+  \fill[gray!12] (-0.2,-1.5) rectangle (0.2,0);
+  \draw[thick] (-0.2,0) -- (-0.2,-1.5) (0.2,0) -- (0.2,-1.5);
+  \draw[cut] (-0.2,-1.5) -- (0.2,-1.5);
+  \node[pin] at (0,0) {}; \node[above] at (0,0.3) {$A$};
+  \node[pin] at (0,-1.35) {}; \node[right] at (0.25,-1.2) {$C$};
+  \draw[force] (0,-1.6) -- (0,-2.6) node[below] {$N_C$};
+  \node[align=left, font=\small] at (2.4,-1.6) {What directions\\ are $V_C$ and $M_C$?};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+$\rightarrow$ Rotate the beam in the positive (counterclockwise) direction until its axis
+aligns with the horizontal. Then use the usual conventions:
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \lwall{0}{-0.8}{0.8}
+  \draw[beam] (0,-0.2) rectangle (4,0.2);
+  \node[pin] at (0,0) {}; \node[left] at (-0.4,0) {$A$};
+  \node[pin] at (2,0) {}; \node[above] at (2,0.2) {$C$};
+  \node[pin] at (4,0) {}; \node[right] at (4.05,0) {$B$};
+  \draw[force] (4,1.2) node[above] {$F$} -- (4,0.22);
+\end{tikzpicture}
+\hspace{2cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \lwall{0}{-0.8}{0.8}
+  \cutbar{0}{2}{0.2}{2}
+  \node[pin] at (0,0) {}; \node[left] at (-0.4,0) {$A$};
+  \node at (1.6,0) {$C$};
+  \draw[force] (2.3,0.4) -- (2.3,-0.6) node[below] {$V_C$};
+  \draw[force] (2.15,0) -- (3.1,0) node[right] {$N_C$};
+  \ccwm{3.95}{0}{$M_C$}
+\end{tikzpicture}
+\end{center}
+
+\end{document}

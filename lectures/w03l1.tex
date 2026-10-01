@@ -1,0 +1,160 @@
+% Lecture notes: Week 3, Lecture 1 -- Strain
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 3, LECTURE 1
+% ##################################################################
+\lecture{3}{1}{Strain}
+
+\section*{Normal Strain}
+
+\[
+  \boxed{\epsilon = \frac{\Delta \ell}{\ell_0} = \frac{\ell - \ell_0}{\ell_0}}
+\]
+\begin{itemize}[label=\then]
+  \item Measures the \emph{normalized} displacement in a given direction.
+  \item Unitless.
+\end{itemize}
+
+\section*{Shear Strain}
+
+\noindent
+Consider ``simple shear'':
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \draw[axis] (0,0) -- (3,0) node[right] {$x$};
+  \draw[axis] (0,0) -- (0,2.7) node[above] {$y$};
+  \draw[thick, fill=gray!12] (0,0) rectangle (2,2);
+  \draw (0.4,0) arc (0:90:0.4);
+  \node at (0.85,0.75) {$\theta_0 = \frac{\pi}{2}$};
+  \node[font=\small] at (2.3,2.4) {(initial config.)};
+\end{tikzpicture}
+\hspace{2cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \draw[axis] (0,0) -- (3.4,0) node[right] {$x$};
+  \draw[axis] (0,0) -- (0,2.7) node[above] {$y$};
+  \draw[thick, fill=gray!12] (0,0) -- (2,0) -- (2.7,2) -- (0.7,2) -- cycle;
+  \draw (0.4,0) arc (0:70.7:0.4);
+  \node at (0.6,0.35) {$\theta$};
+  \draw[thinarrow] (0,1.6) arc (90:72:1.6);
+  \node[above] at (0.3,1.62) {$\gamma$};
+  \node[font=\small] at (2.6,2.4) {(deformed config.)};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+  \item $\gamma$ is the \emph{shear strain}, a \emph{change in angle} between the $x$ and $y$
+        directions.
+  \item Visually:
+        \[ \boxed{\gamma = \theta_0 - \theta} \]
+        so that
+        \[
+          \gamma > 0 \text{ if } \theta \text{ \emph{decreases}}, \qquad
+          \gamma < 0 \text{ if } \theta \text{ \emph{increases}}.
+        \]
+\end{itemize}
+
+\noindent
+$\rightarrow$ In practice, we often compute:
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,1);
+  \draw[axis] (0,0) -- (4.4,0) node[right] {$x$};
+  \draw[axis] (0,0) -- (0,3) node[above] {$y$};
+  \draw[thick, fill=gray!12] (0,0) -- (2.8,0) -- (3.6,2) -- (0.8,2) -- cycle;
+  \draw[thin, dashed] (2.8,0) -- (2.8,2.5);
+  \draw[thin, dashed] (0,0) -- (0,2);
+  \draw (0.35,0) arc (0:68.2:0.35);
+  \node at (0.55,0.3) {$\theta$};
+  \draw (2.8,1.4) arc (90:68.2:1.4);
+  \node at (3.0,1.65) {$\gamma$};
+  \draw[dim] (-0.5,0) -- (-0.5,2) node[midway, left] {$\ell$};
+  \draw[dim] (4.0,0) -- (4.0,2) node[midway, right] {$\ell$};
+  \draw[thin] (3.6,2) -- (3.6,2.5);
+  \draw[dim] (2.8,2.35) -- (3.6,2.35) node[midway, above] {$\delta$};
+\end{tikzpicture}
+\hspace{1.5cm}
+$\displaystyle \tan\gamma = \frac{\delta}{\ell}
+ \qquad \text{or} \qquad
+ \boxed{\gamma = \tan^{-1}\!\left(\frac{\delta}{\ell}\right)}$
+\end{center}
+
+\section*{Example}
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 10 cm per m
+  \draw[beam] (0,-0.1) rectangle (5,0.1);
+  \node[pin] at (0,0) {}; \node[pin] at (3,0) {}; \node[pin] at (5,0) {};
+  \node[left] at (-0.1,0.2) {$A$};
+  \node[above left] at (3,0.1) {$B$};
+  \node[right] at (5.05,0.2) {$D$};
+  \pinsupport{0}{-0.1}
+  \draw[very thick] (3,-0.1) -- (3,-3);
+  \ground{2.55}{3.45}{-3}
+  \node[left] at (2.5,-3) {$C$};
+  \draw[force] (5,0.15) -- (5,1.3) node[above] {$P$};
+  \draw[dim] (0,0.6) -- (3,0.6) node[midway, fill=white] {$\SI{0.3}{m}$};
+  \draw[dim] (3,0.6) -- (5,0.6) node[midway, fill=white] {$\SI{0.2}{m}$};
+  \draw[dim] (5.6,-0.1) -- (5.6,-3) node[midway, right] {$\SI{0.3}{m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{Q:} If $P$ causes $D$ to displace upwards by \SI{0.25}{mm}, what is the strain
+$\epsilon_{BC}$ in the cable?
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thin, gray] (0,0) -- (5,0);
+  \draw[thick] (0,0) -- (5,0.8);
+  \node[pin] at (0,0) {}; \node[left] at (0,0) {$A$};
+  \draw[force] (3,0) -- (3,0.46);
+  \node[left] at (2.95,0.3) {$\delta_B$};
+  \draw[force] (5,0) -- (5,0.78);
+  \node[right] at (5.05,0.4) {$\delta_D$};
+  \node[below] at (3,0) {$B$};
+  \node[below] at (5,0) {$D$};
+  \draw[dim] (0,-0.7) -- (3,-0.7) node[midway, fill=white] {$\SI{0.3}{m}$};
+  \draw[dim] (3,-0.7) -- (5,-0.7) node[midway, fill=white] {$\SI{0.2}{m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.45\textwidth}
+Similar triangles:
+\[
+  \frac{\delta_D}{\SI{0.5}{m}} = \frac{\delta_B}{\SI{0.3}{m}}
+  \quad\Rightarrow\quad
+  \delta_B = \frac{\SI{0.3}{m}}{\SI{0.5}{m}}\,\delta_D
+\]
+\[
+  \delta_B = \SI{0.15}{mm}
+\]
+\end{minipage}
+
+\[
+  \epsilon_{BC} = \frac{\Delta\ell}{\ell} = \frac{\delta_B}{\ell_{BC}}
+  = \frac{\SI{0.15}{mm}}{\SI{300}{mm}}
+  \qquad\Rightarrow\qquad
+  \boxed{\epsilon_{BC} = 0.0005} \quad (= \num{5e-4})
+\]
+\begin{center}
+  (or $\epsilon_{BC} = 0.05\%$) \qquad
+  (or $\epsilon_{BC} = 500\,\mu\epsilon$, where $1\,\mu\epsilon = 10^{-6}$, ``micro-strain'')
+\end{center}
+
+\end{document}

@@ -1,0 +1,179 @@
+% ==================================================================
+%  mech2030notes.sty -- shared macros and TikZ styles for the
+%  MECH 2030 lecture notes. Every lecture file loads this package.
+% ==================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mech2030notes}[2026/10/01 MECH 2030 lecture notes]
+% ------------------------------------------------------------------
+% Packages
+% ------------------------------------------------------------------
+\RequirePackage[margin=1in]{geometry}
+\RequirePackage{microtype}
+\RequirePackage{amsmath,amssymb}
+\RequirePackage{textcomp}
+\RequirePackage{siunitx}
+\RequirePackage{enumitem}
+\RequirePackage{array}
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,patterns,calc,intersections,
+                decorations.pathmorphing,decorations.pathreplacing}
+\RequirePackage[hidelinks]{hyperref}
+
+\sisetup{inter-unit-product=\ensuremath{\cdot}, per-mode=symbol,
+         group-separator={,}, group-minimum-digits=4,
+         group-digits=integer}
+
+% ------------------------------------------------------------------
+% TikZ styles shared by all figures
+% ------------------------------------------------------------------
+\tikzset{
+  force/.style    = {-{Stealth[length=2.6mm,width=2mm]}, thick},
+  torque/.style   = {-{Stealth[length=2.4mm,width=2mm]Stealth[length=2.4mm,width=2mm]}, thick},
+  thinarrow/.style= {-{Stealth[length=2mm,width=1.5mm]}, thin},
+  beam/.style     = {thick, fill=gray!12},
+  element/.style  = {thick, dashed, gray},
+  dim/.style      = {{Bar[width=2.2mm]}-{Bar[width=2.2mm]}, thin},
+  dimto/.style    = {{Bar[width=2.2mm]}-{Stealth[length=2.2mm]}, thin},
+  axis/.style     = {-{Stealth[length=2.2mm]}, semithick},
+  hatch/.style    = {pattern=north east lines, pattern color=gray!70},
+  plotline/.style = {very thick, blue!60!black},
+  pin/.style      = {circle, fill, inner sep=1.3pt},
+  cut/.style      = {thick, decorate,
+                     decoration={snake, amplitude=0.55mm, segment length=2.2mm}},
+}
+
+% Hatched wall (fixed support) at x = 0, spanning y = -#1 .. +#1
+\newcommand{\wall}[1]{%
+  \fill[hatch] (-0.3,-#1) rectangle (0,#1);
+  \draw[very thick] (0,-#1) -- (0,#1);
+}
+% Wall with hatching to the LEFT of x = #1, spanning y = #2 .. #3
+\newcommand{\lwall}[3]{%
+  \fill[hatch] ({#1-0.3},#2) rectangle (#1,#3);
+  \draw[very thick] (#1,#2) -- (#1,#3);
+}
+% Wall with hatching to the RIGHT of x = #1, spanning y = #2 .. #3
+\newcommand{\rwall}[3]{%
+  \fill[hatch] (#1,#2) rectangle ({#1+0.3},#3);
+  \draw[very thick] (#1,#2) -- (#1,#3);
+}
+% Hatched wall (fixed support) on the RIGHT, spanning y = -#2 .. +#2 at x = #1
+\newcommand{\rightwall}[2]{\rwall{#1}{-#2}{#2}}
+% Ground (hatching below) from x = #1 to #2 at height #3
+\newcommand{\ground}[3]{%
+  \fill[hatch] (#1,{#3-0.25}) rectangle (#2,#3);
+  \draw[very thick] (#1,#3) -- (#2,#3);
+}
+% Ceiling (hatching above) from x = #1 to #2 at height #3
+\newcommand{\ceiling}[3]{%
+  \fill[hatch] (#1,#3) rectangle (#2,{#3+0.25});
+  \draw[very thick] (#1,#3) -- (#2,#3);
+}
+% Pin support (triangle + ground) with apex at (#1,#2)
+\newcommand{\pinsupport}[2]{%
+  \draw[thick, fill=white] (#1,#2) -- ({#1-0.3},{#2-0.5}) -- ({#1+0.3},{#2-0.5}) -- cycle;
+  \ground{#1-0.45}{#1+0.45}{#2-0.5}
+}
+
+% Uniform distributed load: \distload{x1}{x2}{y_beam_top}{height}{# arrows}
+\newcommand{\distload}[5]{%
+  \draw[thick] (#1,{#3+#4}) -- (#2,{#3+#4});
+  \foreach \i in {0,...,#5} {
+    \pgfmathsetmacro{\xx}{#1+(#2-#1)*\i/#5}
+    \draw[-{Stealth[length=2mm,width=1.6mm]}, semithick] (\xx,{#3+#4}) -- (\xx,{#3+0.02});
+  }
+}
+% Linearly varying distributed load (downward):
+% \linload{x1}{x2}{y_beam_top}{height at x1}{height at x2}{# arrows}
+\newcommand{\linload}[6]{%
+  \draw[thick] (#1,{#3+#4}) -- (#2,{#3+#5});
+  \foreach \i in {0,...,#6} {
+    \pgfmathsetmacro{\xx}{#1+(#2-#1)*\i/#6}
+    \pgfmathsetmacro{\hh}{#4+(#5-#4)*\i/#6}
+    \ifdim \hh pt > 0.15pt
+      \draw[-{Stealth[length=2mm,width=1.6mm]}, semithick] (\xx,{#3+\hh}) -- (\xx,{#3+0.02});
+    \fi
+  }
+}
+
+% Rectangular bar from x = #1 to #2, half-height #3; #4 selects the ends:
+% 0 = both solid, 1 = cut on left, 2 = cut on right, 3 = both cut
+\newcommand{\cutbar}[4]{%
+  \fill[gray!12] (#1,-#3) rectangle (#2,#3);
+  \draw[thick] (#1,#3) -- (#2,#3) (#1,-#3) -- (#2,-#3);
+  \ifcase#4
+    \draw[thick] (#1,-#3) -- (#1,#3) (#2,-#3) -- (#2,#3);
+  \or
+    \draw[cut] (#1,-#3) -- (#1,#3); \draw[thick] (#2,-#3) -- (#2,#3);
+  \or
+    \draw[thick] (#1,-#3) -- (#1,#3); \draw[cut] (#2,-#3) -- (#2,#3);
+  \or
+    \draw[cut] (#1,-#3) -- (#1,#3); \draw[cut] (#2,-#3) -- (#2,#3);
+  \fi
+}
+
+% Center-of-mass symbol at coordinate #1, e.g. \com{(0,0)}
+\newcommand{\com}[1]{%
+  \draw[thick, fill=white] #1 circle (0.17);
+  \draw[thick] #1 ++(45:0.17) -- ++(225:0.34);
+  \draw[thick] #1 ++(135:0.17) -- ++(-45:0.34);
+}
+
+% 2D coordinate triad (z out of page) with origin at (#1,#2)
+\newcommand{\triad}[2]{%
+  \begin{scope}[shift={(#1,#2)}]
+    \draw[axis] (0.12,0) -- (0.85,0) node[right] {$x$};
+    \draw[axis] (0,0.12) -- (0,0.85) node[above] {$y$};
+    \draw[semithick] (0,0) circle (0.12);
+    \fill (0,0) circle (0.035);
+    \node[left] at (-0.12,0) {$z$};
+  \end{scope}
+}
+
+% Vertical dogbone specimen centered at x = #1:
+% \dogbone{x}{gauge half-width}{gauge half-length}
+\newcommand{\dogbone}[3]{%
+  \begin{scope}[shift={(#1,0)}]
+    \draw[thick, fill=gray!8]
+      (-0.8,{#3+1.5}) -- (0.8,{#3+1.5}) -- (0.8,{#3+0.6})
+      to[out=-90,in=90] (#2,#3) -- (#2,{-#3})
+      to[out=-90,in=90] (0.8,{-#3-0.6}) -- (0.8,{-#3-1.5})
+      -- (-0.8,{-#3-1.5}) -- (-0.8,{-#3-0.6})
+      to[out=90,in=-90] ({-#2},{-#3}) -- ({-#2},#3)
+      to[out=90,in=-90] (-0.8,{#3+0.6}) -- cycle;
+  \end{scope}
+}
+
+% Small moment symbols at (#1,#2) with label #3:
+% \ccwm = counterclockwise (label right), \cwm = clockwise (label left)
+\newcommand{\ccwm}[3]{%
+  \draw[force] ([shift={(-80:0.32)}]#1,#2) arc (-80:110:0.32);
+  \node[right] at ({#1+0.33},#2) {#3};
+}
+\newcommand{\cwm}[3]{%
+  \draw[force] ([shift={(260:0.32)}]#1,#2) arc (260:70:0.32);
+  \node[left] at ({#1-0.33},#2) {#3};
+}
+
+% Circled number, e.g. method labels
+\newcommand{\circnum}[1]{%
+  \tikz[baseline=(c.base)]\node[draw, circle, thick, inner sep=1.2pt](c){\small #1};}
+
+% Lecture heading: \lecture{week}{lecture}{title}
+% Starts a new page and adds an entry to the table of contents.
+\newcommand{\lecture}[3]{%
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{section}{Week #1, Lecture #2 \enspace--\enspace #3}
+  \begin{center}
+    {\large\scshape Week #1 \textperiodcentered{} Lecture #2}\\[0.3em]
+    {\LARGE\bfseries #3}\\[-0.2em]
+    \rule{\textwidth}{0.8pt}
+  \end{center}
+  \vspace{0.3em}
+}
+
+\setlist[itemize]{itemsep=2pt, topsep=4pt}
+\newcommand{\then}{\ensuremath{\hookrightarrow}}
+
+\endinput

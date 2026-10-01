@@ -1,0 +1,210 @@
+% Lecture notes: Week 6, Lecture 2 -- Two Methods for Shear and Moment Diagrams
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 6, LECTURE 2
+% ##################################################################
+\lecture{6}{2}{Two Methods for Shear and Moment Diagrams}
+
+\noindent
+Consider a cantilever beam of length $\SI{0.5}{m}$, fixed at $A$ on the right,
+under a uniform distributed load of $\SI{10}{N/m}$:
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[beam] (0,-0.15) rectangle (6,0.15);
+  \rightwall{6}{0.9}
+  \distload{0}{6}{0.15}{0.9}{8}
+  \node[above] at (3,1.05) {$\SI{10}{N/m}$};
+  \node[right] at (6.4,0) {$A$};
+  \draw[dim] (0,-0.7) -- (6,-0.7) node[midway, fill=white] {$\SI{0.5}{m}$};
+  \draw[axis] (0,-1.35) -- (1.1,-1.35) node[right] {$x$};
+  \draw[thin] (0,-1.2) -- (0,-1.5);
+\end{tikzpicture}
+\end{center}
+
+\noindent
+There are two methods to draw the shear and moment diagrams:
+\begin{itemize}[label={}, leftmargin=2.5em]
+  \item[\circnum{1}] The ``graphical method'' (from Week~6, Lecture~1).
+  \item[\circnum{2}] A ``cut'' at a variable position $x$.
+  \begin{itemize}[label=\then]
+    \item \emph{Both} require solving the global FBD for the reactions first.
+  \end{itemize}
+\end{itemize}
+
+% ==================================================================
+\section*{Method \protect\circnum{1}: Graphical Method}
+% ==================================================================
+
+\subsubsection*{a) Global FBD}
+
+\begin{center}
+\begin{tikzpicture}[baseline=(base)]
+  \coordinate (base) at (0,0);
+  \distload{0}{4.5}{0}{0.8}{6}
+  \node[above] at (2.25,0.9) {$\SI{10}{N/m}$};
+  \draw[thick] (0,0) -- (4.5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (4.5,0) {};
+  \draw[force] (4.5,-1.2) node[below] {$A_y$} -- (4.5,-0.08);
+  \draw[force] ([shift={(-60:0.5)}]4.5,0) arc (-60:80:0.5);
+  \node[right] at (5.05,0.1) {$M_A$};
+  \draw[dim] (0,-2.1) -- (4.5,-2.1) node[midway, fill=white] {$\SI{0.5}{m}$};
+  \draw[thin, gray] (0,-0.1) -- (0,-2.25);
+\end{tikzpicture}
+\quad$\Longrightarrow$\quad
+\begin{tikzpicture}[baseline=(base)]
+  \coordinate (base) at (0,0);
+  \draw[thick] (0,0) -- (4.5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (4.5,0) {};
+  \draw[force] (2.25,1.1) node[above] {$\SI{5}{N}$} -- (2.25,0.05);
+  \draw[force] (4.5,-1.2) node[below] {$A_y$} -- (4.5,-0.08);
+  \draw[force] ([shift={(-60:0.5)}]4.5,0) arc (-60:80:0.5);
+  \node[right] at (5.05,0.1) {$M_A$};
+  \draw[dim] (0,-2.1) -- (2.25,-2.1) node[midway, fill=white] {$\SI{0.25}{m}$};
+  \draw[dim] (2.25,-2.1) -- (4.5,-2.1) node[midway, fill=white] {$\SI{0.25}{m}$};
+  \draw[thin, gray] (0,-0.1) -- (0,-2.25);
+  \draw[thin, gray] (2.25,-0.1) -- (2.25,-2.25);
+\end{tikzpicture}
+\end{center}
+
+\begin{align*}
+  \textstyle\sum F_y = 0 \quad &\Rightarrow \quad \boxed{A_y = \SI{5}{N}} \\
+  \textstyle\sum M^{(A)} = 0 \quad &\Rightarrow \quad
+      M_A + (\SI{5}{N})(\SI{0.25}{m}) = 0
+      \quad\Rightarrow\quad \boxed{M_A = -\SI{1.25}{N.m}}
+\end{align*}
+
+\subsubsection*{b) Shear diagram}
+
+\noindent
+\begin{minipage}[c]{0.42\textwidth}
+\begin{itemize}
+  \item $p(x) = \dfrac{dV}{dx} = -\SI{10}{N/m}$.
+  \item $A_y = \SI{5}{N}$ acts at $x = \SI{0.5}{m}$.
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 0.5 m -> 5 cm, 5 N -> 2.5 cm
+  \fill[hatch] (0,0) -- (5,-2.5) -- (5,0) -- cycle;
+  \draw[axis] (0,0) -- (6,0) node[right] {$x$};
+  \draw[axis] (0,-3) -- (0,1) node[above] {$V(x)$};
+  \draw[plotline] (0,0) -- (5,-2.5);
+  \node[pin] at (0,0) {}; \node[pin] at (5,0) {}; \node[pin] at (5,-2.5) {};
+  \node[above] at (5,0) {$\SI{0.5}{m}$};
+  \node[below] at (5,-2.5) {$-\SI{5}{N}$};
+  % slope triangle
+  \draw[thin] (1,-0.5) -- (1,-1.0) -- (2,-1.0);
+  \node[below] at (1.2,-1.05) {$-\SI{10}{N/m}$};
+  % jump due to A_y
+  \draw[force] (5.4,-2.45) -- (5.4,-0.05);
+  \node[right] at (5.45,-1.25) {$+A_y$};
+\end{tikzpicture}
+\end{minipage}
+
+\subsubsection*{c) Moment diagram}
+
+\begin{itemize}
+  \item $\dfrac{dM}{dx} = V(x)$, so $M(x) = \displaystyle\int V(x)\,dx$,
+        which is the \emph{area under the $V(x)$ curve}.
+  \item $\displaystyle \Delta M = \int_0^{\SI{0.5}{m}} V(x)\,dx
+        = -\tfrac{1}{2}(\SI{5}{N})(\SI{0.5}{m}) = -\SI{1.25}{N.m}$.
+  \item $M_A = -\SI{1.25}{N.m}$ acts at $x = \SI{0.5}{m}$.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}
+  % scale: 0.5 m -> 5 cm, 1 N.m -> 2 cm;  M = -5x^2  ->  y = -0.1 X^2
+  \fill[hatch] (0,0) -- plot[domain=0:5, samples=40] (\x,{-0.1*\x*\x}) -- (5,0) -- cycle;
+  \draw[axis] (0,0) -- (6,0) node[right] {$x$};
+  \draw[axis] (0,-3) -- (0,1) node[above] {$M(x)$};
+  \draw[plotline] plot[domain=0:5, samples=40] (\x,{-0.1*\x*\x}) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (5,0) {}; \node[pin] at (5,-2.5) {};
+  \node[above] at (5,0) {$\SI{0.5}{m}$};
+  % Delta M
+  \draw[dim] (-0.5,0) -- (-0.5,-2.5) node[midway, left] {$\Delta M$};
+  % jump due to point moment M_A
+  \draw[force] (5.4,-2.45) -- (5.4,-0.05);
+  \node[right] at (5.45,-1.25) {$-M_A = +\SI{1.25}{N.m}$};
+  % annotation
+  \draw[-{Stealth[length=2mm]}, thin] (2.2,-2.1) to[out=60, in=-120] (3,-0.95);
+  \node[align=center, font=\small] at (1.9,-2.65) {parabolic, since\\ $V(x)$ is linear};
+\end{tikzpicture}
+\end{center}
+
+% ==================================================================
+\section*{Method \protect\circnum{2}: ``Cut'' at $x$}
+% ==================================================================
+
+\noindent
+Take an FBD of the segment from the free end to a cut at position $x$, and
+replace the distributed load by its resultant.
+
+\begin{center}
+\begin{tikzpicture}[baseline=(base)]
+  \coordinate (base) at (0,0);
+  \draw[beam] (0,-0.25) -- (3,-0.25) -- (3.08,-0.12) -- (2.94,0) -- (3.08,0.12)
+               -- (3,0.25) -- (0,0.25) -- cycle;
+  \distload{0}{3}{0.25}{0.7}{5}
+  \draw[force] (3.3,0.35) -- (3.3,-0.55);
+  \node[below] at (3.3,-0.55) {$V(x)$};
+  \draw[force] ([shift={(-55:0.8)}]3,0) arc (-55:65:0.8);
+  \node[right] at (3.8,0.1) {$M(x)$};
+  \draw[{Bar[width=2.2mm]}-{Stealth[length=2.2mm]}, thin] (0,-1.3) -- (3,-1.3)
+        node[midway, fill=white] {$x$};
+\end{tikzpicture}
+\quad$\Longrightarrow$\quad
+\begin{tikzpicture}[baseline=(base)]
+  \coordinate (base) at (0,0);
+  \draw[beam] (0,-0.25) -- (3,-0.25) -- (3.08,-0.12) -- (2.94,0) -- (3.08,0.12)
+               -- (3,0.25) -- (0,0.25) -- cycle;
+  \draw[force] (1.5,1.3) node[above] {$(10x)\,\si{N}$} -- (1.5,0.27);
+  \draw[force] (3.3,0.35) -- (3.3,-0.55);
+  \node[below] at (3.3,-0.55) {$V(x)$};
+  \draw[force] ([shift={(-55:0.8)}]3,0) arc (-55:65:0.8);
+  \node[right] at (3.8,0.1) {$M(x)$};
+  \draw[{Bar[width=2.2mm]}-{Stealth[length=2.2mm]}, thin] (0,-0.8) -- (1.5,-0.8)
+        node[midway, fill=white] {$\tfrac{x}{2}$};
+  \draw[{Bar[width=2.2mm]}-{Stealth[length=2.2mm]}, thin] (0,-1.3) -- (3,-1.3)
+        node[midway, fill=white] {$x$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\begin{gather*}
+  \textstyle\sum F_y = 0 \quad (+\uparrow) \\
+  -10x - V(x) = 0 \\[2pt]
+  \boxed{V(x) = (-10x)\,\si{N}}
+\end{gather*}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\begin{gather*}
+  \textstyle\sum M^{(x)} = 0 \quad (+\circlearrowleft) \\
+  M(x) + (10x)\left(\tfrac{x}{2}\right) = 0 \\[2pt]
+  \boxed{M(x) = -(5x^2)\,\si{N.m}}
+\end{gather*}
+\end{minipage}
+
+\paragraph{Check:}
+\[
+  \frac{dV}{dx} = -10\,\si{N/m} = p(x)\;\checkmark
+  \qquad\qquad
+  \frac{dM}{dx} = (-10x)\,\si{N} = V(x)\;\checkmark
+\]
+
+\subsection*{Notes}
+\begin{itemize}[label={}, leftmargin=2.5em]
+  \item[\circnum{1}] is much faster if \emph{many separate loads} are applied.
+  \item[\circnum{2}] is especially useful if $p(x)$ is \emph{not constant}.
+\end{itemize}
+
+\end{document}

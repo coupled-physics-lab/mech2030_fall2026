@@ -1,0 +1,244 @@
+% Lecture notes: Week 4, Lecture 3 -- Torsion
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 4, LECTURE 3
+% ##################################################################
+\lecture{4}{3}{Torsion}
+
+\noindent
+$\rightarrow$ Consider a circular shaft:
+
+\begin{center}
+\begin{tikzpicture}
+  % ---------- undeformed ----------
+  \node[font=\small] at (0,4.1) {undeformed};
+  \draw[thick, fill=gray!15] (-2.1,-0.7) -- (1.5,-0.7) -- (2.2,0.5) -- (-1.4,0.5) -- cycle;
+  \node[below, font=\small] at (-0.2,-0.7) {fixed};
+  \fill[gray!8] (-1.0,0) arc (180:360:1.0 and 0.3) -- (1.0,3) arc (0:180:1.0 and 0.3) -- cycle;
+  \draw[thick] (-1.0,0) -- (-1.0,3) (1.0,0) -- (1.0,3);
+  \draw[thick] (-1.0,0) arc (180:360:1.0 and 0.3);
+  \draw[thin, dashed, gray] (1.0,0) arc (0:180:1.0 and 0.3);
+  \draw[thick, fill=gray!20] (0,3) ellipse (1.0 and 0.3);
+  \node[pin, inner sep=0.9pt] at (0,3) {};
+  \draw[thinarrow] (0,3) -- (0.85,3.15) node[above right] {$c$};
+  \draw[dim] (-1.5,0) -- (-1.5,3) node[midway, left] {$L$};
+  % triad
+  \begin{scope}[shift={(-3.4,-0.3)}]
+    \draw[axis] (0,0) -- (0,0.9) node[above] {$z$};
+    \draw[axis] (0,0) -- (0.6,0.45) node[right] {$y$};
+    \draw[axis] (0,0) -- (0.9,0) node[right] {$x$};
+  \end{scope}
+  % ---------- torque arrow ----------
+  \draw[-{Stealth[length=2.5mm]}, thick] (2.2,2.4) to[bend left=30] (4.0,2.4);
+  \node[above] at (3.1,2.75) {torque $T$};
+  % ---------- deformed ----------
+  \begin{scope}[shift={(6.2,0)}]
+    \node[font=\small] at (-1.6,4.1) {deformed};
+    \fill[gray!8] (-1.0,0) arc (180:360:1.0 and 0.3) -- (1.0,3) arc (0:180:1.0 and 0.3) -- cycle;
+    \draw[thick] (-1.0,0) -- (-1.0,3) (1.0,0) -- (1.0,3);
+    \draw[thick] (-1.0,0) arc (180:360:1.0 and 0.3);
+    \draw[thin, dashed, gray] (1.0,0) arc (0:180:1.0 and 0.3);
+    \draw[thick, fill=gray!20] (0,3) ellipse (1.0 and 0.3);
+    \node[pin, inner sep=0.9pt] at (0,3) {};
+    % reference line and twisted line
+    \draw[thin, dashed] (0,-0.3) -- (0,2.7);
+    \draw[thick] (0,-0.3) -- (0.57,2.75);
+    \node[pin, inner sep=0.9pt] at (0,-0.3) {};
+    \foreach \t in {0.75,1.5,2.25}
+      \draw[-{Stealth[length=1.6mm,width=1.2mm]}, thin] (0,{-0.3+\t}) -- ({0.57*\t/3.05},{-0.3+\t});
+    \draw[thin] (0,3) -- (0,2.7) (0,3) -- (0.57,2.75);
+    \draw[thinarrow] (0,2.85) to[bend right=20] (0.3,2.82);
+    \node at (0.25,3.25) {\small$\phi$};
+    % applied torque
+    \draw[-{Stealth[length=2.2mm]}, thick] ([shift={(200:0.55 and 0.18)}]0,3.75) arc (200:-120:0.55 and 0.18);
+    \node[right] at (0.65,3.8) {$T$};
+    \draw[axis] (-1.5,1.0) -- (-1.5,2.0) node[above] {$\hat{z}$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}[label=$\rightarrow$]
+  \item Circular cross-sections remain circular, and rotate around the $z$-axis by an
+        angle $\phi$.
+  \item $\phi$ varies with $z$: $\phi(z)$. The \emph{rate of twist} is
+        $\displaystyle \alpha = \frac{d\phi}{dz}$.
+\end{itemize}
+
+\noindent
+$\rightarrow$ Examine one ``slice'' of the cylinder:
+
+\begin{center}
+\begin{tikzpicture}
+  % thin cylinder with slice
+  \fill[gray!8] (-0.5,0) arc (180:360:0.5 and 0.15) -- (0.5,3) arc (0:180:0.5 and 0.15) -- cycle;
+  \draw[thick] (-0.5,0) -- (-0.5,3) (0.5,0) -- (0.5,3);
+  \draw[thick] (-0.5,0) arc (180:360:0.5 and 0.15);
+  \draw[thick] (0,3) ellipse (0.5 and 0.15);
+  \draw[thick] (-0.5,1.3) arc (180:360:0.5 and 0.15);
+  \draw[thick] (-0.5,1.6) arc (180:360:0.5 and 0.15);
+  \draw[dim] (-0.8,1.3) -- (-0.8,1.6);
+  \node[left] at (-0.85,1.45) {\small$dz$};
+  \draw[thin] (-1.3,0) -- (-1.3,1.15);
+  \node[left] at (-1.3,0.6) {\small$z$};
+  \node at (1.4,1.45) {\Large$=$};
+  % enlarged slice
+  \begin{scope}[shift={(4.4,0.4)}]
+    \fill[gray!8] (-2.2,0) arc (180:360:2.2 and 0.6) -- (2.2,1.6) arc (0:180:2.2 and 0.6) -- cycle;
+    \draw[thick] (-2.2,0) -- (-2.2,1.6) (2.2,0) -- (2.2,1.6);
+    \draw[thick] (-2.2,0) arc (180:360:2.2 and 0.6);
+    \draw[thick, fill=gray!20] (0,1.6) ellipse (2.2 and 0.6);
+    \draw[thin, dashed] (0,1.6) ellipse (1.2 and 0.33);
+    \node[pin, inner sep=0.9pt] at (0,1.6) {};
+    \draw[thinarrow] (0,1.6) -- (-0.7,1.33);
+    \node[above] at (-0.45,1.55) {\small$\rho$};
+    \draw[thinarrow] (0,1.6) -- (1.6,2.0);
+    \node[above] at (1.5,2.0) {\small$c$};
+    % surface element: undeformed (dashed) and deformed
+    \draw[thin, dashed] (-0.5,-0.57) -- (-0.5,1.03) (0.3,-0.59) -- (0.3,1.01);
+    \draw[thick] (-0.5,-0.57) -- (0.3,-0.59) -- (0.75,1.0) -- (-0.05,1.02) -- cycle;
+    \node[pin, inner sep=0.8pt] at (-0.5,-0.57) {};
+    \node[pin, inner sep=0.8pt] at (-0.05,1.02) {};
+    % labels
+    \draw[dim] (3.0,-0.6) -- (3.0,1.0) node[midway, right] {$dz$};
+    \node[right, align=left, font=\small] at (3.3,1.4) {coord.\ $z+dz$\\twist $\phi(z+dz)$};
+    \node[right, align=left, font=\small] at (3.3,-0.6) {coord.\ $z$\\twist $\phi(z)$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\textbf{Flattened view:}\\[0.6em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (0.7,2);
+  \draw[thin, dashed] (1.6,0) -- (1.6,2.2);
+  \draw[thick, fill=gray!12] (1.6,0) -- (2.3,0) -- (3.1,2) -- (2.4,2) -- cycle;
+  \draw[dimto] (0,2.4) -- (2.4,2.4) node[midway, above] {$\rho\,\phi(z+dz)$};
+  \draw[dimto] (0,-0.4) -- (1.6,-0.4) node[midway, below] {$\rho\,\phi(z)$};
+  \draw (1.6,1.5) arc (90:68.2:1.5);
+  \node at (1.82,1.75) {$\gamma$};
+  \draw[dim] (-0.4,0) -- (-0.4,2) node[midway, left] {$dz$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\[
+  \tan\gamma = \frac{\rho\,\phi(z+dz) - \rho\,\phi(z)}{dz}
+\]
+\begin{itemize}
+  \item Small angle approximation:
+        $\cos\gamma \approx 1$, $\sin\gamma \approx \gamma$, $\tan\gamma \approx \gamma$.
+        \[ \gamma = \rho\,\frac{\phi(z+dz) - \phi(z)}{dz} \]
+  \item Take the limit as $dz \to 0$:
+        \[ \boxed{\gamma = \rho\,\frac{d\phi}{dz}} \]
+\end{itemize}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.62\textwidth}
+\begin{itemize}[label=$\rightarrow$]
+  \item Linear elasticity, $\sigma = E\epsilon$, has a counterpart in shear:
+        \[ \boxed{\tau = G\gamma} \]
+        \begin{itemize}[label=\then]
+          \item $\tau$ = shear stress
+          \item $G$ = shear modulus
+          \item $\gamma$ = shear strain
+        \end{itemize}
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.35\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[axis] (0,0) -- (3,0) node[right] {$\gamma$};
+  \draw[axis] (0,0) -- (0,2.2) node[above] {$\tau$};
+  \draw[plotline] (0,0) -- (2.6,1.8);
+  \draw[thin] (1.2,0.83) -- (1.8,0.83) -- (1.8,1.245);
+  \node[right] at (1.8,1.0) {\small$G$};
+\end{tikzpicture}
+\end{minipage}
+
+\begin{itemize}[label=$\rightarrow$]
+  \item Thus, for torsion:
+        $\displaystyle \tau = G\gamma = G\rho\left(\frac{d\phi}{dz}\right)$.
+\end{itemize}
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+  \fill[gray!8] (-1.8,0) arc (180:360:1.8 and 0.5) -- (1.8,1.3) arc (0:180:1.8 and 0.5) -- cycle;
+  \draw[thick] (-1.8,0) -- (-1.8,1.3) (1.8,0) -- (1.8,1.3);
+  \draw[thick] (-1.8,0) arc (180:360:1.8 and 0.5);
+  \draw[thick, fill=gray!20] (0,1.3) ellipse (1.8 and 0.5);
+  \draw[thick] (0,1.3) -- (1.8,1.3);
+  \node[below] at (0.9,1.3) {\small$\rho$};
+  \node[right] at (1.8,1.15) {\small$c$};
+  \foreach \r in {0.45,0.9,1.35,1.8}
+    \draw[-{Stealth[length=1.6mm,width=1.2mm]}, thick] (\r,1.3) -- (\r,{1.3+0.5*\r});
+  \draw[thin] (0,1.3) -- (1.8,2.2);
+  \node[right] at (1.8,2.2) {$\tau_{\max}$};
+  \node[left] at (0.9,1.85) {$\tau$};
+  \draw[torque] (0,1.3) -- (0,2.6) node[above] {$T$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\begin{itemize}[label=$\rightarrow$]
+  \item The maximum $\tau$ occurs at $\rho = c$, since $\rho_{\max} = c$.
+  \item Thus:
+        \[ \tau = \left(\frac{\rho}{c}\right)\tau_{\max} \]
+\end{itemize}
+\end{minipage}
+
+\bigskip
+\noindent
+$\rightarrow$ The total torque is
+\begin{align*}
+  T &= \int_A \underbrace{\rho}_{\text{moment arm}}\;\underbrace{\tau}_{\text{shear stress}}\, dA
+     = \int_A \rho\left(\frac{\rho}{c}\right)\tau_{\max}\, dA \\
+  T &= \frac{\tau_{\max}}{c}\underbrace{\int_A \rho^2\, dA}_{J}
+\end{align*}
+
+\begin{itemize}[label=$\rightarrow$]
+  \item $J$ is the ``\emph{polar moment of inertia}.''
+  \item Then, we have
+        \[
+          \boxed{\tau_{\max} = \frac{Tc}{J}} \qquad \text{and} \qquad
+          \boxed{\tau(\rho) = \frac{T\rho}{J}}
+        \]
+  \item For circular shafts:
+\end{itemize}
+
+\begin{center}
+\begin{minipage}[t]{0.4\textwidth}
+\centering
+\textbf{Solid}\\[0.4em]
+\begin{tikzpicture}
+  \draw[thick, hatch] (0,0) circle (0.7);
+  \draw[thick] (0,0) circle (0.7);
+  \draw[dim] (1.0,-0.7) -- (1.0,0.7) node[midway, right] {$2c$};
+\end{tikzpicture}\\[0.4em]
+$\boxed{J = \frac{\pi}{2}c^4}$
+\end{minipage}%
+\begin{minipage}[t]{0.4\textwidth}
+\centering
+\textbf{Hollow}\\[0.4em]
+\begin{tikzpicture}
+  \fill[hatch, even odd rule] (0,0) circle (0.7) (0,0) circle (0.42);
+  \draw[thick] (0,0) circle (0.7) (0,0) circle (0.42);
+  \draw[dim] (0.95,-0.42) -- (0.95,0.42) node[midway, right] {$2c_i$};
+  \draw[dim] (1.9,-0.7) -- (1.9,0.7) node[midway, right] {$2c_o$};
+\end{tikzpicture}\\[0.4em]
+$\boxed{J = \frac{\pi}{2}\left(c_o^4 - c_i^4\right)}$
+\end{minipage}
+\end{center}
+
+\end{document}

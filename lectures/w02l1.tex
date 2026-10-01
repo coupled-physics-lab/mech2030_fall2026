@@ -1,0 +1,232 @@
+% Lecture notes: Week 2, Lecture 1 -- Internal Forces
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 2, LECTURE 1
+% ##################################################################
+\lecture{2}{1}{Internal Forces}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-0.7}{0.7}
+  \draw[beam] (0,-0.15) rectangle (6,0.15);
+  \node[pin] at (0,0) {}; \node[left] at (-0.4,0) {$A$};
+  \node[pin] at (1.5,0) {}; \node[right] at (1.55,0.02) {$B$};
+  \draw[force] (6,1.3) node[above] {$\SI{5}{N}$} -- (6,0.17);
+  \draw[dimto] (0,0.6) -- (5.95,0.6) node[midway, fill=white] {$\SI{0.4}{m}$};
+  \draw[dimto] (0,-0.5) -- (1.5,-0.5) node[right] {$\SI{0.1}{m}$};
+  \triad{-1.6}{-1.6}
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.4\textwidth}
+$\rightarrow$ What are the internal forces and moments at $B$?
+\end{minipage}
+
+\section*{\protect\circnum{1} Solve for the reactions}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \node[font=\bfseries] at (-1.2,1.4) {FBD};
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (5,0) {};
+  \draw[force] (-1.3,0) node[left] {$A_x$} -- (-0.08,0);
+  \draw[force] (0,-1.2) node[below] {$A_y$} -- (0,-0.08);
+  \draw[force] ([shift={(20:0.55)}]0,0) arc (20:160:0.55);
+  \node at (0,0.9) {$M_A$};
+  \draw[force] (5,1.3) node[above] {$\SI{5}{N}$} -- (5,0.08);
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\[
+  \left\{
+  \begin{aligned}
+    \textstyle\sum F_x = 0 &\;\rightarrow\; A_x = 0 \\
+    \textstyle\sum F_y = 0 &\;\rightarrow\; A_y = \SI{5}{N} \\
+    \textstyle\sum M^{(A)} = 0 &\;\rightarrow\; M_A = \SI{2}{N.m}
+  \end{aligned}
+  \right.
+\]
+\end{minipage}
+
+\section*{\protect\circnum{2} Make a ``cut'' at $B$}
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-0.7}{0.7}
+  \cutbar{0}{1.8}{0.2}{2}
+  \node[pin] at (0,0) {}; \node[left] at (-0.4,0) {$A$};
+  \node at (1.2,0) {$B$};
+  \draw[force] (2.15,0.45) -- (2.15,-0.6) node[below] {$V_B$};
+  \draw[force] (2.05,0) -- (3.1,0) node[right] {$N_B$};
+  \ccwm{4.0}{0}{$M_B$}
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.47\textwidth}
+\[
+  \left\{
+  \begin{aligned}
+    N_B &= \text{internal \emph{normal} force} \\
+    V_B &= \text{internal \emph{shear} force} \\
+    M_B &= \text{internal \emph{bending} moment}
+  \end{aligned}
+  \right.
+\]
+\end{minipage}
+
+\medskip
+\noindent
+$\rightarrow$ $N_B$, $V_B$, $M_B$ have a \emph{different orientation} depending on the
+\emph{direction of the cut}.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (6,0);
+  \node[pin] at (0,0) {}; \node[above] at (0,0.05) {$A$};
+  \draw[thick] (1.4,-0.25) -- (1.6,0.25) (1.55,-0.25) -- (1.75,0.25);
+  \node[below] at (1.6,-0.3) {$B$};
+  \draw[thinarrow] (-0.9,0.5) node[above] {left side} to[bend right=40] (-1.2,-0.6);
+  \draw[thinarrow] (6.9,0.5) node[above] {right side} to[bend left=40] (7.2,-0.6);
+\end{tikzpicture}
+
+\vspace{0.5em}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \draw[thick] (0,0) -- (1.6,0);
+  \node[pin] at (0,0) {}; \node[pin] at (1.6,0) {};
+  \draw[force] ([shift={(110:0.5)}]0,0) arc (110:250:0.5);
+  \node[left] at (-0.55,0.1) {$M_A$};
+  \draw[force] (0,-1.2) node[below] {$A_y$} -- (0,-0.55);
+  \draw[dim] (0,0.6) -- (1.6,0.6) node[midway, above] {$\SI{0.1}{m}$};
+  \draw[force] (1.85,0.4) -- (1.85,-0.6) node[below] {$V_B$};
+  \draw[force] (1.7,0) -- (2.6,0) node[right] {$N_B$};
+  \ccwm{3.45}{0}{$M_B$}
+\end{tikzpicture}
+\hspace{1.8cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \draw[thick] (0,0) -- (3.6,0);
+  \node[pin] at (0,0) {}; \node[pin] at (3.6,0) {};
+  \draw[force] (-0.1,0) -- (-1.0,0) node[left] {$N_B$};
+  \draw[force] (-0.3,-0.6) -- (-0.3,0.45) node[above] {$V_B$};
+  \cwm{-1.85}{0}{$M_B$}
+  \draw[force] (3.6,1.2) node[above] {$\SI{5}{N}$} -- (3.6,0.08);
+  \draw[dim] (0,0.6) -- (3.6,0.6) node[midway, above] {$\SI{0.3}{m}$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+$\rightarrow$ This ensures that the local internal forces at $B$ sum to zero.
+
+\subsection*{Left-side equilibrium}
+\begin{align*}
+  \textstyle\sum F_y = 0 &\;\rightarrow\; A_y - V_B = 0, \qquad \boxed{V_B = A_y = \SI{5}{N}} \\
+  \textstyle\sum F_x = 0 &\;\rightarrow\; \boxed{N_B = 0} \\
+  \textstyle\sum M^{(B)} = 0 &\;\rightarrow\; M_B + M_A - (\SI{0.1}{m})(A_y) = 0 \\
+  &\;\phantom{\rightarrow}\;\; M_B = (\SI{0.1}{m})A_y - M_A = \SI{0.5}{N.m} - \SI{2.0}{N.m} \\
+  &\;\phantom{\rightarrow}\;\; \boxed{M_B = -\SI{1.5}{N.m}}
+\end{align*}
+
+\subsection*{Right-side equilibrium}
+\begin{align*}
+  \textstyle\sum F_x = 0 &\;\rightarrow\; \boxed{N_B = 0} \\
+  \textstyle\sum F_y = 0 &\;\rightarrow\; V_B - \SI{5}{N} = 0, \qquad \boxed{V_B = \SI{5}{N}} \\
+  \textstyle\sum M^{(B)} = 0 &\;\rightarrow\; -M_B - (\SI{5}{N})(\SI{0.3}{m}) = 0 \\
+  &\;\phantom{\rightarrow}\;\; \boxed{M_B = -\SI{1.5}{N.m}}
+\end{align*}
+
+\begin{center}
+  \fbox{\fbox{\;Both sides give the same result!\;}}
+\end{center}
+
+\section*{Sign Convention (for 2D planar problems)}
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Normal force}\\[0.5em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (1.2,0.6);
+  \draw[force] (-0.05,0.3) -- (-0.9,0.3) node[left] {$N^+$};
+  \draw[force] (1.25,0.3) -- (2.1,0.3) node[right] {$N^+$};
+\end{tikzpicture}\\[0.8em]
+\begin{tabular}{l l}
+  $(+)$: tension &
+  \tikz[baseline=-0.1cm]{\draw[thick, fill=gray!12] (0,-0.12) rectangle (1.1,0.12);
+    \draw[force] (-0.05,0) -- (-0.6,0); \draw[force] (1.15,0) -- (1.7,0);} \\[0.6em]
+  $(-)$: compression &
+  \tikz[baseline=-0.1cm]{\draw[thick, fill=gray!12] (0,-0.12) rectangle (0.4,0.12);
+    \draw[force] (-0.6,0) -- (-0.05,0); \draw[force] (1.0,0) -- (0.45,0);}
+\end{tabular}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Bending moment}\\[0.5em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (1.2,0.6);
+  \draw[force] ([shift={(235:0.5)}]-0.15,0.3) arc (235:125:0.5);
+  \node[left] at (-0.7,0.3) {$M^+$};
+  \draw[force] ([shift={(-55:0.5)}]1.35,0.3) arc (-55:55:0.5);
+  \node[right] at (1.9,0.3) {$M^+$};
+\end{tikzpicture}\\[0.8em]
+\begin{tabular}{l l}
+  $(+)$: upward curvature &
+  \tikz[baseline=0cm]{
+    \draw[thick, fill=gray!12] (0,0.2) to[bend right=30] (1.2,0.2) -- (1.2,0.0)
+         to[bend left=30] (0,0.0) -- cycle;
+    \draw[force] ([shift={(235:0.3)}]-0.1,0.15) arc (235:125:0.3);
+    \draw[force] ([shift={(-55:0.3)}]1.3,0.15) arc (-55:55:0.3);} \\[0.6em]
+  $(-)$: downward curvature &
+  \tikz[baseline=0cm]{
+    \draw[thick, fill=gray!12] (0,0.2) to[bend left=30] (1.2,0.2) -- (1.2,0.0)
+         to[bend right=30] (0,0.0) -- cycle;
+    \draw[force] ([shift={(125:0.3)}]-0.1,0.05) arc (125:235:0.3);
+    \draw[force] ([shift={(55:0.3)}]1.3,0.05) arc (55:-55:0.3);}
+\end{tabular}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\textbf{Shear force}\\[0.5em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (1.2,0.6);
+  \draw[force] (-0.2,-0.2) -- (-0.2,0.8);
+  \node[left] at (-0.25,0.3) {$V^+$};
+  \draw[force] (1.4,0.8) -- (1.4,-0.2);
+  \node[right] at (1.45,0.3) {$V^+$};
+\end{tikzpicture}\\[0.8em]
+\begin{tabular}{l c l}
+  $(+)$: &
+  \tikz[baseline=0cm]{
+    \draw[thick, fill=gray!12] (0,0) -- (0,0.5) -- (1.0,0.2) -- (1.0,-0.3) -- cycle;
+    \draw[force] (-0.2,-0.2) -- (-0.2,0.6); \draw[force] (1.2,0.3) -- (1.2,-0.5);}
+  & clockwise rotation \\[0.8em]
+  $(-)$: &
+  \tikz[baseline=0cm]{
+    \draw[thick, fill=gray!12] (0,0) -- (0,0.5) -- (1.0,0.8) -- (1.0,0.3) -- cycle;
+    \draw[force] (-0.2,0.6) -- (-0.2,-0.2); \draw[force] (1.2,0.2) -- (1.2,1.0);}
+  & counterclockwise rotation
+\end{tabular}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.4\textwidth}
+$\rightarrow$ Why is clockwise positive here?\\
+HW\,2 has a problem about this.
+\end{minipage}
+
+\end{document}

@@ -1,0 +1,177 @@
+% Lecture notes: Week 5, Lecture 1 -- Torsion: Polar Moment of Inertia
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 5, LECTURE 1
+% ##################################################################
+\lecture{5}{1}{Torsion: Polar Moment of Inertia}
+
+\noindent
+$\rightarrow$ Last time, we derived
+\[
+  \boxed{\tau = \frac{T\rho}{J}} \qquad \text{and} \qquad \boxed{\tau_{\max} = \frac{Tc}{J}}
+\]
+
+\noindent
+\begin{minipage}[c]{0.4\textwidth}
+\centering
+\begin{tikzpicture}
+  \fill[gray!8] (-1.2,0) arc (180:360:1.2 and 0.35) -- (1.2,2.2) arc (0:180:1.2 and 0.35) -- cycle;
+  \draw[thick] (-1.2,0) -- (-1.2,2.2) (1.2,0) -- (1.2,2.2);
+  \draw[thick] (-1.2,0) arc (180:360:1.2 and 0.35);
+  \draw[thick, fill=gray!20] (0,2.2) ellipse (1.2 and 0.35);
+  \draw[thin, dashed] (0,2.2) ellipse (0.6 and 0.17);
+  \node[pin, inner sep=0.9pt] at (0,2.2) {};
+  \draw[thinarrow] (0,2.2) -- (1.05,2.37);
+  \node[above] at (1.0,2.4) {$c$};
+  \draw[thinarrow] (0,2.2) -- (-0.55,2.14);
+  \node[below] at (-0.35,2.1) {\small$\rho$};
+  \draw[torque] (0,2.25) -- (0,3.4) node[above] {$T$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.57\textwidth}
+where
+\[
+  \left\{
+  \begin{aligned}
+    \tau &= \text{shear stress} \\
+    T &= \text{torque} \\
+    \rho &= \text{radial coordinate} \\
+    c &= \text{radius of the cylinder} \\
+    J &= \int_A \rho^2\, dA = \text{polar moment of inertia}
+  \end{aligned}
+  \right.
+\]
+\end{minipage}
+
+\section*{Circular shaft}
+
+\noindent
+\begin{minipage}[c]{0.4\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick, fill=gray!8] (0,0) circle (1.0);
+  \node[pin] at (0,0) {};
+  \draw[thinarrow] (0,0) -- (55:1.0);
+  \node at (40:0.62) {$\rho$};
+  \draw[thinarrow] (0.55,0.85) -- (0.15,1.0);
+  \node[above] at (0.2,1.0) {\small$\hat\theta$};
+  \draw[dim] (1.4,-1.0) -- (1.4,1.0) node[midway, right] {$2c$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.57\textwidth}
+\begin{align*}
+  J &= \int_A \rho^2\, dA
+     = \int_0^{2\pi}\!\!\int_0^c \rho^2\,(\rho\, d\rho\, d\theta) \\
+    &= 2\pi\int_0^c \rho^3\, d\rho
+     = 2\pi\left(\tfrac14\rho^4\right)\Big|_0^c
+\end{align*}
+\[
+  \boxed{J_{\text{circle}} = \frac{\pi}{2}c^4}
+\]
+\end{minipage}
+
+\section*{Tube}
+
+\noindent
+Similarly, for a tube:
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \fill[hatch, even odd rule] (0,0) circle (0.9) (0,0) circle (0.55);
+  \draw[thick] (0,0) circle (0.9) (0,0) circle (0.55);
+  \draw[dim] (1.2,-0.9) -- (1.2,0.9) node[midway, right] {$2c_o$};
+  \draw[dim] (2.1,-0.55) -- (2.1,0.55) node[midway, right] {$2c_i$};
+\end{tikzpicture}
+\hspace{1.5cm}
+$\boxed{J_{\text{tube}} = \dfrac{\pi}{2}\left(c_o^4 - c_i^4\right)}$
+\end{center}
+
+\section*{Example}
+
+\noindent
+\begin{minipage}[c]{0.58\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-0.9}{0.9}
+  \draw[beam] (0,-0.5) rectangle (5,0.5);
+  \node[left] at (-0.4,0) {$A$};
+  \node[pin] at (2.5,0) {}; \node[right] at (2.55,-0.18) {$B$};
+  \draw[torque] (2.45,0) -- (1.3,0);
+  \node[above] at (1.6,0.5) {$\SI{300}{N.m}$};
+  \node[above] at (4.8,0.5) {$C$};
+  \draw[torque] (5.05,0) -- (6.3,0) node[right] {$\SI{800}{N.m}$};
+  \draw[thinarrow] (4.0,-1.15) -- (4.0,-0.52);
+  \draw[thinarrow] (4.0,1.15) -- (4.0,0.52);
+  \node[below] at (4.0,-1.15) {\small$\SI{70}{mm}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.38\textwidth}
+\textbf{Q:} What is the maximum shear stress $\tau_{\max}$ in the cylinder?
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\textbf{``Cut'' in $BC$}\\[0.3em]
+\centering
+\begin{tikzpicture}
+  \cutbar{0}{2}{0.35}{1}
+  \draw[torque] (-0.1,0) -- (-1.2,0) node[left] {$T_{BC}$};
+  \draw[torque] (2.05,0) -- (3.2,0) node[right] {$\SI{800}{N.m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\begin{gather*}
+  \textstyle\sum T_x = 0 \\
+  -T_{BC} + \SI{800}{N.m} = 0 \\
+  \boxed{T_{BC} = \SI{800}{N.m}}
+\end{gather*}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\textbf{``Cut'' in $AB$}\\[0.3em]
+\centering
+\begin{tikzpicture}
+  \cutbar{0}{2.8}{0.35}{1}
+  \draw[torque] (-0.1,0) -- (-1.2,0) node[left] {$T_{AB}$};
+  \draw[torque] (1.4,0) -- (0.5,0);
+  \node[above] at (0.95,0.35) {\small$\SI{300}{N.m}$};
+  \draw[torque] (2.85,0) -- (4.0,0) node[right] {$\SI{800}{N.m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\begin{gather*}
+  \textstyle\sum T_x = 0 \\
+  -T_{AB} - \SI{300}{N.m} + \SI{800}{N.m} = 0 \\
+  \boxed{T_{AB} = \SI{500}{N.m}}
+\end{gather*}
+\end{minipage}
+
+\begin{align*}
+  \tau_{\max}^{AB} &= \frac{T_{AB}\,c_{AB}}{J_{AB}}
+     = \frac{(\SI{500}{N.m})(\SI{0.035}{m})}{\frac{\pi}{2}(\SI{0.035}{m})^4}
+     = \SI{7.42}{MPa} \\[4pt]
+  \tau_{\max}^{BC} &= \frac{T_{BC}\,c_{BC}}{J_{BC}}
+     = \frac{(\SI{800}{N.m})(\SI{0.035}{m})}{\frac{\pi}{2}(\SI{0.035}{m})^4}
+     = \SI{11.88}{MPa}
+\end{align*}
+
+\noindent
+$\rightarrow$ The maximum shear stress in the cylinder is
+\[
+  \boxed{\tau_{\max}^{BC} = \SI{11.88}{MPa}}
+\]
+
+\end{document}

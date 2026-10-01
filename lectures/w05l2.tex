@@ -1,0 +1,131 @@
+% Lecture notes: Week 5, Lecture 2 -- Angle of Twist
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 5, LECTURE 2
+% ##################################################################
+\lecture{5}{2}{Angle of Twist}
+
+\noindent
+$\rightarrow$ Recall:
+\begin{align*}
+  \gamma &= \frac{d\phi}{dx}\,\rho \\
+  d\phi &= \left(\frac{\gamma}{\rho}\right)dx \\
+  d\phi &= \left(\frac{\tau}{G\rho}\right)dx
+     && \left(\tau = G\gamma, \text{ or } \gamma = \frac{\tau}{G}\right) \\
+  d\phi &= \left(\frac{T\rho}{JG\rho}\right)dx
+     && \left(\tau = \frac{T\rho}{J}\right) \\
+  d\phi &= \left(\frac{T}{JG}\right)dx
+\end{align*}
+
+\noindent
+$\rightarrow$ Integrating:
+\[
+  \boxed{\phi = \int_0^L \frac{T(x)}{J(x)\,G(x)}\,dx} \qquad \text{(angle of twist)}
+\]
+
+\noindent
+$\rightarrow$ For constant $T$, $J$, $G$ we have:
+\[
+  \boxed{\phi = \frac{TL}{GJ}} \qquad
+  \left(\text{compare with } \delta = \frac{NL}{EA}\right)
+\]
+
+\section*{Figure Skater Problem}
+
+\begin{center}
+\begin{tikzpicture}
+  \lwall{0}{-1.1}{1.1}
+  \draw[beam] (0,-0.35) rectangle (5,0.35);
+  \draw[torque] (5.05,0) -- (6.4,0) node[right] {$\SI{100}{N.m}$};
+  \draw[dim] (0,0.75) -- (5,0.75) node[midway, fill=white] {$\SI{0.45}{m}$};
+  \node[left, align=right, font=\small] at (-0.5,0.4) {``fixed''\\knee joint};
+  \node[align=center, font=\small] at (6.9,1.0) {torque from\\upper body};
+  \draw[dimto] (0,-1.5) -- (1,-1.5) node[right] {$x$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+(The bone is modeled as a tube with $c_o = \SI{14}{mm}$, $c_i = \SI{7}{mm}$, and
+$G = \SI{5}{GPa}$.)
+
+\subsection*{Reaction at the knee}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \node[font=\bfseries] at (-1.6,0.7) {FBD};
+  \draw[thick] (0,0) -- (3.4,0);
+  \node[pin] at (0,0) {}; \node[pin] at (3.4,0) {};
+  \draw[torque] (-1.2,0) node[left] {$T_K$} -- (-0.08,0);
+  \draw[torque] (3.48,0) -- (4.6,0) node[right] {$\SI{100}{N.m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\begin{gather*}
+  \textstyle\sum T_x = 0 \;\rightarrow\; T_K + \SI{100}{N.m} = 0 \\
+  \boxed{T_K = -\SI{100}{N.m}}
+\end{gather*}
+\end{minipage}
+
+\subsection*{``Cut'' to determine the internal torque}
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Left side}\\[0.5em]
+\begin{tikzpicture}
+  \cutbar{0}{1.8}{0.3}{2}
+  \draw[torque] (-1.1,0) node[left] {$T_K$} -- (-0.05,0);
+  \draw[torque] (1.9,0) -- (3.0,0) node[right] {$T(x)$};
+\end{tikzpicture}
+\begin{gather*}
+  \textstyle\sum T_x = 0 \\
+  T_K + T(x) = 0 \\
+  \boxed{T(x) = -T_K = \SI{100}{N.m}}
+\end{gather*}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Right side}\\[0.5em]
+\begin{tikzpicture}
+  \cutbar{0}{1.8}{0.3}{1}
+  \draw[torque] (-0.1,0) -- (-1.1,0) node[left] {$T(x)$};
+  \draw[torque] (1.85,0) -- (2.95,0) node[right] {$\SI{100}{N.m}$};
+\end{tikzpicture}
+\begin{gather*}
+  \textstyle\sum T_x = 0 \\
+  -T(x) + \SI{100}{N.m} = 0 \\
+  \boxed{T(x) = \SI{100}{N.m}}
+\end{gather*}
+\end{minipage}
+
+\subsection*{Maximum shear stress}
+\[
+  \tau_{\max} = \frac{Tc_o}{J}
+  = \frac{(\SI{100}{N.m})(\SI{0.014}{m})}
+         {\frac{\pi}{2}\left((\SI{0.014}{m})^4 - (\SI{0.007}{m})^4\right)}
+  = \boxed{\SI{24.75}{MPa}}
+\]
+\begin{center}
+  (Fracture of bone occurs at $\tau \sim 50$--$\SI{70}{MPa}$.)
+\end{center}
+
+\subsection*{Angle of twist}
+\[
+  \phi = \frac{TL}{GJ}
+  = \frac{(\SI{100}{N.m})(\SI{0.45}{m})}
+         {(\SI{5e9}{Pa})\,\frac{\pi}{2}\left((\SI{0.014}{m})^4 - (\SI{0.007}{m})^4\right)}
+\]
+\[
+  \boxed{\phi = \SI{0.159}{rad} = \ang{9.12}} \;\text{!}
+\]
+
+\end{document}

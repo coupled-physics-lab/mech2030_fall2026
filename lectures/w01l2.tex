@@ -1,0 +1,156 @@
+% Lecture notes: Week 1, Lecture 2 -- Distributed Loads
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 1, LECTURE 2
+% ##################################################################
+\lecture{1}{2}{Distributed Loads}
+
+\section*{Example: Snow Loading}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-0.4}{2.6}
+  \fill[hatch] (0,0.15) -- (0,2.15) -- (6,0.35) -- (6,0.15) -- cycle;
+  \draw[thick] (0,2.15) -- (6,0.35);
+  \draw[beam] (0,-0.15) rectangle (6,0.15);
+  \node[pin] at (0,2.15) {}; \node[pin] at (6,0.35) {};
+  \node[fill=white, inner sep=1.5pt] at (1.4,0.85) {Snow};
+  \draw[thinarrow] (1.1,2.6) -- (0.1,2.22);
+  \node[right] at (1.1,2.6) {\small \SI{1}{m} height};
+  \draw[thinarrow] (5.4,1.25) -- (5.95,0.45);
+  \node[above] at (5.4,1.25) {\small \SI{0.1}{m} height};
+  \draw[dim] (0,-0.8) -- (6,-0.8) node[midway, fill=white] {$\SI{3}{m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+Using:
+\begin{itemize}
+  \item $\rho_{\text{snow}} \approx \SI{250}{kg/m^3}$\\
+        (recall $\rho_{\text{water}} = \SI{1000}{kg/m^3}$)
+  \item $g = \SI{9.81}{m/s^2} \approx \SI{10}{m/s^2}$
+  \item \SI{1}{m} depth out of the page
+\end{itemize}
+\end{minipage}
+
+\bigskip
+\noindent
+This gives a distributed load due to the snow (in \si{N/m}):
+
+\begin{center}
+\begin{tikzpicture}
+  \lwall{0}{-0.6}{2.6}
+  \draw[beam] (0,-0.15) rectangle (6,0.15);
+  \linload{0}{6}{0.15}{2.0}{0.2}{10}
+  \node[above right] at (0.05,2.15) {$\SI{2500}{N/m}$};
+  \node[above] at (6,0.4) {$\SI{250}{N/m}$};
+  \node[pin] at (0,0) {};
+  \node[left] at (-0.4,0) {$A$};
+  \draw[dim] (0,-0.9) -- (6,-0.9) node[midway, fill=white] {$\SI{3}{m}$};
+  \triad{-1.4}{-1.6}
+\end{tikzpicture}
+\end{center}
+
+\noindent
+This topic:
+\begin{enumerate}
+  \item Replace the distributed load with equivalent point loads at centroids.
+  \item Solve equilibrium for the reaction forces and moments.
+\end{enumerate}
+
+\subsection*{Superposition of two loads}
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0.3);
+  \lwall{0}{-0.4}{1.9}
+  \draw[beam] (0,-0.15) rectangle (4,0.15);
+  \distload{0}{4}{0.15}{0.45}{8}
+  \node[above] at (2,0.6) {$\SI{250}{N/m}$};
+  \draw[dim] (0,-0.75) -- (4,-0.75) node[midway, fill=white] {$\SI{3}{m}$};
+\end{tikzpicture}
+\quad{\Large $+$}\quad
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0.3);
+  \lwall{0}{-0.4}{1.9}
+  \draw[beam] (0,-0.15) rectangle (4,0.15);
+  \linload{0}{4}{0.15}{1.5}{0}{6}
+  \node[above right] at (0.05,1.65) {$\SI{2250}{N/m}$};
+  \node[above right] at (4,0.15) {$\SI{0}{N/m}$};
+  \draw[dim] (0,-0.75) -- (4,-0.75) node[midway, fill=white] {$\SI{3}{m}$};
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.7}
+\begin{tabular}{>{\bfseries}l c c}
+  Shape &
+  \tikz[baseline=0.1cm]{\draw[thick] (0,0) rectangle (1,0.5); \node[pin] at (0.5,0.25) {};}\;\;Rectangle &
+  \tikz[baseline=0.1cm]{\draw[thick] (0,0) -- (0,0.6) -- (1.2,0) -- cycle; \node[pin] at (0.4,0.2) {};}\;\;Triangle \\
+  Centroid & $\tfrac12$ of the length & $\tfrac13$ of the length, on the thicker side \\
+           & $x_c^R = \tfrac12(\SI{3}{m}) = \SI{1.5}{m}$
+           & $x_c^T = \tfrac13(\SI{3}{m}) = \SI{1}{m}$ \\
+  Total force (area) & $F_y^R = (\SI{250}{N/m})(\SI{3}{m}) = \SI{750}{N}$
+                     & $F_y^T = \tfrac12(\SI{2250}{N/m})(\SI{3}{m}) = \SI{3375}{N}$
+\end{tabular}
+\end{center}
+
+\subsection*{Equivalent forces at centroids}
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \lwall{0}{-1.6}{1.0}
+  \draw[beam] (0,-0.15) rectangle (5,0.15);
+  \node[pin] at (0,0) {};
+  \node[left] at (-0.4,0) {$A$};
+  \draw[force] (1.667,1.3) node[above] {$F_y^T$} -- (1.667,0.17);
+  \draw[force] (2.5,1.3) node[above] {$F_y^R$} -- (2.5,0.17);
+  \draw[dimto] (0,-0.6) -- (1.667,-0.6) node[right] {$x_c^T$};
+  \draw[dimto] (0,-1.2) -- (2.5,-1.2) node[right] {$x_c^R$};
+\end{tikzpicture}
+\hspace{1.5cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \node[font=\bfseries] at (-0.6,1.7) {FBD};
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (1.667,0) {}; \node[pin] at (2.5,0) {};
+  \draw[force] (0,-1.1) node[below] {$A_y$} -- (0,-0.08);
+  \draw[force] ([shift={(20:0.5)}]0,0) arc (20:160:0.5);
+  \node at (0,0.85) {$M_A$};
+  \draw[force] (1.667,1.3) node[above] {$F_y^T$} -- (1.667,0.08);
+  \draw[force] (2.5,1.3) node[above] {$F_y^R$} -- (2.5,0.08);
+  \draw[dimto] (0,-1.9) -- (1.667,-1.9) node[right] {$x_c^T$};
+  \draw[dimto] (0,-2.5) -- (2.5,-2.5) node[right] {$x_c^R$};
+  \triad{3.6}{0.7}
+\end{tikzpicture}
+\end{center}
+
+\subsection*{Equilibrium}
+
+\begin{align*}
+  \textstyle\sum F_y = 0 \quad &\Rightarrow \quad A_y - F_y^T - F_y^R = 0
+     \quad\Rightarrow\quad \boxed{A_y = F_y^T + F_y^R = \SI{4125}{N}} \\[4pt]
+  \textstyle\sum M^{(A)} = 0 \quad &\Rightarrow \quad M_A - F_y^T x_c^T - F_y^R x_c^R = 0
+     \qquad \text{(no contribution from $A_y$!)} \\
+  &\Rightarrow \quad \boxed{M_A = F_y^T x_c^T + F_y^R x_c^R = \SI{4500}{N.m}}
+\end{align*}
+
+\subsection*{Notes}
+\begin{itemize}
+  \item We always draw reactions in the positive \emph{global} direction.
+  \item Notation:
+  \begin{itemize}[label=\then]
+    \item $\sum M^{(A)}$: ``the sum of all moments about point $A$''
+    \item $M_A$: ``the reaction moment at point $A$''
+  \end{itemize}
+\end{itemize}
+
+\end{document}
