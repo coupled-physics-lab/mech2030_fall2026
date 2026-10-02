@@ -1,0 +1,322 @@
+% Lecture notes: Week 6, Lecture 3 -- Flexure Formula
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 6, LECTURE 3
+% ##################################################################
+\lecture{6}{3}{Flexure Formula}
+
+\noindent
+$\rightarrow$ Consider a beam with \emph{positive} $M$, and therefore \emph{positive}
+curvature.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[font=\bfseries\small, left] at (-0.4,0.9) {undeformed};
+  \draw[beam] (0,-0.6) rectangle (6,0.6);
+  \draw[thin, dashed] (1.8,-0.6) -- (1.8,0.6) (4.2,-0.6) -- (4.2,0.6);
+  \draw[thin, dotted] (1.8,0) -- (4.2,0);
+  \foreach \x/\a/\c/\e in {1.8/A/C/E, 4.2/B/D/F} {
+    \node[pin] at (\x,0.6) {};  \node[above] at (\x,0.65) {$\a$};
+    \node[pin] at (\x,0) {};    \node[fill=gray!12, inner sep=1pt, left] at ({\x-0.08},0) {$\c$};
+    \node[pin] at (\x,-0.6) {}; \node[below] at (\x,-0.65) {$\e$};
+  }
+  \draw[dim] (6.5,-0.6) -- (6.5,0.6) node[midway, right] {$2c$};
+\end{tikzpicture}
+
+\vspace{1em}
+\begin{tikzpicture}
+  \node[font=\bfseries\small, left] at (-1.6,0.9) {deformed};
+  % center of curvature above the beam (positive curvature)
+  \coordinate (O) at (3,6);
+  \fill[gray!12] ($(O)+(243:5.4)$) arc (243:297:5.4) -- ($(O)+(297:6.6)$) arc (297:243:6.6) -- cycle;
+  \draw[thick] ($(O)+(243:5.4)$) arc (243:297:5.4) -- ($(O)+(297:6.6)$) arc (297:243:6.6) -- cycle;
+  \draw[thin, dotted] ($(O)+(258.5:6)$) arc (258.5:281.5:6);
+  \foreach \ang/\a/\c/\e in {258.5/A'/C'/E', 281.5/B'/D'/F'} {
+    \draw[thin, dashed] ($(O)+(\ang:5.4)$) -- ($(O)+(\ang:6.6)$);
+    \node[pin] at ($(O)+(\ang:5.4)$) {}; \node[above] at ($(O)+(\ang:5.35)$) {$\a$};
+    \node[pin] at ($(O)+(\ang:6)$) {};
+    \node[pin] at ($(O)+(\ang:6.6)$) {}; \node[below] at ($(O)+(\ang:6.65)$) {$\e$};
+  }
+  \node[left] at ($(O)+(258.5:6)+(-0.08,0)$) {\small$C'$};
+  \node[right] at ($(O)+(281.5:6)+(0.08,0)$) {\small$D'$};
+  % applied moments (positive: clockwise on left end, counterclockwise on right end)
+  \draw[force] ([shift={(235:0.6)}]-0.3,0.6) arc (235:125:0.6);
+  \node[left] at (-0.95,0.6) {$M$};
+  \draw[force] ([shift={(-55:0.6)}]6.3,0.6) arc (-55:55:0.6);
+  \node[right] at (6.95,0.6) {$M$};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}[label=$\rightarrow$]
+  \item $AB$ gets \emph{shorter}, so $\epsilon_{AB} < 0$.
+  \item $CD$ stays the \emph{same}, so $\epsilon_{CD} = 0$.
+  \item $EF$ gets \emph{longer}, so $\epsilon_{EF} > 0$.
+  \begin{itemize}[label=\then]
+    \item We call $CD$ the ``\emph{neutral axis}'' (N.A.), since it is not affected by
+          bending.
+  \end{itemize}
+\end{itemize}
+
+\section*{Normal Strain Distribution}
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \coordinate (O) at (2,5);
+  \fill[gray!12] ($(O)+(250:4.4)$) arc (250:290:4.4) -- ($(O)+(290:5.6)$) arc (290:250:5.6) -- cycle;
+  \draw[thick] ($(O)+(250:4.4)$) arc (250:290:4.4) -- ($(O)+(290:5.6)$) arc (290:250:5.6) -- cycle;
+  \draw[thick] ($(O)+(270:4.4)$) -- ($(O)+(270:5.6)$);
+  \draw[force] ([shift={(235:0.55)}]0.15,0.3) arc (235:125:0.55);
+  \node[left] at (-0.45,0.3) {$M$};
+  \draw[force] ([shift={(-55:0.55)}]3.85,0.3) arc (-55:55:0.55);
+  \node[right] at (4.45,0.3) {$M$};
+\end{tikzpicture}
+\hspace{1.5cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \draw[thick] (0,-1.2) -- (0,1.2);
+  \draw[thin, dotted] (-2.4,0) -- (2.2,0) node[right] {N.A.};
+  \draw[plotline] (-1.1,1.2) -- (1.1,-1.2);
+  \foreach \y in {1.2,0.8,0.4} {
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,\y) -- ({-1.1*\y/1.2},\y);
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,-\y) -- ({1.1*\y/1.2},-\y);
+  }
+  \node[pin] at (0,0) {};
+  \node[above left] at (-1.1,1.2) {$-\epsilon_{\max}$};
+  \node[below right] at (1.1,-1.2) {$\epsilon_{\max}$};
+  \draw[axis] (-2.5,0.1) -- (-2.5,1.0) node[above] {$y$};
+  \draw[dim] (3.4,0) -- (3.4,1.2) node[midway, right] {$c$};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}[label=\then]
+  \item The strain varies linearly with $y$, so
+        \[ \boxed{\epsilon = -\left(\frac{y}{c}\right)\epsilon_{\max}} \]
+\end{itemize}
+
+\section*{Normal Stress Distribution}
+
+\noindent
+\begin{minipage}[c]{0.35\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick] (0,-1.2) -- (0,1.2);
+  \draw[thin, dashed] (-2.3,0) -- (1.6,0);
+  \draw[plotline] (-1.1,1.2) -- (1.1,-1.2);
+  \foreach \y in {1.2,0.8,0.4} {
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,\y) -- ({-1.1*\y/1.2},\y);
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,-\y) -- ({1.1*\y/1.2},-\y);
+  }
+  \node[pin] at (0,0) {};
+  \node[above left] at (-1.1,1.2) {$-\sigma_{\max}$};
+  \node[below right] at (1.1,-1.2) {$\sigma_{\max}$};
+  \draw[axis] (-2.4,0.1) -- (-2.4,1.0) node[above] {$y$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.62\textwidth}
+$\rightarrow$ Use linear elasticity, $\sigma = E\epsilon$, to write
+\[
+  \boxed{\sigma = -\left(\frac{y}{c}\right)E\,\epsilon_{\max}
+         = -\left(\frac{y}{c}\right)\sigma_{\max}}
+\]
+\end{minipage}
+
+\bigskip
+\noindent
+$\rightarrow$ The stress must satisfy:
+\begin{itemize}[label={}, leftmargin=2.5em]
+  \item[\circnum{1}] No net axial force (pure bending):
+        $\displaystyle \quad \int_A \sigma\, dA = 0$
+  \item[\circnum{2}] The stresses add up to the local bending moment $M$.
+      A strip at height $y$ carries a force $dF = \sigma\,dA$ in the $x$-direction,
+      so its moment about the neutral axis is
+      \[
+        d\mathbf{M} = \mathbf{r}\times\mathbf{F}
+        = (y\,\hat{\mathbf{j}})\times(\sigma\,dA\,\hat{\mathbf{i}})
+        = -y\,\sigma\,dA\;\hat{\mathbf{k}}
+        \qquad\Rightarrow\qquad
+        M = -\int_A y\,\sigma\,dA
+      \]
+\end{itemize}
+\noindent
+
+\section*{Consequences}
+
+\subsection*{\protect\circnum{1} No net axial force}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\begin{align*}
+  \int_A \sigma\, dA &= \int_A -\left(\frac{y}{c}\right)\sigma_{\max}\, dA \\
+  &= -\frac{\sigma_{\max}}{c}\int_A y\, dA = 0
+\end{align*}
+so
+\[ \int_A y\, dA = 0. \]
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\centering
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \draw[thick, fill=gray!12] (-0.8,-0.9) rectangle (0.8,0.9);
+  \draw[thin, dashed] (-1.1,0) -- (1.1,0);
+  \node[font=\small] at (0,0.3) {N.A.};
+  \draw[axis] (-1.4,-0.2) -- (-1.4,0.7) node[above] {$y$};
+\end{tikzpicture}
+\hspace{0.8cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \draw[thick, fill=gray!12] (-1,-0.6) -- (1,-0.6) -- (0,1.2) -- cycle;
+  \draw[thin, dashed] (-1.2,0) -- (1.2,0);
+  \node[font=\small] at (0,-0.3) {N.A.};
+  \draw[axis] (-1.4,-0.2) -- (-1.4,0.7) node[above] {$y$};
+\end{tikzpicture}
+\end{minipage}
+
+\begin{itemize}[label=\then]
+  \item This means:
+        \fbox{\parbox{0.55\textwidth}{\centering The neutral axis (N.A.) is located at the
+        \emph{centroid} of the cross-section.}}
+\end{itemize}
+
+\subsection*{\protect\circnum{2} Local bending moment}
+
+\begin{align*}
+  M = -\int_A y\,\sigma\, dA
+    &= -\int_A y\left(-\frac{y}{c}\,\sigma_{\max}\right) dA
+     = \frac{\sigma_{\max}}{c}\underbrace{\int_A y^2\, dA}_{=\,I}
+\end{align*}
+where $I$ is the \emph{area moment of inertia} of the cross-section about the neutral axis.
+Rearranging:
+\[
+  \boxed{\sigma_{\max} = \frac{Mc}{I}}
+  \qquad \text{so that} \qquad
+  \boxed{\sigma = -\frac{My}{I}}
+  \qquad \text{(the \emph{flexure formula})}
+\]
+
+\section*{Area Moments of Inertia}
+
+\[
+  I = \int_A y^2\, dA
+\]
+
+\begin{center}
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+\textbf{Rectangle}\\[0.5em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (-0.6,-0.9) rectangle (0.6,0.9);
+  \draw[thin, dashed] (-0.9,0) -- (0.9,0);
+  \draw[axis] (0,0) -- (0,1.25) node[above] {$y$};
+  \draw[dim] (-0.6,-1.2) -- (0.6,-1.2) node[midway, below] {$b$};
+  \draw[dim] (1.0,-0.9) -- (1.0,0.9) node[midway, right] {$h$};
+\end{tikzpicture}\\[0.5em]
+$\displaystyle I = \frac{b h^3}{12}$
+\end{minipage}%
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+\textbf{Solid circle}\\[0.5em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) circle (0.8);
+  \draw[thin, dashed] (-1.0,0) -- (1.0,0);
+  \draw[axis] (0,0) -- (0,1.2) node[above] {$y$};
+  \draw[dim] (1.2,-0.8) -- (1.2,0.8) node[midway, right] {$d$};
+\end{tikzpicture}\\[0.5em]
+$\displaystyle I = \frac{\pi d^4}{64}$
+\end{minipage}%
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+\textbf{Hollow circle}\\[0.5em]
+\begin{tikzpicture}
+  \fill[gray!12, even odd rule] (0,0) circle (0.8) (0,0) circle (0.45);
+  \draw[thick] (0,0) circle (0.8) (0,0) circle (0.45);
+  \draw[thin, dashed] (-1.0,0) -- (1.0,0);
+  \draw[axis] (0,0) -- (0,1.2) node[above] {$y$};
+  \draw[dim] (1.1,-0.45) -- (1.1,0.45) node[midway, right] {$d_i$};
+  \draw[dim] (1.7,-0.8) -- (1.7,0.8) node[midway, right] {$d_o$};
+\end{tikzpicture}\\[0.5em]
+$\displaystyle I = \frac{\pi\left(d_o^4 - d_i^4\right)}{64}$
+\end{minipage}
+\end{center}
+
+\section*{Example: Squirrel Problem}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-1.0}{1.0}
+  \draw[beam] (0,-0.45) rectangle (6,0.45);
+  \node[pin] at (0,0.45) {};  \node[left] at (-0.35,0.5) {$A$};
+  \node[pin] at (0,0) {};     \node[left] at (-0.35,0) {$B$};
+  \node[pin] at (0,-0.45) {}; \node[left] at (-0.35,-0.5) {$C$};
+  \draw[force] (6,1.4) node[above] {$\SI{5}{N}$} -- (6,0.47);
+  \draw[dim] (0,-1.15) -- (6,-1.15) node[midway, fill=white] {$\SI{0.5}{m}$};
+  \draw[dimto] (0,1.2) -- (0.9,1.2) node[right] {$x$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+A squirrel (\SI{5}{N}) sits at the tip of a branch. The maximum bending moment occurs at
+the base of the branch.
+\begin{itemize}
+  \item What is the maximum stress in the branch, and where does it occur in the
+        cross-section?
+  \item Will the branch fail at point $A$, $B$, or $C$?
+\end{itemize}
+\end{minipage}
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  % scale: 0.5 m -> 4 cm, 5 N -> 1.5 cm
+  \draw[axis] (0,0) -- (4.8,0) node[right] {$x$};
+  \draw[axis] (0,0) -- (0,2.1) node[above] {$V(x)$};
+  \draw[plotline] (0,1.5) -- (4,1.5);
+  \draw[plotline, dashed] (4,1.5) -- (4,0);
+  \node[left] at (0,1.5) {$\SI{5}{N}$};
+  \node[below] at (4,0) {$\SI{0.5}{m}$};
+\end{tikzpicture}
+\hspace{1.5cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,-0.6);
+  % scale: 0.5 m -> 4 cm, 2.5 N.m -> 1.5 cm
+  \draw[axis] (0,0) -- (4.8,0) node[right] {$x$};
+  \draw[axis] (0,-1.8) -- (0,0.8) node[above] {$M(x)$};
+  \draw[plotline, green!45!black] (0,-1.5) -- (4,0);
+  \node[pin] at (0,-1.5) {};
+  \node[left] at (0,-1.5) {$-\SI{2.5}{N.m}$};
+  \node[above] at (4,0) {$\SI{0.5}{m}$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+Assume a branch diameter of $d = \SI{20}{mm}$ (so $c = d/2 = \SI{10}{mm}$).
+\begin{itemize}[label=\then]
+  \item From the moment diagram, $M_{\max} = -\SI{2.5}{N.m}$, at the base of the branch.
+  \item The largest stress magnitude is
+        \[
+          |\sigma|_{\max} = \frac{|M_{\max}|\,c}{I}
+          = \frac{|M_{\max}|\left(\frac{d}{2}\right)}{\frac{\pi}{64}d^4}
+          = \frac{(\SI{2.5}{N.m})(\SI{0.010}{m})}{\frac{\pi}{64}(\SI{0.020}{m})^4}
+        \]
+        \[
+          \boxed{|\sigma|_{\max} = \SI{3.18}{MPa}}
+        \]
+\end{itemize}
+
+\noindent
+$\rightarrow$ Since $\sigma = -\dfrac{My}{I}$ and $M < 0$, the maximum \emph{tensile}
+stress ($\sigma > 0$) occurs at $y = c$, which is point $A$.
+\begin{itemize}[label=\then]
+  \item Failure occurs at point $A$.
+\end{itemize}
+
+\end{document}
