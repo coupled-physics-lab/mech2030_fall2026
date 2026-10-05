@@ -1,0 +1,179 @@
+% Lecture notes: Week 7, Lecture 1 -- Flexure Formula: Example
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 7, LECTURE 1
+% ##################################################################
+\lecture{7}{1}{Flexure Formula: Example}
+
+\noindent
+$\rightarrow$ A hollow cylindrical shaft is supported by bearings at $A$ and $D$:
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  % scale: 2 cm per m
+  \draw[beam] (0,-0.12) rectangle (6,0.12);
+  % bearings
+  \foreach \x in {0,6} {
+    \draw[thick, fill=white] ({\x-0.3},-0.4) rectangle ({\x+0.3},0.4);
+    \foreach \dx in {-0.2,0,0.2}
+      \draw[thick] ({\x+\dx},-0.5) circle (0.1);
+    \ground{\x-0.45}{\x+0.45}{-0.6}
+  }
+  \node[above] at (0,0.45) {$A$};
+  \node[above] at (6,0.45) {$D$};
+  \node[pin] at (1.5,0) {}; \node[pin] at (4.5,0) {};
+  \draw[force] (1.5,1.3) node[above] {$\SI{3}{kN}$} -- (1.5,0.14);
+  \draw[force] (4.5,1.3) node[above] {$\SI{3}{kN}$} -- (4.5,0.14);
+  \node[below right] at (1.5,-0.1) {$B$};
+  \node[below left] at (4.5,-0.1) {$C$};
+  \draw[dim] (0,-1.3) -- (1.5,-1.3) node[midway, fill=white] {$\SI{0.75}{m}$};
+  \draw[dim] (1.5,-1.3) -- (4.5,-1.3) node[midway, fill=white] {$\SI{1.5}{m}$};
+  \draw[dim] (4.5,-1.3) -- (6,-1.3) node[midway, fill=white] {$\SI{0.75}{m}$};
+\end{tikzpicture}
+\hspace{1.2cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \fill[gray!12, even odd rule] (0,0) circle (0.8) (0,0) circle (0.5);
+  \draw[thick] (0,0) circle (0.8) (0,0) circle (0.5);
+  \draw[dim] (1.05,-0.5) -- (1.05,0.5) node[midway, right] {\small$\SI{50}{mm}$};
+  \draw[dim] (2.25,-0.8) -- (2.25,0.8) node[midway, right] {\small$\SI{80}{mm}$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+\textbf{Q:} What is the maximum \emph{stress} due to \emph{bending} in the beam?
+
+\section*{1) Global FBD}
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (6,0);
+  \node[pin] at (0,0) {}; \node[pin] at (1.5,0) {};
+  \node[pin] at (4.5,0) {}; \node[pin] at (6,0) {};
+  \draw[force] (0,-1.2) node[below] {$A_y$} -- (0,-0.08);
+  \draw[force] (6,-1.2) node[below] {$D_y$} -- (6,-0.08);
+  \draw[force] (1.5,1.2) node[above] {$\SI{3}{kN}$} -- (1.5,0.08);
+  \draw[force] (4.5,1.2) node[above] {$\SI{3}{kN}$} -- (4.5,0.08);
+\end{tikzpicture}
+\end{center}
+
+\noindent
+By \emph{symmetry}:
+\[
+  A_y = D_y = \tfrac12\,(\text{total applied load})
+  \qquad\Rightarrow\qquad
+  \boxed{A_y = D_y = \SI{3}{kN}}
+\]
+
+\section*{2) Shear and Moment Diagrams}
+
+\subsection*{Shear}
+
+\noindent
+\begin{minipage}[c]{0.4\textwidth}
+\begin{itemize}
+  \item $+A_y$ at $x = 0$
+  \item $-\SI{3}{kN}$ at $x = \SI{0.75}{m}$
+  \item $-\SI{3}{kN}$ at $x = \SI{2.25}{m}$
+  \item $+D_y$ at $x = \SI{3}{m}$
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.57\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 3 m -> 6 cm, 3 kN -> 1.3 cm
+  \fill[hatch] (0,0) rectangle (1.5,1.3);
+  \fill[hatch] (4.5,-1.3) rectangle (6,0);
+  \draw[axis] (0,0) -- (6.9,0) node[right] {$x$};
+  \draw[axis] (0,-1.9) -- (0,1.9) node[above] {$V(x)$};
+  \draw[plotline] (0,0) -- (0,1.3) -- (1.5,1.3) -- (1.5,0) -- (4.5,0) -- (4.5,-1.3)
+                  -- (6,-1.3) -- (6,0);
+  \foreach \p in {(0,1.3),(1.5,1.3),(1.5,0),(4.5,0),(4.5,-1.3),(6,-1.3),(6,0)}
+    \node[pin] at \p {};
+  \node[left] at (0,1.3) {$\SI{3}{kN}$};
+  \node[left] at (0,-1.3) {$-\SI{3}{kN}$};
+  \draw[thin] (-0.08,-1.3) -- (0.08,-1.3);
+  \node[below] at (1.5,0) {\small$\SI{0.75}{m}$};
+  \node[above] at (4.5,0) {\small$\SI{2.25}{m}$};
+  \node[above] at (6,0.05) {\small$\SI{3}{m}$};
+  \draw[force] (0.3,0.1) -- (0.3,1.2);
+  \node[fill=white, inner sep=1pt, right] at (0.35,0.65) {\small$+A_y$};
+  \draw[force] (1.8,1.2) -- (1.8,0.1);
+  \node[right] at (1.85,0.65) {\small$-\SI{3}{kN}$};
+  \draw[force] (4.2,-0.1) -- (4.2,-1.2);
+  \node[left] at (4.15,-0.65) {\small$-\SI{3}{kN}$};
+  \draw[force] (6.3,-1.2) -- (6.3,-0.1);
+  \node[right] at (6.35,-0.65) {\small$+D_y$};
+\end{tikzpicture}
+\end{minipage}
+
+\subsection*{Moment}
+
+\noindent
+\begin{minipage}[c]{0.4\textwidth}
+\begin{itemize}
+  \item $\displaystyle \Delta M_1 = \int_0^{\SI{0.75}{m}} V(x)\,dx$\\[2pt]
+        $= (\SI{3}{kN})(\SI{0.75}{m})$\\[2pt]
+        $= +\SI{2.25}{kN.m}$
+  \item $\displaystyle \Delta M_2 = \int_{\SI{2.25}{m}}^{\SI{3}{m}} V(x)\,dx$\\[2pt]
+        $= (-\SI{3}{kN})(\SI{0.75}{m})$\\[2pt]
+        $= -\SI{2.25}{kN.m}$
+  \item Throughout, $\dfrac{dM}{dx} = V(x)$.
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.57\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 3 m -> 6 cm, 2.25 kN.m -> 1.8 cm
+  \fill[hatch] (0,0) -- (1.5,1.8) -- (4.5,1.8) -- (6,0) -- cycle;
+  \draw[axis] (0,0) -- (6.9,0) node[right] {$x$};
+  \draw[axis] (0,-0.5) -- (0,2.6) node[above] {$M(x)$};
+  \draw[plotline] (0,0) -- (1.5,1.8) -- (4.5,1.8) -- (6,0);
+  \foreach \p in {(0,0),(1.5,1.8),(4.5,1.8),(6,0)}
+    \node[pin] at \p {};
+  \node[above] at (1.5,1.8) {$\SI{2.25}{kN.m}$};
+  \node[below] at (1.5,0) {\small$\SI{0.75}{m}$};
+  \node[below] at (4.5,0) {\small$\SI{2.25}{m}$};
+  \node[below] at (6,0) {\small$\SI{3}{m}$};
+  \draw[dim] (-0.45,0) -- (-0.45,1.8) node[midway, left] {$\Delta M_1$};
+  \draw[dim] (6.45,0) -- (6.45,1.8) node[midway, right] {$\Delta M_2$};
+\end{tikzpicture}
+\end{minipage}
+
+\begin{itemize}[label=\then]
+  \item We see that $\boxed{M_{\max} = \SI{2.25}{kN.m}}$.
+\end{itemize}
+
+\section*{3) Stress}
+
+\begin{itemize}[label=\then]
+  \item The maximum stress occurs where $M_{\max}$ occurs.
+\end{itemize}
+
+\begin{align*}
+  \sigma_{\max} &= \frac{M_{\max}\,c}{I}
+   = \frac{(\SI{2.25e3}{N.m})(\SI{0.04}{m})}
+          {\frac{\pi}{64}\left((\SI{0.08}{m})^4 - (\SI{0.05}{m})^4\right)}
+\end{align*}
+\[
+  \boxed{\sigma_{\max} = \SI{52.8}{MPa}}
+\]
+
+\subsection*{Notice}
+\begin{itemize}
+  \item The stress value has nothing to do with the particular \emph{material}.
+  \begin{itemize}[label=\then]
+    \item It is not a function of $E$ or $G$.
+    \item It depends only on the \emph{loading} and \emph{geometry}.
+  \end{itemize}
+\end{itemize}
+
+\end{document}
