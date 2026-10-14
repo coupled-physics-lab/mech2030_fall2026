@@ -1,0 +1,263 @@
+% Lecture notes: Week 8, Lecture 1 -- Quiz 4 Review; Beam Deflection Example
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 8, LECTURE 1
+% ##################################################################
+\lecture{8}{1}{Quiz 4 Review; Beam Deflection Example}
+
+% ==================================================================
+\section*{Quiz 4: Three-Bar Assembly Problem}
+% ==================================================================
+
+\begin{center}
+\begin{tikzpicture}
+  \lwall{0}{-1.0}{1.0}
+  \draw[beam] (0,-0.6) rectangle (2.2,0.6);
+  \draw[beam] (2.2,-0.2) rectangle (4.6,0.2);
+  \draw[beam] (4.6,-0.6) rectangle (6.8,0.6);
+  \node at (1.1,0) {$A$};
+  \node[pin] at (6.8,0) {}; \node[left] at (6.75,0) {$B$};
+  % section properties
+  \node[above, font=\small] at (1.1,0.6) {$A_1, E_1, \sigma_y^{1}$};
+  \node[above, font=\small] at (3.3,0.2) {$A_2, E_2, \sigma_y^{2}$};
+  \node[above, font=\small] at (5.7,0.6) {$A_3, E_3, \sigma_y^{3}$};
+  % F1 at the shoulder between sections 2 and 3
+  \draw[force] (3.5,0) -- (4.58,0);
+  \node[below] at (3.95,-0.22) {$F_1$};
+  % F2 at the free end
+  \draw[force] (8.0,0) node[right] {$F_2$} -- (6.85,0);
+  % lengths
+  \draw[dim] (0,-1.4) -- (2.2,-1.4) node[midway, fill=white] {$L_1$};
+  \draw[dim] (2.2,-1.4) -- (4.6,-1.4) node[midway, fill=white] {$L_2$};
+  \draw[dim] (4.6,-1.4) -- (6.8,-1.4) node[midway, fill=white] {$L_3$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+\textbf{Q:} What is $\delta_B$?
+\begin{itemize}[label=\then]
+  \item We will use
+        $\displaystyle \delta_B = \sum_{i=1}^{3} \frac{N_i L_i}{E_i A_i}$,
+        so the yield stresses $\sigma_y^i$ are not needed.
+\end{itemize}
+
+\subsection*{FBD}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (1.6,0) {};
+  \node[pin] at (3.4,0) {}; \node[pin] at (5,0) {};
+  \draw[force] (-1.2,0) node[left] {$F_A$} -- (-0.08,0);
+  \draw[force] (2.4,-0.45) -- (3.35,-0.45);
+  \node[below] at (2.9,-0.5) {$F_1$};
+  \draw[force] (6.2,0) node[right] {$F_2$} -- (5.08,0);
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\begin{gather*}
+  \textstyle\sum F_x = 0 \\
+  F_A + F_1 - F_2 = 0 \\
+  \boxed{F_A = F_2 - F_1}
+\end{gather*}
+\end{minipage}
+
+\subsection*{``Cut'' in section 1}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \cutbar{0}{1.6}{0.6}{2}
+  \draw[force] (-1.2,0) node[left] {$F_A$} -- (-0.05,0);
+  \draw[force] (1.7,0) -- (2.6,0) node[right] {$N_1$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\begin{gather*}
+  \textstyle\sum F_x = 0 \\
+  F_A + N_1 = 0 \\
+  \boxed{N_1 = -F_A = F_1 - F_2}
+\end{gather*}
+\end{minipage}
+
+\subsection*{``Cut'' in section 2}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[beam] (0,-0.6) rectangle (1.6,0.6);
+  \cutbar{1.6}{2.6}{0.2}{2}
+  \draw[force] (-1.2,0) node[left] {$F_A$} -- (-0.05,0);
+  \draw[force] (2.7,0) -- (3.6,0) node[right] {$N_2$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+Same as section 1:
+\[ \boxed{N_2 = F_1 - F_2} \]
+\end{minipage}
+
+\subsection*{``Cut'' in section 3}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  \cutbar{0}{1.6}{0.6}{1}
+  \draw[force] (-0.1,0) -- (-1.0,0) node[left] {$N_3$};
+  \draw[force] (2.8,0) node[right] {$F_2$} -- (1.65,0);
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\begin{gather*}
+  \textstyle\sum F_x = 0 \\
+  -N_3 - F_2 = 0 \\
+  \boxed{N_3 = -F_2}
+\end{gather*}
+\end{minipage}
+
+\subsection*{Result}
+
+\begin{center}
+\fbox{\fbox{$\displaystyle
+  \delta_B = \sum_{i=1}^{3} \frac{N_i L_i}{E_i A_i}
+  = \frac{(F_1 - F_2)\,L_1}{E_1 A_1}
+  + \frac{(F_1 - F_2)\,L_2}{E_2 A_2}
+  + \frac{(-F_2)\,L_3}{E_3 A_3}
+$}}
+\end{center}
+
+\noindent
+(The solution to the distributed load problem is in Week~4, Lecture~2.)
+
+% ==================================================================
+\section*{Beam Deflection}
+% ==================================================================
+
+\noindent
+$\rightarrow$ Recall:
+
+\begin{center}
+\begin{tikzpicture}
+  \pgfmathsetmacro{\Lb}{6}
+  \pgfmathsetmacro{\xs}{4.4}
+  \pgfmathsetmacro{\vs}{1.6*(\xs/\Lb)^2*(3-\xs/\Lb)/2}
+  \pgfmathsetmacro{\ss}{1.6*(6*\xs/\Lb - 3*(\xs/\Lb)^2)/(2*\Lb)}
+  \pgfmathsetmacro{\ang}{atan(\ss)}
+  \pgfmathsetmacro{\xd}{2.6}
+  \pgfmathsetmacro{\vd}{1.6*(\xd/\Lb)^2*(3-\xd/\Lb)/2}
+  \lwall{0}{-0.9}{2.0}
+  \draw[thin, dashed] (0,0) -- (6.6,0);
+  \draw[plotline] plot[domain=0:\Lb, samples=50] (\x,{1.6*(\x/\Lb)^2*(3-\x/\Lb)/2});
+  \draw[force] (\xd,0) -- (\xd,\vd);
+  \node[right] at (\xd,{\vd/2+0.05}) {$v(x)$};
+  \draw[thin] ({\xs-1.0},{\vs-1.0*\ss}) -- ({\xs+1.6},{\vs+1.6*\ss});
+  \draw[thin, dashed] (\xs,\vs) -- ({\xs+1.9},\vs);
+  \draw ({\xs+1.4},\vs) arc (0:\ang:1.4);
+  \node[right] at ({\xs+1.45},{\vs+0.2}) {$\theta(x)$};
+  \node[pin] at (\xs,\vs) {};
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}
+  \item $v(x)$ is the transverse \emph{deflection}.
+  \item $\theta(x) = \dfrac{dv}{dx}(x)$ is the \emph{slope angle}.
+\end{itemize}
+
+\subsection*{Example}
+
+\noindent
+\begin{minipage}[c]{0.6\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-1.5}{1.0}
+  \draw[beam] (0,-0.12) rectangle (5,0.12);
+  \draw[thin, dashed] (0,0) -- (5,0);
+  \draw[plotline] plot[domain=0:5, samples=40] (\x,{-1.1*(\x/5)^2*(3-\x/5)/2});
+  % point A at x = 0.3 m (3 cm), point B at the tip
+  \pgfmathsetmacro{\vA}{-1.1*(3/5)^2*(3-3/5)/2}
+  \node[pin] at (3,\vA) {}; \node[below left] at (3,\vA) {$A$};
+  \node[pin] at (5,-1.1) {}; \node[right] at (5.05,-1.1) {$B$};
+  \draw[force] (5,1.3) node[above] {$P = \SI{5}{N}$} -- (5,0.14);
+  \draw[dim] (0,0.6) -- (3,0.6) node[midway, fill=white] {$\SI{0.3}{m}$};
+  \draw[dim] (0,-2.0) -- (5,-2.0) node[midway, fill=white] {$L = \SI{0.5}{m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.36\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) circle (0.35);
+  \draw[dim] (0.6,-0.35) -- (0.6,0.35) node[midway, right] {$d = \SI{20}{mm}$};
+\end{tikzpicture}
+\begin{align*}
+  E &= \SI{10}{GPa} \\
+  I &= \tfrac{\pi}{64}\,d^4
+\end{align*}
+\end{minipage}
+
+\bigskip
+\noindent
+\textbf{Q:}
+\begin{enumerate}[label=\alph*)]
+  \item Tip deflection $v_B$?
+  \item Tip angle $\theta_B$?
+  \item Deflection $v_A$?
+\end{enumerate}
+
+\subsubsection*{a) From the table (derived in Week~7, Lecture~3)}
+\[
+  v_B = v_{\max} = -\frac{PL^3}{3EI}
+  \qquad\Rightarrow\qquad
+  \boxed{v_B = -\SI{2.65}{mm}}
+\]
+
+\subsubsection*{b) From the table}
+\[
+  \theta_B = \theta_{\max} = -\frac{PL^2}{2EI}
+  \qquad\Rightarrow\qquad
+  \boxed{\theta_B = -\SI{0.0080}{rad} = -\ang{0.46}}
+\]
+
+\subsubsection*{c) From the elastic curve}
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[axis] (0,0) -- (4.4,0) node[right] {$x$};
+  \draw[axis] (0,-1.6) -- (0,0.9) node[above] {$v(x)$};
+  \draw[plotline] plot[domain=0:4, samples=40] (\x,{-1.3*(\x/4)^2*(3-\x/4)/2});
+  \pgfmathsetmacro{\vA}{-1.3*(2.4/4)^2*(3-2.4/4)/2}
+  \node[pin] at (2.4,\vA) {};
+  \node[above] at (2.4,0.05) {$A$};
+  \draw[force] (2.4,0) -- (2.4,\vA);
+  \node[left] at (2.35,{\vA/2}) {\small$v_A$};
+  \node[below, font=\small] at (2.0,-1.5)
+       {$v(x) = -\dfrac{P x^2}{6EI}\,(3L - x)$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\begin{align*}
+  v_A &= v(\SI{0.3}{m}) \\[4pt]
+      &= -\frac{P\,(\SI{0.3}{m})^2}{6EI}\,\bigl(3L - \SI{0.3}{m}\bigr)
+\end{align*}
+\[
+  \boxed{v_A = -\SI{1.15}{mm}}
+\]
+\end{minipage}
+
+\end{document}
