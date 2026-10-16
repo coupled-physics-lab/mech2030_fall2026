@@ -75,6 +75,15 @@
   \ground{#1-0.45}{#1+0.45}{#2-0.5}
 }
 
+% Simply supported beam from x = 0 to #1 (cm): pin at left, roller at right
+\newcommand{\simplebeam}[1]{%
+  \draw[beam] (0,-0.15) rectangle (#1,0.15);
+  \pinsupport{0}{-0.15}
+  \draw[thick, fill=white] (#1,-0.15) -- ({#1-0.3},-0.55) -- ({#1+0.3},-0.55) -- cycle;
+  \foreach \dx in {-0.18,0,0.18} \draw[thick] ({#1+\dx},-0.64) circle (0.09);
+  \ground{#1-0.45}{#1+0.45}{-0.73}
+}
+
 % Uniform distributed load: \distload{x1}{x2}{y_beam_top}{height}{# arrows}
 \newcommand{\distload}[5]{%
   \draw[thick] (#1,{#3+#4}) -- (#2,{#3+#4});
@@ -164,7 +173,7 @@
 \newcommand{\lecture}[3]{%
   \clearpage
   \phantomsection
-  \addcontentsline{toc}{section}{Week #1, Lecture #2 \enspace--\enspace #3}
+  \addcontentsline{toc}{section}{Week #1, Lecture #2\texorpdfstring{\enspace--\enspace}{ -- }#3}
   \begin{center}
     {\large\scshape Week #1 \textperiodcentered{} Lecture #2}\\[0.3em]
     {\LARGE\bfseries #3}\\[-0.2em]

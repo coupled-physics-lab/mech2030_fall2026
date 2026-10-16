@@ -4,15 +4,6 @@
 \documentclass[11pt]{article}
 \usepackage{mech2030notes}
 
-% Simply supported beam from x = 0 to #1 (cm): pin at left, roller at right
-\newcommand{\simplebeam}[1]{%
-  \draw[beam] (0,-0.15) rectangle (#1,0.15);
-  \pinsupport{0}{-0.15}
-  \draw[thick, fill=white] (#1,-0.15) -- ({#1-0.3},-0.55) -- ({#1+0.3},-0.55) -- cycle;
-  \foreach \dx in {-0.18,0,0.18} \draw[thick] ({#1+\dx},-0.64) circle (0.09);
-  \ground{#1-0.45}{#1+0.45}{-0.73}
-}
-
 \begin{document}
 
 % ##################################################################
