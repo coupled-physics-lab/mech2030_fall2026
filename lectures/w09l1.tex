@@ -1,0 +1,219 @@
+% Lecture notes: Week 9, Lecture 1 -- Combined Loading
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 9, LECTURE 1
+% ##################################################################
+\lecture{9}{1}{Combined Loading}
+
+\noindent
+$\rightarrow$ Axial loads and bending loads \emph{both} produce \emph{normal} stresses.
+
+\begin{center}
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\textbf{Normal force $N$:}\\[0.6em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,-1) rectangle (0.35,1);
+  \foreach \y in {-0.8,-0.4,0,0.4,0.8}
+    \draw[-{Stealth[length=2mm,width=1.5mm]}, semithick] (0.35,\y) -- (1.35,\y);
+  \draw[thin] (1.35,-1) -- (1.35,1);
+  \node[above] at (1.35,1) {$\sigma_N$};
+  \draw[force] (1.8,0) -- (2.8,0) node[right] {$N$};
+  \draw[thinarrow] (-0.8,-0.6) node[left] {$A$} -- (-0.02,-0.4);
+\end{tikzpicture}\\[0.6em]
+$\boxed{\sigma_N = \dfrac{N}{A}}$
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\textbf{Bending moment $M$:}\\[0.6em]
+\begin{tikzpicture}
+  \draw[axis] (-1.6,0.2) -- (-1.6,1.0) node[above] {$y$};
+  \draw[thin] (0,-1) -- (0,1);
+  \draw[thin, dashed] (-1.2,0) -- (1.2,0);
+  \node[below left] at (-0.25,0) {\small N.A.};
+  % positive M: compression on top, tension on bottom
+  \draw[plotline] (-0.9,1) -- (0.9,-1);
+  \foreach \y in {1,0.6,0.3} {
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,\y) -- ({-0.9*\y},\y);
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,-\y) -- ({0.9*\y},-\y);
+  }
+  \node[above] at (-0.9,1) {$\sigma_B$};
+  \ccwm{1.8}{0}{$M$}
+\end{tikzpicture}\\[0.6em]
+$\boxed{\sigma_B = -\dfrac{My}{I}}$
+\end{minipage}
+\end{center}
+
+\bigskip
+\noindent
+$\rightarrow$ When \emph{both} $N$ and $M$ are non-zero, their \emph{normal} stresses simply
+\emph{add together}:
+\[
+  \boxed{\sigma_{\text{tot}} = \sigma_N + \sigma_B}
+\]
+
+% ==================================================================
+\section*{Example}
+% ==================================================================
+
+\noindent
+\begin{minipage}[c]{0.6\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 1 cm = 100 mm
+  \draw[beam] (0,-1) rectangle (4,1);
+  \rwall{4}{-1.5}{1.5}
+  % section a-a
+  \draw[thick, dashed] (3.3,-1.4) -- (3.3,1.4);
+  \node[above] at (3.3,1.4) {$a$};
+  \node[below] at (3.3,-1.4) {$a$};
+  % 3 kN load, 150 mm above the bottom
+  \draw[force] (0,0.5) -- (-1.3,0.5) node[left] {$\SI{3}{kN}$};
+  \node[pin] at (0,0.5) {};
+  \draw[dim] (-0.5,-1) -- (-0.5,0.5);
+  \node[left] at (-0.55,-0.25) {$\SI{150}{mm}$};
+  \draw[dim] (2.3,-1) -- (2.3,1);
+  \node[left] at (2.25,0) {$\SI{200}{mm}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.36\textwidth}
+\textbf{Q:} Plot the stresses along section $a$--$a$.
+\begin{itemize}[label=$\rightarrow$]
+  \item $\SI{20}{mm}$ out-of-page thickness.
+\end{itemize}
+\end{minipage}
+
+\subsection*{``Cut'' at $a$--$a$}
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}
+  \cutbar{0}{2.6}{1}{2}
+  \draw[thin, dashed] (0,0) -- (2.6,0);
+  \node[pin] at (2.6,0) {}; \node[above left] at (2.55,0) {$B$};
+  \draw[force] (0,0.5) -- (-1.2,0.5) node[left] {$\SI{3}{kN}$};
+  \node[pin] at (0,0.5) {};
+  \draw[dim] (-0.45,-1) -- (-0.45,0.5);
+  \node[left] at (-0.5,-0.25) {\small$\SI{150}{mm}$};
+  \draw[dim] (0.9,-1) -- (0.9,0);
+  \node[right] at (0.9,-0.5) {\small$\SI{100}{mm}$};
+  \draw[force] (2.75,0) -- (3.7,0) node[below] {$N$};
+  \ccwm{3.9}{0.55}{$M$}
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.47\textwidth}
+\begin{gather*}
+  \textstyle\sum F_x = 0 \;\rightarrow\; \boxed{N = \SI{3}{kN}} \\[6pt]
+  \textstyle\sum M^{(B)} = 0 \\
+  M + (\SI{3}{kN})(\SI{150}{mm} - \SI{100}{mm}) = 0 \\
+  M = -\SI{150}{kN.mm} \\
+  \boxed{M = -\SI{150}{N.m}}
+\end{gather*}
+\end{minipage}
+
+\subsection*{Axial stresses at $a$--$a$}
+
+\noindent
+\begin{minipage}[c]{0.6\textwidth}
+\[
+  \sigma_N = \frac{N}{A} = \frac{\SI{3000}{N}}{(\SI{200}{mm})(\SI{20}{mm})}
+  = \SI{0.75}{MPa}
+\]
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.36\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 1 cm = 100 mm vertically, 1 cm = 1 MPa horizontally
+  \draw[thick] (0,-1) -- (0,1);
+  \draw[plotline] (0.75,-1) -- (0.75,1);
+  \foreach \y in {-1,-0.5,0,0.5,1}
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,\y) -- (0.75,\y);
+  \node[right] at (0.8,0) {$\SI{0.75}{MPa}$};
+\end{tikzpicture}
+\end{minipage}
+
+\subsection*{Bending stresses at $a$--$a$}
+
+\[
+  \sigma_B = -\frac{My}{I},
+  \qquad
+  \sigma_B^{\max} = \frac{|M|\,c}{I}
+  = \frac{(\SI{150}{N.m})(\SI{0.1}{m})}{\frac{1}{12}(\SI{0.02}{m})(\SI{0.2}{m})^3}
+  = \SI{1.125}{MPa}
+\]
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[axis] (-1.9,0.2) -- (-1.9,1.0) node[above] {$y$};
+  \draw[thick] (0,-1) -- (0,1);
+  \draw[thin, dashed] (-1.6,0) -- (1.6,0) node[right] {\small N.A.};
+  % M < 0: tension on top, compression on bottom
+  \draw[plotline] (-1.125,-1) -- (1.125,1);
+  \foreach \y in {1,0.6,0.3} {
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,\y) -- ({1.125*\y},\y);
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,-\y) -- ({-1.125*\y},-\y);
+  }
+  \node[above right] at (1.125,1) {$\SI{1.125}{MPa}$};
+  \node[below left] at (-1.125,-1) {$-\SI{1.125}{MPa}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\[
+  \sigma_B = -\frac{My}{I} = (11.25\,y)\ \si{MPa}
+  \qquad (y \text{ in } \si{m})
+\]
+\end{minipage}
+
+\subsection*{Total stress at $a$--$a$}
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\begin{align*}
+  \sigma_{\text{tot}} &= \sigma_N + \sigma_B \\
+  &= \SI{0.75}{MPa} + (11.25\,y)\ \si{MPa}
+\end{align*}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.47\textwidth}
+\centering
+\begin{tikzpicture}
+  % sigma = 0.75 + 1.125*Y  (Y in cm = units of 100 mm); zero at Y = -0.667
+  \draw[thick] (0,-1) -- (0,1);
+  \draw[thin, dashed] (-0.8,-0.667) -- (2.2,-0.667);
+  \draw[plotline] (-0.375,-1) -- (1.875,1);
+  \foreach \y in {1,0.6,0.2,-0.3} {
+    \pgfmathsetmacro{\s}{0.75+1.125*\y}
+    \draw[-{Stealth[length=1.8mm,width=1.3mm]}, semithick] (0,\y) -- (\s,\y);
+  }
+  \draw[-{Stealth[length=1.5mm,width=1.2mm]}, semithick] (0,-1) -- (-0.375,-1);
+  \node[pin] at (0,-0.667) {};
+  \node[above] at (1.875,1) {$\SI{1.875}{MPa}$};
+  \node[below left] at (-0.375,-1) {$-\SI{0.375}{MPa}$};
+  \node[right, align=left, font=\small] at (2.2,-0.667)
+       {$\sigma_{\text{tot}} = 0$\\(at $y = -\SI{67}{mm}$)};
+\end{tikzpicture}
+\end{minipage}
+
+\subsection*{Notes}
+\begin{itemize}
+  \item The offset $\SI{3}{kN}$ \emph{tensile} load induced some \emph{compressive} stress!
+        (due to bending)
+  \item The maximum tensile and compressive stresses have \emph{different values}.
+  \item The effective \emph{neutral axis} (where $\sigma = \epsilon = 0$) \emph{shifts
+        downward} due to the normal load.
+\end{itemize}
+
+\end{document}
