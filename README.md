@@ -8,6 +8,7 @@ with one PDF per lecture plus a combined PDF of all notes.
 ```
 mech2030notes.sty           shared macros and TikZ styles (edit once, applies everywhere)
 lectures/wXXlY.tex          one complete LaTeX document per lecture
+figures/                    the occasional image (photos, simulation results)
 build_site.py               compiles everything and writes the website into site/
 .github/workflows/          GitHub Action that runs build_site.py and publishes site/
 ```
@@ -33,6 +34,14 @@ build_site.py               compiles everything and writes the website into site
 Each lecture file compiles on its own in any LaTeX editor (Overleaf, TeXShop,
 VS Code, ...), as long as `mech2030notes.sty` is in the folder above it or on
 your TeX path. (In most editors, simply compile from the repository root.)
+
+### Images
+
+Figures are normally drawn in TikZ. When a photo or simulation result is worth
+including, put the image in `figures/` (name it after the lecture, e.g.
+`figures/w09l2_fe_plate_hole.png`) and include it with
+`\includegraphics[width=\textwidth]{figures/...}`. Paths are relative to the
+repository root, so compile from the root.
 
 ### Hiding a lecture until it's ready
 
