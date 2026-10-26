@@ -1,0 +1,391 @@
+% Lecture notes: Week 10, Lecture 1 -- Stress Transformations and Mohr's Circle
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 10, LECTURE 1
+% ##################################################################
+\lecture{10}{1}{Stress Transformations and Mohr's Circle}
+
+% ==================================================================
+\section*{Stress Transformations}
+% ==================================================================
+
+\noindent
+\begin{minipage}[t]{0.3\textwidth}
+\centering
+\textbf{Uniaxial tension stress state:}\\[0.6em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (-0.8,-0.8) rectangle (0.8,0.8);
+  \draw[force] (0,0.85) -- (0,1.6) node[right] {$\sigma$};
+  \draw[force] (0,-0.85) -- (0,-1.6) node[right] {$\sigma$};
+  \draw[axis] (-0.3,-0.3) -- (0.3,-0.3) node[right] {\small$x$};
+  \draw[axis] (-0.3,-0.3) -- (-0.3,0.3) node[above] {\small$y$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.66\textwidth}
+\centering
+\textbf{``Cut'' at a $\ang{45}$ angle:}\\[0.6em]
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0.8);
+  % rotated axes
+  \draw[axis] (0,0) -- (1.6,0) node[right] {$x$};
+  \draw[axis] (0,0) -- (0,1.6) node[above] {$y$};
+  \draw[axis] (0,0) -- (45:1.6) node[above right] {$x'$};
+  \draw[axis] (0,0) -- (135:1.6) node[above left] {$y'$};
+  \draw[thinarrow] (0:0.8) arc (0:45:0.8);
+  \node at (22:1.12) {\small$\theta = \ang{45}$};
+  \draw[thinarrow] (90:0.65) arc (90:135:0.65);
+  \node at (112:0.95) {\small$\theta$};
+\end{tikzpicture}
+\hspace{1.2cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0.8);
+  % wedge: bottom face (normal -y), right face (normal +x), inclined face (normal y')
+  \draw[thick, fill=gray!12] (0,0) -- (1.6,0) -- (1.6,1.6) -- cycle;
+  \draw[force] (0.8,-0.05) -- (0.8,-0.8) node[right] {$\sigma$};
+  % on the inclined face: sigma_y' along the outward normal (135 deg), tau_x'y' along +x'
+  \draw[force] (0.8,0.8) -- ++(135:0.9) node[above left] {$\sigma_{y'}$};
+  \draw[force] (0.45,0.45) -- ++(45:0.9) node[above] {$\tau_{x'y'}$};
+\end{tikzpicture}
+\end{minipage}
+
+\bigskip
+\noindent
+We can sum forces on the wedge to show that the following two states are
+\emph{equivalent}:
+\[
+  \underbrace{\sigma_x = 0,\quad \sigma_y = \sigma,\quad \tau_{xy} = 0}_{\text{state in } (x,y)}
+  \qquad\Longleftrightarrow\qquad
+  \underbrace{\sigma_{x'} = \frac{\sigma}{2},\quad \sigma_{y'} = \frac{\sigma}{2},\quad
+              \tau_{x'y'} = \frac{\sigma}{2}}_{\text{state in } (x',y')}
+\]
+
+\begin{itemize}[label=$\rightarrow$]
+  \item So, \emph{uniaxial tension} creates a \emph{shear stress} $\tau_{x'y'} = \sigma/2$,
+        oriented at $\theta = \ang{45}$ relative to $\sigma$!
+\end{itemize}
+
+\noindent
+$\rightarrow$ In fact, the \emph{general} 2D stress state is:
+
+\noindent
+\begin{minipage}[c]{0.48\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.3]
+  \draw[thick, fill=gray!12] (-0.8,-0.8) rectangle (0.8,0.8);
+  \draw[axis] (0,0) -- (0.5,0) node[right] {\small$x$};
+  \draw[axis] (0,0) -- (0,0.5) node[left] {\small$y$};
+  % normal stresses
+  \draw[force] (0.85,0) -- (1.6,0) node[right] {$\sigma_x$};
+  \draw[force] (-0.85,0) -- (-1.6,0) node[left] {$\sigma_x$};
+  \draw[force] (0,0.85) -- (0,1.6) node[right] {$\sigma_y$};
+  \draw[force] (0,-0.85) -- (0,-1.6) node[right] {$\sigma_y$};
+  % positive shear
+  \draw[force] (1.0,-0.55) -- (1.0,0.55);
+  \draw[force] (-1.0,0.55) -- (-1.0,-0.55);
+  \draw[force] (-0.55,1.0) -- (0.55,1.0) node[right] {$\tau_{xy}$};
+  \draw[force] (0.55,-1.0) -- (-0.55,-1.0) node[left] {$\tau_{xy}$};
+\end{tikzpicture}\\[0.4em]
+State: $(\sigma_x,\ \sigma_y,\ \tau_{xy})$
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.48\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.3]
+  \begin{scope}[rotate=30]
+    \draw[thick, fill=gray!12] (-0.8,-0.8) rectangle (0.8,0.8);
+    \draw[axis] (0,0) -- (0.6,0) node[above left] {\small$x'$};
+    \draw[axis] (0,0) -- (0,0.6) node[left] {\small$y'$};
+    \draw[force] (0.85,0) -- (1.6,0) node[right] {$\sigma_{x'}$};
+    \draw[force] (-0.85,0) -- (-1.6,0) node[left] {$\sigma_{x'}$};
+    \draw[force] (0,0.85) -- (0,1.6) node[above] {$\sigma_{y'}$};
+    \draw[force] (0,-0.85) -- (0,-1.6) node[below] {$\sigma_{y'}$};
+    \draw[force] (1.0,-0.55) -- (1.0,0.55);
+    \draw[force] (-1.0,0.55) -- (-1.0,-0.55);
+    \draw[force] (-0.55,1.0) -- (0.55,1.0) node[above right] {$\tau_{x'y'}$};
+    \draw[force] (0.55,-1.0) -- (-0.55,-1.0) node[below left] {$\tau_{x'y'}$};
+  \end{scope}
+  \draw[thin, dashed] (0,0) -- (0.75,0);
+  \draw[thinarrow] (0.42,0) arc (0:30:0.42);
+  \node at (-12:0.62) {\small$\theta$};
+\end{tikzpicture}\\[0.4em]
+Rotated state: $(\sigma_{x'},\ \sigma_{y'},\ \tau_{x'y'})$
+\end{minipage}
+
+\bigskip
+\begin{itemize}[label=$\rightarrow$]
+  \item This rotation of the stress state by $\theta$ is called a
+        \emph{stress transformation}.
+\end{itemize}
+
+\subsection*{Principal stresses}
+
+\noindent
+$\rightarrow$ For some $\theta$, $\sigma_{x'}$ and $\sigma_{y'}$ take on their
+\emph{highest} and \emph{lowest} possible values. These are the
+\emph{principal stresses}.
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  % sigma_x'(theta) = 250 + 50 cos 2theta + 100 sin 2theta (the example below), x = theta/30 deg
+  \draw[axis] (0,0) -- (6.4,0) node[right] {$\theta$};
+  \draw[axis] (0,0) -- (0,4.6) node[above] {$\sigma$};
+  \draw[plotline] plot[domain=0:6, samples=80]
+        (\x,{(250 + 50*cos(60*\x) + 100*sin(60*\x) - 100)/60});
+  \draw[plotline, red!60!black] plot[domain=0:6, samples=80]
+        (\x,{(250 - 50*cos(60*\x) - 100*sin(60*\x) - 100)/60});
+  \node[right, blue!60!black] at (6,{(250+50-100)/60+0.1}) {\small$\sigma_{x'}$};
+  \node[right, red!60!black] at (6,{(250-50-100)/60-0.1}) {\small$\sigma_{y'}$};
+  % principal values on sigma_x'
+  \node[pin] at (1.057,4.364) {}; \node[above] at (1.057,4.364) {$\sigma_1$};
+  \node[pin] at (4.057,0.636) {}; \node[below] at (4.057,0.636) {$\sigma_2$};
+  \draw[densely dotted] (1.057,0) -- (1.057,4.364);
+  \draw[densely dotted] (4.057,0) -- (4.057,0.636);
+  \node[below] at (1.057,0) {\small$\theta_{p1}$};
+  \node[below] at (4.057,-0.02) {\small$\theta_{p2}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\fbox{\parbox{0.92\textwidth}{
+  \textbf{Principal stresses:} $\sigma_1$ and $\sigma_2$, with $\sigma_1 > \sigma_2$\\[4pt]
+  \textbf{Associated angles:} $\theta_{p1}$ and $\theta_{p2}$}}
+\end{minipage}
+
+\bigskip
+\noindent
+$\rightarrow$ Similarly, for some other $\theta$, $\tau_{x'y'}$ has a maximum.
+\begin{itemize}[label=\then]
+  \item This is the \emph{maximum shear} stress.
+\end{itemize}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  % tau_x'y'(theta) = -50 sin 2theta + 100 cos 2theta, x = theta/30 deg
+  \draw[axis] (-1,0) -- (5.6,0) node[right] {$\theta$};
+  \draw[axis] (0,-2.1) -- (0,2.4) node[above] {$\tau_{x'y'}$};
+  \draw[plotline] plot[domain=-1:5, samples=80]
+        (\x,{(-50*sin(60*\x) + 100*cos(60*\x))/60});
+  \node[pin] at (-0.443,1.863) {};
+  \node[above left] at (-0.443,1.863) {$\tau_{\max}$};
+  \draw[densely dotted] (-0.443,0) -- (-0.443,1.863);
+  \node[below] at (-0.443,0) {\small$\theta_s$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\fbox{\parbox{0.92\textwidth}{
+  \textbf{Max shear:} $\tau_{\max}$\\[4pt]
+  \textbf{Associated angle:} $\theta_s$}}
+\end{minipage}
+
+\subsection*{The stress tensor}
+
+\noindent
+$\rightarrow$ The stress state is actually a \emph{tensor} quantity, with matrix
+representation
+\[
+  [\sigma] = \begin{bmatrix} \sigma_x & \tau_{xy} \\ \tau_{xy} & \sigma_y \end{bmatrix},
+\]
+and $(\sigma_1, \sigma_2)$ are the \emph{eigenvalues} of this matrix.
+
+\noindent
+$\rightarrow$ However, in this class we use a graphical method called
+\emph{Mohr's circle} to compute $(\sigma_1, \sigma_2)$.
+
+% ==================================================================
+\section*{Mohr's Circle}
+% ==================================================================
+
+\subsection*{Example problem}
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (-0.8,-0.8) rectangle (0.8,0.8);
+  \draw[force] (0.85,0) -- (1.6,0) node[right] {$\SI{300}{MPa}$};
+  \draw[force] (-0.85,0) -- (-1.6,0) node[left] {$\SI{300}{MPa}$};
+  \draw[force] (0,0.85) -- (0,1.6) node[above] {$\SI{200}{MPa}$};
+  \draw[force] (0,-0.85) -- (0,-1.6) node[below] {$\SI{200}{MPa}$};
+  \draw[force] (1.0,-0.55) -- (1.0,0.55);
+  \draw[force] (-1.0,0.55) -- (-1.0,-0.55);
+  \draw[force] (-0.55,1.0) -- (0.55,1.0) node[right] {$\SI{100}{MPa}$};
+  \draw[force] (0.55,-1.0) -- (-0.55,-1.0) node[left] {$\SI{100}{MPa}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\begin{itemize}
+  \item State: $\sigma_x = \SI{300}{MPa}$, $\sigma_y = \SI{200}{MPa}$,
+        $\tau_{xy} = \SI{100}{MPa}$.
+  \item What are:
+  \begin{enumerate}[label=(\alph*)]
+    \item the principal stresses and their orientations,
+          $(\sigma_1, \sigma_2)$ and $(\theta_{p1}, \theta_{p2})$?
+    \item the max shear stress $\tau_{\max}$ and its orientation $\theta_s$?
+  \end{enumerate}
+\end{itemize}
+\end{minipage}
+
+\subsection*{Constructing the circle}
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.85]
+  % scale: 1 cm = 40 MPa; tau is plotted positive DOWNWARD
+  \draw[axis] (1.8,0) -- (10.2,0) node[right] {$\sigma$};
+  \draw[axis] (1.8,3.2) -- (1.8,-3.4) node[below] {$\tau$};
+  \foreach \s in {100,200,300,400}
+    \draw[thin] ({\s/40},0.08) -- ({\s/40},-0.08) node[below, font=\scriptsize] {\s};
+  \draw (6.25,0) circle (2.795);
+  \draw[thick] (5,2.5) -- (7.5,-2.5);
+  \node[pin] at (5,2.5) {};   \node[above left] at (5,2.5) {$(\sigma_y, -\tau_{xy})$};
+  \node[pin] at (7.5,-2.5) {}; \node[below right] at (7.5,-2.5) {$(\sigma_x, \tau_{xy})$};
+  \node[pin] at (6.25,0) {};  \node[above right] at (6.25,0) {$\sigma_{\text{avg}}$};
+  \draw[densely dotted] (6.25,0) -- (6.25,-2.795);
+  \node[pin] at (6.25,-2.795) {}; \node[below] at (6.25,-2.795) {$\tau_{\max}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.47\textwidth}
+\begin{enumerate}[label=\arabic*)]
+  \item Draw axes: $x \to \sigma$, $y \to -\tau$
+        (positive $\tau$ points \emph{down}).
+  \item Draw 2 points:
+        \begin{enumerate}[label=\roman*)]
+          \item $(\sigma_x, \tau_{xy})$
+          \item $(\sigma_y, -\tau_{xy})$
+        \end{enumerate}
+  \item Connect them. The $\sigma$-intercept is
+        \[ \boxed{\sigma_{\text{avg}} = \frac{\sigma_x + \sigma_y}{2}}
+           \quad (= \SI{250}{MPa}) \]
+  \item Draw a circle through the 2 points.
+        \begin{itemize}[label=\then]
+          \item \emph{All} points on the circle are equivalent stress states.
+        \end{itemize}
+\end{enumerate}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.4\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thin] (-0.3,0) -- (3.3,0);
+  \draw[thick] (0,2) -- (2.5,-2);
+  \node[pin] at (0,2) {};    \node[above] at (0,2) {$(\sigma_y, -\tau_{xy})$};
+  \node[pin] at (2.5,-2) {}; \node[below] at (2.5,-2) {$(\sigma_x, \tau_{xy})$};
+  \node[pin] at (1.25,0) {};
+  \draw[dim] (1.25,0.45) -- (2.5,0.45) node[midway, above] {$\dfrac{\sigma_x - \sigma_y}{2}$};
+  \draw[dim] (2.95,0) -- (2.95,-2) node[midway, right] {$\tau_{xy}$};
+  \draw[thin, dashed] (2.5,0) -- (2.5,-2);
+  \node[below left] at (1.85,-1.0) {$R$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.57\textwidth}
+\begin{enumerate}[label=\arabic*), start=5]
+  \item Determine the radius:
+        \[
+          \fbox{\fbox{$\displaystyle
+            R = \sqrt{\left(\frac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2}$}}
+        \]
+        \[ R = \SI{112}{MPa} = \tau_{\max} \]
+\end{enumerate}
+\end{minipage}
+
+\subsection*{Reading the circle}
+
+\noindent
+\begin{minipage}[c]{0.52\textwidth}
+\centering
+\begin{tikzpicture}
+  % same circle: center (6.25,0), R = 2.795 cm; X at screen angle -63.43 deg
+  \draw[axis] (2.8,0) -- (10.2,0) node[right] {$\sigma$};
+  \draw[axis] (2.8,3.2) -- (2.8,-3.4) node[below] {$\tau$};
+  \draw (6.25,0) circle (2.795);
+  \draw[thick] (5,2.5) -- (7.5,-2.5);
+  \draw[thick] (6.25,0) -- (6.25,-2.795);
+  \node[pin] at (7.5,-2.5) {};
+  \node[pin] at (9.045,0) {}; \node[above right] at (9.045,0) {$\sigma_1$};
+  \node[pin] at (3.455,0) {}; \node[above left] at (3.455,0) {$\sigma_2$};
+  \node[pin] at (6.25,-2.795) {}; \node[below] at (6.25,-2.795) {$\tau_{\max}$};
+  \node[above] at (6.25,0.05) {\small$\sigma_{\text{avg}}$};
+  % angle arcs (measured from the (sigma_x, tau_xy) diameter)
+  \draw[thinarrow] (6.25,0) ++(-63.43:1.5) arc (-63.43:0:1.5);
+  \node at ($(6.25,0)+(-30:1.95)$) {\small$2\theta_{p1}$};
+  \draw[thinarrow] (6.25,0) ++(-63.43:2.1) arc (-63.43:-90:2.1);
+  \node at ($(6.25,0)+(-72:2.45)$) {\small$2\theta_s$};
+  \draw[thinarrow] (6.25,0) ++(-63.43:0.8) arc (-63.43:-180:0.8);
+  \node at ($(6.25,0)+(-140:1.25)$) {\small$2\theta_{p2}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.45\textwidth}
+\begin{enumerate}[label=\arabic*), start=6]
+  \item Graphically, the principal stresses are:
+        \[
+          \fbox{\fbox{$\begin{aligned}
+            \sigma_1 &= \sigma_{\text{avg}} + R \\
+            \sigma_2 &= \sigma_{\text{avg}} - R
+          \end{aligned}$}}
+          \qquad
+          \begin{aligned}
+            &(\SI{362}{MPa}) \\ &(\SI{138}{MPa})
+          \end{aligned}
+        \]
+\end{enumerate}
+\end{minipage}
+
+\pagebreak
+\begin{enumerate}[label=\arabic*), start=7]
+  \item \textbf{Principal directions.}
+  \begin{itemize}
+    \item From the triangle,
+          \[
+            \tan(2\theta_{p1}) = \frac{\tau_{xy}}{\sigma_x - \sigma_{\text{avg}}}
+            \qquad\Rightarrow\qquad
+            \fbox{\fbox{$\displaystyle
+              \theta_{p1} = \frac12 \tan^{-1}\!\left(\frac{\tau_{xy}}{\sigma_x - \sigma_{\text{avg}}}\right)$}}
+          \]
+          \[
+            \boxed{\theta_{p1} = \ang{31.72}} \qquad \text{(positive, since counterclockwise)}
+          \]
+    \item Graphically, $|2\theta_{p1}| + |2\theta_{p2}| = \ang{180}$, so
+          \[
+            \fbox{\fbox{$|\theta_{p2}| = \ang{90} - |\theta_{p1}|$}} = \ang{58.28}
+            \qquad\text{and}\qquad
+            \boxed{\theta_{p2} = -\ang{58.28}} \quad \text{(negative, since clockwise)}
+          \]
+    \item Also, $|2\theta_s| + |2\theta_{p1}| = \ang{90}$, so
+          \[
+            \fbox{\fbox{$|\theta_s| = \ang{45} - |\theta_{p1}|$}} = \ang{13.28}
+            \qquad\text{and}\qquad
+            \boxed{\theta_s = -\ang{13.28}} \quad \text{(negative, since clockwise)}
+          \]
+  \end{itemize}
+\end{enumerate}
+
+\subsection*{Summary}
+
+\begin{center}
+\fbox{\fbox{\begin{tabular}{l @{\qquad} l}
+  $\sigma_{\text{avg}} = \SI{250}{MPa}$ & \\[2pt]
+  $\sigma_1 = \SI{362}{MPa}$ & $\theta_{p1} = \ang{31.72}$ \\[2pt]
+  $\sigma_2 = \SI{138}{MPa}$ & $\theta_{p2} = -\ang{58.28}$ \\[2pt]
+  $\tau_{\max} = \SI{112}{MPa}$ & $\theta_s = -\ang{13.28}$
+\end{tabular}}}
+\end{center}
+
+\end{document}
