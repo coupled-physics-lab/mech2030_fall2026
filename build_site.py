@@ -9,7 +9,8 @@ Steps:
   1. Find every lectures/wXXlY.tex that is not marked "% draft".
   2. Compile each one to its own PDF.
   3. Generate and compile full_notes.tex (all published lectures + contents).
-  4. Write site/index.html linking to everything, grouped by week.
+  4. Copy the interactive pages in tools/ (e.g. the Mohr's circle calculator).
+  5. Write site/index.html linking to everything, grouped by week.
 
 The GitHub Action in .github/workflows/publish.yml runs this script on every
 push and publishes the ./site folder to GitHub Pages.
@@ -39,6 +40,7 @@ DISCLAIMER = ( "I use Claude to convert my hand-written lecture notes to typeset
 # ----------------------------------------------------------------------
 ROOT = Path(__file__).resolve().parent
 LECTURE_DIR = ROOT / "lectures"
+TOOLS_DIR = ROOT / "tools"          # self-contained .html pages, published as-is
 BUILD_DIR = ROOT / "build"
 SITE_DIR = ROOT / "site"
 PDF_DIR = SITE_DIR / "pdf"
@@ -80,6 +82,23 @@ def find_lectures():
     return lectures
 
 
+TITLE_RE = re.compile(r"<title>(.*?)</title>", re.IGNORECASE | re.DOTALL)
+DESC_RE = re.compile(r'<meta\s+name="description"\s+content="(.*?)"', re.IGNORECASE | re.DOTALL)
+
+
+def find_tools():
+    """Each tools/*.html page, with the title and description from its <head>."""
+    tools = []
+    for path in sorted(TOOLS_DIR.glob("*.html")) if TOOLS_DIR.exists() else []:
+        text = path.read_text(encoding="utf-8")
+        title = TITLE_RE.search(text)
+        desc = DESC_RE.search(text)
+        tools.append(dict(name=path.name,
+                          title=html.unescape(title.group(1).strip()) if title else path.stem,
+                          desc=html.unescape(desc.group(1).strip()) if desc else ""))
+    return tools
+
+
 def latexmk(tex: Path):
     cmd = ["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error",
            f"-outdir={BUILD_DIR}", str(tex)]
@@ -115,7 +134,7 @@ def fmt_date(d):
     return d.strftime("%b %-d") if d else ""
 
 
-def write_index(lectures, has_full):
+def write_index(lectures, has_full, tools=()):
     weeks = {}
     for L in lectures:
         weeks.setdefault(L["week"], []).append(L)
@@ -139,6 +158,15 @@ def write_index(lectures, has_full):
     full = ('<a class="button" href="pdf/full_notes.pdf">Download all notes (PDF)</a>'
             if has_full else "")
     updated = dt.date.today().strftime("%B %-d, %Y")
+
+    tool_section = ""
+    if tools:
+        items = "\n".join(
+            f'      <li><a href="tools/{T["name"]}"><span class="title">{html.escape(T["title"])}</span>'
+            + (f'<span class="desc">{html.escape(T["desc"])}</span>' if T["desc"] else "")
+            + "</a></li>" for T in tools)
+        tool_section = (f'    <section class="tools">\n      <h2>Interactive tools</h2>\n      <ul>\n'
+                        f'{items}\n      </ul>\n    </section>')
 
     page = f"""<!DOCTYPE html>
 <html lang="en">
@@ -177,6 +205,8 @@ def write_index(lectures, has_full):
   li a:hover .title {{ color: var(--accent); text-decoration: underline; }}
   .num {{ flex: 0 0 5.5rem; color: var(--muted); font: .9rem/1.6 system-ui,sans-serif; }}
   .date {{ color: var(--muted); font: .85rem/1.6 system-ui,sans-serif; white-space:nowrap; }}
+  .tools li a {{ flex-direction: column; gap: .1rem; }}
+  .desc {{ color: var(--muted); font: .85rem/1.45 system-ui,sans-serif; }}
   a {{ color: var(--accent); }}
   footer {{ margin-top: 3rem; color: var(--muted); font: .8rem/1.4 system-ui,sans-serif; }}
 </style>
@@ -194,6 +224,7 @@ def write_index(lectures, has_full):
     {latest}
     {full}
   </header>
+{tool_section}
 {chr(10).join(sections)}
   <footer>Last updated {updated}.</footer>
 </main>
@@ -225,7 +256,12 @@ def main():
             shutil.copy(latexmk(write_full_notes(lectures)), PDF_DIR / "full_notes.pdf")
             has_full = True
 
-    write_index(lectures, has_full)
+    tools = find_tools()
+    if tools:
+        shutil.copytree(TOOLS_DIR, SITE_DIR / "tools")
+        print(f"  copied {len(tools)} tool page(s) from tools/")
+
+    write_index(lectures, has_full, tools)
     print(f"Done. Open {SITE_DIR / 'index.html'} to preview.")
 
 

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2D Mohr's Circle Calculator</title>
+<meta name="description" content="Two-dimensional stress transformation: principal stresses, maximum shear, and the stresses on a rotated element, drawn on Mohr's circle.">
+<style>
+  :root { --bg:#fdfdfb; --fg:#1d1d1f; --muted:#6b6b70; --accent:#9b1c1c;
+          --card:#ffffff; --line:#e3e3e0; --grid:#efefeb; --soft:rgba(155,28,28,.07); }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#16171a; --fg:#ececee; --muted:#9a9aa2; --accent:#f07a7a;
+            --card:#1f2024; --line:#303136; --grid:#28292e; --soft:rgba(240,122,122,.10); }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font: 17px/1.55 "Charter","Iowan Old Style","Palatino Linotype",Georgia,serif; }
+  main { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1rem 4rem; }
+  header { border-bottom: 2px solid var(--fg); padding-bottom: 1.1rem; margin-bottom: 1.6rem; }
+  .code { font: 600 .85rem/1 system-ui,sans-serif; letter-spacing:.12em;
+          text-transform: uppercase; color: var(--accent); }
+  .code a { color: inherit; text-decoration: none; }
+  .code a:hover { text-decoration: underline; }
+  h1 { font-size: 2.1rem; margin: .4rem 0 .3rem; line-height: 1.15; }
+  h2 { font: 600 .8rem/1 system-ui,sans-serif; letter-spacing:.1em; text-transform:uppercase;
+       color: var(--muted); margin: 0 0 .85rem; }
+  a { color: var(--accent); }
+
+  .top { display:grid; grid-template-columns: 300px minmax(0,1fr); gap: 1.25rem; align-items:start; }
+  .bottom { display:grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr); gap: 1.25rem;
+            margin-top: 1.25rem; align-items:start;
+            grid-template-areas: "elem res"; }
+  .a-elem { grid-area: elem; } .a-res { grid-area: res; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+           padding: 1.1rem 1.1rem 1.2rem; min-width: 0; }
+  .ui, .ui input, .ui select, .ui button { font-family: system-ui, sans-serif; }
+
+  .field { display:grid; grid-template-columns: 2.6rem minmax(0,1fr) 3.2rem; align-items:center;
+           gap:.5rem; margin-bottom:.55rem; }
+  .sym { font: italic 1.1rem/1 "Charter",Georgia,serif; }
+  .sym sub { font-size: .7em; }
+  .unit { color: var(--muted); font-size: .85rem; }
+  input[type=number], select {
+    width:100%; padding:.45rem .55rem; font-size: 1rem; color: var(--fg); background: var(--bg);
+    border:1px solid var(--line); border-radius:6px; font-variant-numeric: tabular-nums; }
+  input[type=number]:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  input.bad { border-color: var(--accent); background: var(--soft); }
+  .row { display:flex; gap:.5rem; align-items:center; flex-wrap: wrap; }
+  .sep { border:0; border-top:1px solid var(--line); margin: 1rem 0; }
+  /* custom-drawn slider so the thumb size (18px) is known and the tick labels line up */
+  input[type=range] { -webkit-appearance:none; appearance:none; display:block; width:100%; height:22px;
+                      margin:0; background:transparent; cursor:pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height:4px; border-radius:2px;
+    background: linear-gradient(to right, var(--accent) var(--pct,50%), var(--line) var(--pct,50%)); }
+  input[type=range]::-moz-range-track { height:4px; border-radius:2px;
+    background: linear-gradient(to right, var(--accent) var(--pct,50%), var(--line) var(--pct,50%)); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; box-sizing:border-box; width:18px; height:18px;
+    margin-top:-7px; border-radius:50%; background:var(--accent); border:2px solid var(--card); box-shadow:0 0 0 1px var(--accent); }
+  input[type=range]::-moz-range-thumb { box-sizing:border-box; width:18px; height:18px; border-radius:50%;
+    background:var(--accent); border:2px solid var(--card); box-shadow:0 0 0 1px var(--accent); }
+  input[type=range]:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:4px; }
+  .theta { display:grid; grid-template-columns: minmax(0,1fr) 6.4rem; gap:1.1rem; align-items:center; }
+  .ticks { position:relative; height:1.2em; margin: .2rem 9px 0; color:var(--muted); font-size:.75rem; }
+  .ticks span { position:absolute; top:0; transform:translateX(-50%); white-space:nowrap; }
+  button { padding:.4rem .65rem; border:1.5px solid var(--line); border-radius:6px; background:transparent;
+           color: var(--fg); font-size:.85rem; cursor:pointer; }
+  button:hover { border-color: var(--fg); }
+  button.on { border-color: var(--accent); color: var(--accent); }
+  button sub { font-size:.7em; }
+  .snaps { display:grid; grid-template-columns: 1fr 1fr; gap:.4rem; margin-top:.4rem; }
+  .small { font-size:.82rem; color: var(--muted); }
+
+  svg { display:block; width:100%; height:auto; font-family: system-ui, sans-serif; }
+  .ax { stroke: var(--muted); stroke-width: 1.2; fill:none; }
+  .axh { fill: var(--muted); }
+  .gl { stroke: var(--grid); stroke-width: 1; }
+  .tk { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .circ { stroke: var(--fg); stroke-width: 1.6; fill: none; }
+  .dia0 { stroke: var(--fg); stroke-width: 1.2; stroke-dasharray: 5 4; opacity:.75; }
+  .dia1 { stroke: var(--accent); stroke-width: 2.2; }
+  .pt0 { fill: var(--fg); }
+  .pt1 { fill: var(--accent); }
+  .ptp { fill: var(--card); stroke: var(--fg); stroke-width: 1.4; }
+  .lbl { fill: var(--fg); font-size: 13px; }
+  .lbl1 { fill: var(--accent); font-size: 13px; font-weight: 600; }
+  .lblm { fill: var(--muted); font-size: 12px; }
+  .arc { stroke: var(--accent); stroke-width: 1.3; fill:none; }
+  .hit { stroke: transparent; stroke-width: 30; fill: none; cursor: grab; touch-action: none; pointer-events: stroke; }
+  .handle { cursor: grab; touch-action: none; }
+  .dragging .hit, .dragging .handle { cursor: grabbing; }
+  .note { fill: var(--muted); font-size: 13px; }
+  #mohr .lbl, #mohr .lbl1, #mohr .lblm, #mohr .note, .val {
+    paint-order: stroke; stroke: var(--card); stroke-width: 4px; stroke-linejoin: round; }
+
+  .elem { stroke: var(--fg); stroke-width: 1.6; fill: var(--card); }
+  .elem.rot { fill: var(--soft); stroke: var(--accent); }
+  .arw { stroke: var(--fg); stroke-width: 1.7; }
+  .arwh { fill: var(--fg); }
+  .arw1 { stroke: var(--accent); stroke-width: 1.5; }
+  .arwh1 { fill: var(--accent); }
+  .val { fill: var(--fg); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .elems { display:grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  figure { margin:0; }
+  figcaption { text-align:center; font: .85rem/1.35 system-ui,sans-serif; color: var(--muted); }
+  figcaption b { color: var(--fg); font-weight:600; }
+
+  table { width:100%; border-collapse: collapse; font: .92rem/1.35 system-ui,sans-serif; }
+  th { text-align:left; font-weight:600; color: var(--muted); font-size:.75rem; letter-spacing:.06em;
+       text-transform: uppercase; padding:.35rem .4rem; border-bottom: 1px solid var(--line); }
+  td { padding:.42rem .4rem; border-bottom: 1px solid var(--line); vertical-align: baseline; }
+  td.n { text-align:right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  th.n { text-align:right; }
+  td .d { display:block; color: var(--muted); font-size:.78rem; }
+  td i { font-family: "Charter",Georgia,serif; font-size:1.05em; }
+  tr.grp td { padding-top: .8rem; }
+  tr.on td { background: var(--soft); }
+  tr.on td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+
+  .equiv { margin-top: .9rem; font-size: .9rem; line-height: 1.45; }
+  .equiv p { margin: 0 0 .3rem; }
+  .equiv ul { padding-left: 1.1rem; margin: 0; }
+  .equiv li { margin: .2rem 0; }
+  footer { margin-top: 2.5rem; color: var(--muted); font: .8rem/1.4 system-ui,sans-serif; }
+
+  @media (max-width: 860px) {
+    .top, .bottom { grid-template-columns: minmax(0,1fr); }
+    .bottom { grid-template-areas: "elem" "res"; }
+  }
+  @media (max-width: 560px) {
+    main { padding: 1.6rem .8rem 3rem; }
+    h1 { font-size: 1.7rem; }
+    .elems { grid-template-columns: minmax(0,1fr); max-width: 300px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="code"><a href="../">MECH 2030 &middot; Lecture notes</a></div>
+    <h1>2D Mohr's Circle Calculator</h1>
+  </header>
+
+  <div class="top">
+    <section class="panel ui" aria-label="Inputs">
+      <h2>Stress on the unrotated element</h2>
+      <label class="field"><span class="sym">&sigma;<sub>x</sub></span>
+        <input type="number" id="sx" step="any" inputmode="decimal"><span class="unit u"></span></label>
+      <label class="field"><span class="sym">&sigma;<sub>y</sub></span>
+        <input type="number" id="sy" step="any" inputmode="decimal"><span class="unit u"></span></label>
+      <label class="field"><span class="sym">&tau;<sub>xy</sub></span>
+        <input type="number" id="txy" step="any" inputmode="decimal"><span class="unit u"></span></label>
+      <label class="field"><span class="small">Units</span>
+        <select id="unit">
+          <option>MPa</option><option>kPa</option><option>GPa</option><option>Pa</option>
+          <option>ksi</option><option>psi</option>
+        </select><span></span></label>
+      <div class="row" style="margin-top:.3rem">
+        <button type="button" id="example">Example stress state from W10L1</button>
+      </div>
+
+      <hr class="sep">
+      <h2>Rotation angle &theta;</h2>
+      <div class="theta">
+        <div>
+          <input type="range" id="thr" min="-90" max="90" step="0.5" aria-label="Rotation angle in degrees">
+          <div class="ticks" aria-hidden="true"><span style="left:0%">&minus;90&deg;</span><span style="left:50%">0&deg;</span><span style="left:100%">+90&deg;</span></div>
+        </div>
+        <label class="row" style="gap:.3rem; flex-wrap:nowrap"><input type="number" id="thn" min="-90" max="90" step="any" inputmode="decimal" aria-label="Rotation angle in degrees"><span class="unit">&deg;</span></label>
+      </div>
+      <div class="snaps">
+        <button type="button" data-snap="zero">&theta; = 0&deg;</button>
+        <button type="button" data-snap="p1" id="bp1"></button>
+        <button type="button" data-snap="p2" id="bp2"></button>
+        <button type="button" data-snap="s" id="bs"></button>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Mohr's circle">
+      <h2>Mohr's circle</h2>
+      <svg id="mohr" viewBox="0 0 640 440" role="img" aria-label="Mohr's circle for the current stress state"></svg>
+    </section>
+  </div>
+
+  <div class="bottom">
+    <section class="panel a-elem" aria-label="Stress elements">
+      <h2>Elements</h2>
+      <div class="elems">
+        <figure><svg id="el0" viewBox="0 0 260 300" role="img" aria-label="Unrotated element"></svg>
+          <figcaption><b>Unrotated</b> (x, y)</figcaption></figure>
+        <figure><svg id="el1" viewBox="0 0 260 300" role="img" aria-label="Rotated element"></svg>
+          <figcaption><b>Rotated</b> (x&prime;, y&prime;), &theta; = <span id="capth"></span></figcaption></figure>
+      </div>
+      <p class="small" style="margin:.6rem 0 0">Arrows point in the actual directions of the stresses; labels are magnitudes in <span class="u"></span>.</p>
+    </section>
+
+    <section class="panel ui a-res" aria-label="Results">
+      <h2>Results</h2>
+      <table>
+        <thead><tr><th>Quantity</th><th class="n">Value</th><th class="n">Angle</th></tr></thead>
+        <tbody id="res"></tbody>
+      </table>
+      <div class="equiv">
+        <p><strong>More than one angle is correct.</strong></p>
+        <ul>
+          <li>&theta;<sub>p1</sub> or &theta;<sub>p2</sub> &plusmn; 180&deg; describes the same plane, so it is equally correct. (&theta;<sub>p1</sub> and &theta;<sub>p2</sub> are always 90&deg; apart.)</li>
+          <li>&theta;<sub>s</sub> &plusmn; 180&deg; also gives +&tau;<sub>max</sub>. &theta;<sub>s</sub> &plusmn; 90&deg; is also a plane of maximum shear, but the shear on it is &minus;&tau;<sub>max</sub>. Both planes carry normal stress &sigma;<sub>avg</sub>.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>MECH 2030 &middot; Solid Mechanics. Runs entirely in your browser; nothing is sent anywhere.</footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var NS = "http://www.w3.org/2000/svg";
+  var EXAMPLE = { sx: 300, sy: 200, txy: 100, unit: "MPa", th: 0 };
+  var state = { sx: 300, sy: 200, txy: 100, unit: "MPa", th: 0 };
+  var $ = function (id) { return document.getElementById(id); };
+  var DEG = 180 / Math.PI;
+
+  // ---------- state from / to the URL (so a problem can be linked) ----------
+  function readURL() {
+    try {
+      var p = new URLSearchParams(window.location.search);
+      ["sx", "sy", "txy", "th"].forEach(function (k) {
+        if (p.has(k)) { var v = parseFloat(p.get(k)); if (isFinite(v)) state[k] = v; }
+      });
+      var u = p.get("u");
+      if (u && Array.prototype.some.call($("unit").options, function (o) { return o.value === u; })) state.unit = u;
+      state.th = clampTheta(state.th);
+    } catch (e) { /* ignore */ }
+  }
+  function query() {
+    return "?sx=" + state.sx + "&sy=" + state.sy + "&txy=" + state.txy +
+           "&u=" + encodeURIComponent(state.unit) + "&th=" + round(state.th, 2);
+  }
+  function writeURL() {
+    try { history.replaceState(null, "", query()); } catch (e) { /* file:// etc. */ }
+  }
+
+  // ---------- math ----------
+  function norm90(x) { return x - 180 * Math.ceil((x - 90) / 180); }        // -> (-90, 90]
+  function clampTheta(x) { return Math.max(-90, Math.min(90, x)); }
+  function round(x, d) { var f = Math.pow(10, d); return Math.round(x * f) / f; }
+
+  function analyze(sx, sy, t) {
+    var avg = (sx + sy) / 2, a = (sx - sy) / 2, R = Math.hypot(a, t);
+    var scale = Math.max(Math.abs(sx), Math.abs(sy), Math.abs(t), 1e-300);
+    var deg = R <= 1e-12 * scale;
+    var p1 = deg ? NaN : norm90(0.5 * Math.atan2(t, a) * DEG);
+    var s = deg ? NaN : norm90(0.5 * Math.atan2(-a, t) * DEG);
+    return {
+      avg: avg, a: a, t: t, R: R, degenerate: deg, scale: Math.max(scale, R),
+      s1: avg + R, s2: avg - R,
+      p1: p1, p2: deg ? NaN : norm90(p1 + 90),
+      s: s, sNeg: deg ? NaN : norm90(s + 90)
+    };
+  }
+  function rotate(r, thDeg) {
+    var c = Math.cos(2 * thDeg / DEG), s = Math.sin(2 * thDeg / DEG);
+    return { sx: r.avg + r.a * c + r.t * s, sy: r.avg - r.a * c - r.t * s, txy: -r.a * s + r.t * c };
+  }
+
+  // ---------- formatting ----------
+  var decimals = 1, zeroTol = 0;
+  function setFormat(r) {
+    var sc = r.scale > 0 ? r.scale : 1;
+    decimals = Math.max(0, Math.min(6, 3 - Math.floor(Math.log10(sc))));
+    zeroTol = sc * 1e-9;
+  }
+  function fmt(v) {
+    if (!isFinite(v)) return "—";
+    if (Math.abs(v) < zeroTol) v = 0;
+    var s = v.toFixed(decimals);
+    if (parseFloat(s) === 0) s = (0).toFixed(decimals);
+    return s.replace("-", "−");
+  }
+  function fmtA(v) {
+    if (!isFinite(v)) return "any";
+    var s = v.toFixed(2);
+    if (parseFloat(s) === 0) s = "0.00";
+    return s.replace("-", "−") + "°";
+  }
+
+  // ---------- SVG helpers ----------
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  // parts: array of [text, isSubscript]
+  function label(parent, x, y, parts, cls, anchor, baseline) {
+    var t = el("text", { x: x, y: y, "class": cls || "lbl", "text-anchor": anchor || "middle",
+                         "dominant-baseline": baseline || "middle" }, parent);
+    if (typeof parts === "string") { t.textContent = parts; return t; }
+    var prevSub = false;
+    parts.forEach(function (p) {
+      var sp = el("tspan", {}, t);
+      sp.textContent = p[0];
+      if (p[1] && !prevSub) { sp.setAttribute("dy", "0.32em"); sp.setAttribute("font-size", "0.75em"); }
+      else if (p[1]) { sp.setAttribute("font-size", "0.75em"); }
+      else if (!p[1] && prevSub) { sp.setAttribute("dy", "-0.32em"); }
+      prevSub = !!p[1];
+    });
+    return t;
+  }
+  function anchorFor(dx) { return dx > 0.35 ? "start" : (dx < -0.35 ? "end" : "middle"); }
+  function arrow(parent, x1, y1, x2, y2, cls, headCls, size) {
+    var L = Math.hypot(x2 - x1, y2 - y1); if (L < 1e-6) return;
+    var ux = (x2 - x1) / L, uy = (y2 - y1) / L, hl = size || 8, hw = (size || 8) * 0.5;
+    el("line", { x1: x1, y1: y1, x2: x2 - ux * hl * 0.6, y2: y2 - uy * hl * 0.6, "class": cls }, parent);
+    var bx = x2 - ux * hl, by = y2 - uy * hl;
+    el("polygon", { points: x2 + "," + y2 + " " + (bx - uy * hw) + "," + (by + ux * hw) + " " +
+                    (bx + uy * hw) + "," + (by - ux * hw), "class": headCls }, parent);
+  }
+  function niceStep(span, n) {
+    var raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p;
+  }
+  function tickText(v, step) {
+    var d = Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
+    var s = v.toFixed(d); if (parseFloat(s) === 0) s = (0).toFixed(d);
+    return s.replace("-", "−");
+  }
+
+  // ---------- Mohr's circle ----------
+  var view = null;   // mapping kept for dragging
+  function drawMohr(r, rot) {
+    var svg = $("mohr"); svg.textContent = "";
+    // draw at (about) the on-screen width so text stays a readable size on phones
+    var w = svg.getBoundingClientRect().width || 640;
+    var W = Math.round(Math.max(330, Math.min(640, w)));
+    var narrow = W < 480;
+    var H = Math.round(W * (narrow ? 0.86 : 0.69));
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    var pl = narrow ? 46 : 62, pr = narrow ? 30 : 40, pt = 24, pb = 44;
+    var pw = W - pl - pr, ph = H - pt - pb;
+    var Rv = r.degenerate ? Math.max(Math.abs(r.avg), 1) * 0.5 : r.R;
+    var lo = r.avg - Rv, hi = r.avg + Rv;
+    if (Math.max(hi, 0) - Math.min(lo, 0) <= 4.5 * (hi - lo)) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+    var k = Math.min(pw / ((hi - lo) * 1.16), ph / (2 * Rv * 1.24));
+    var xmid = (lo + hi) / 2;
+    var X = function (s) { return pl + pw / 2 + (s - xmid) * k; };
+    var Y = function (t) { return pt + ph / 2 + t * k; };
+    var sMin = xmid - pw / 2 / k, sMax = xmid + pw / 2 / k, tMax = ph / 2 / k;
+
+    // grid + tick labels (equal scales on both axes)
+    var step = niceStep(sMax - sMin, narrow ? 5 : 7), g = el("g", {}, svg);
+    for (var v = Math.ceil(sMin / step) * step; v <= sMax + 1e-9 * step; v += step) {
+      el("line", { x1: X(v), y1: pt, x2: X(v), y2: pt + ph, "class": "gl" }, g);
+      label(g, X(v), pt + ph + 16, tickText(v, step), "tk");
+    }
+    for (v = Math.ceil(-tMax / step) * step; v <= tMax + 1e-9 * step; v += step) {
+      el("line", { x1: pl, y1: Y(v), x2: pl + pw, y2: Y(v), "class": "gl" }, g);
+      label(g, pl - 8, Y(v), tickText(v, step), "tk", "end");
+    }
+    label(g, pl + pw / 2, H - 8, "σ  (" + state.unit + ")", "tk");
+    label(g, 12, pt + ph / 2 - 7, "τ", "tk");
+    label(g, 12, pt + ph / 2 + 9, "+↓", "tk");
+
+    // axes: sigma (tau = 0) and tau (sigma = 0, if in view), tau positive DOWN
+    arrow(svg, pl, Y(0), pl + pw + 22, Y(0), "ax", "axh", 9);
+    label(svg, pl + pw + 26, Y(0) - 12, "σ", "lblm", "middle");
+    if (0 >= sMin && 0 <= sMax) {
+      arrow(svg, X(0), pt, X(0), pt + ph + 4, "ax", "axh", 9);
+    }
+
+    var cx = X(r.avg), cy = Y(0);
+    if (r.degenerate) {
+      el("circle", { cx: cx, cy: cy, r: 5, "class": "pt1" }, svg);
+      label(svg, cx, cy - 18, "σx = σy = " + fmt(r.avg) + ",  τxy = 0", "lbl");
+      label(svg, pl + pw / 2, pt + 16, "The circle shrinks to a point:", "note");
+      label(svg, pl + pw / 2, pt + 34, "every direction is principal, and there", "note");
+      label(svg, pl + pw / 2, pt + 52, "is no shear on any plane.", "note");
+      view = null; return;
+    }
+    var Rp = r.R * k;
+    el("circle", { cx: cx, cy: cy, r: Rp, "class": "circ" }, svg);
+
+    // unrotated diameter X-Y
+    var Xx = X(state.sx), Xy = Y(state.txy), Yx = X(state.sy), Yy = Y(-state.txy);
+    el("line", { x1: Xx, y1: Xy, x2: Yx, y2: Yy, "class": "dia0" }, svg);
+
+    // key points: principal stresses, max shear points, centre
+    el("circle", { cx: cx, cy: cy, r: 3.2, "class": "pt0" }, svg);
+    label(svg, cx + 7, cy - 11, "C", "lblm", "start");
+    [[r.s1, 1], [r.s2, -1]].forEach(function (q, i) {
+      el("circle", { cx: X(q[0]), cy: cy, r: 4.2, "class": "ptp" }, svg);
+      label(svg, X(q[0]) + 8 * q[1], cy - 12, [["σ", false], [i === 0 ? "1" : "2", true]], "lbl", q[1] > 0 ? "start" : "end");
+    });
+    el("circle", { cx: cx, cy: cy + Rp, r: 4.2, "class": "ptp" }, svg);
+    label(svg, cx + 8, cy + Rp + 13, [["τ", false], ["max", true]], "lbl", "start");
+    el("circle", { cx: cx, cy: cy - Rp, r: 4.2, "class": "ptp" }, svg);
+    label(svg, cx + 8, cy - Rp - 12, [["−τ", false], ["max", true]], "lbl", "start");
+
+    // visual angle (counter-clockwise on screen) of point X
+    var psi0 = Math.atan2(-(Xy - cy), Xx - cx);
+    var twoTh = 2 * state.th / DEG;
+    function onCircle(psi, rad) { return [cx + rad * Math.cos(psi), cy - rad * Math.sin(psi)]; }
+    // fixed labels sit beside sigma1, sigma2, +/-tau_max; move point labels that land on them
+    // around the circle, away from the side the fixed label is on
+    var fixed = [[0, -1], [Math.PI, 1], [-Math.PI / 2, -1], [Math.PI / 2, 1]];
+    function radialLabel(psi, txt, cls, extra) {
+      fixed.forEach(function (f) {
+        var d = Math.atan2(Math.sin(psi - f[0]), Math.cos(psi - f[0]));
+        if (Math.abs(d) < 0.36) psi = f[0] + f[1] * 0.36;
+      });
+      var ux = Math.cos(psi), uy = -Math.sin(psi), d = Rp + (extra || 14);
+      var x0 = cx + d * ux, t = label(svg, x0, cy + d * uy + uy * 4, txt, cls, anchorFor(ux));
+      try {   // keep the label inside the drawing
+        var bb = t.getBBox(), shift = 0;
+        if (bb.x + bb.width > W - 4) shift = (W - 4) - (bb.x + bb.width);
+        if (bb.x + shift < 4) shift = 4 - bb.x;
+        if (shift) t.setAttribute("x", x0 + shift);
+      } catch (e) { /* not rendered yet */ }
+      return t;
+    }
+    el("circle", { cx: Xx, cy: Xy, r: 4, "class": "pt0" }, svg);
+    el("circle", { cx: Yx, cy: Yy, r: 4, "class": "pt0" }, svg);
+    var showRot = Math.abs(state.th) > 0.05;
+    radialLabel(psi0, narrow ? "X" : "X (" + fmt(state.sx) + ", " + fmt(state.txy) + ")", "lbl", 16);
+    radialLabel(psi0 + Math.PI, narrow ? "Y" : "Y (" + fmt(state.sy) + ", " + fmt(-state.txy) + ")", "lbl", 16);
+
+    // rotated diameter X'-Y' and the 2-theta arc
+    var A = onCircle(psi0 + twoTh, Rp), B = onCircle(psi0 + twoTh + Math.PI, Rp);
+    if (showRot) {
+      var rho = Math.min(Rp * 0.42, 46), n = 48, pts = [];
+      for (var i = 0; i <= n; i++) { var q = onCircle(psi0 + twoTh * i / n, rho); pts.push(q[0].toFixed(2) + "," + q[1].toFixed(2)); }
+      el("polyline", { points: pts.join(" "), "class": "arc" }, svg);
+      var e1 = onCircle(psi0 + twoTh, rho), e0 = onCircle(psi0 + twoTh * 0.93, rho);
+      if (Math.abs(twoTh) * rho > 12) arrow(svg, e0[0], e0[1], e1[0], e1[1], "arc", "arwh1", 7);
+      var m = onCircle(psi0 + twoTh / 2, rho + 13);
+      label(svg, m[0], m[1], "2θ", "lbl1");
+    }
+    el("line", { x1: A[0], y1: A[1], x2: B[0], y2: B[1], "class": "dia1" }, svg);
+    el("circle", { cx: B[0], cy: B[1], r: 4.5, "class": "pt1" }, svg);
+    if (showRot) {
+      var near = function (a1, a2) { var d = Math.abs(Math.atan2(Math.sin(a1 - a2), Math.cos(a1 - a2))); return d < 0.22; };
+      if (!near(psi0 + twoTh, psi0) && !near(psi0 + twoTh, psi0 + Math.PI)) {
+        radialLabel(psi0 + twoTh, "X′", "lbl1", 18);
+        radialLabel(psi0 + twoTh + Math.PI, "Y′", "lbl1", 18);
+      }
+    }
+    // drag targets: the whole ring and the X' handle
+    var ring = el("circle", { cx: cx, cy: cy, r: Rp, "class": "hit" }, svg);
+    var hnd = el("circle", { cx: A[0], cy: A[1], r: 7.5, "class": "pt1 handle", stroke: "var(--card)", "stroke-width": 2 }, svg);
+    el("title", {}, hnd).textContent = "Drag around the circle to rotate the element";
+    view = { cx: cx, cy: cy, psi0: psi0, ring: ring, handle: hnd };
+  }
+
+  // ---------- stress elements ----------
+  function drawElement(svg, thDeg, s, rotated) {
+    svg.textContent = "";
+    var cx = 130, cy = 122, h = 36, gap = 4, L = 32, sg = 11, S = 46;
+    var th = thDeg / DEG, c = Math.cos(th), sn = Math.sin(th);
+    function P(a, b) { return [cx + a * c - b * sn, cy - (a * sn + b * c)]; }   // local (x', y') -> screen
+    var corners = [P(-h, -h), P(h, -h), P(h, h), P(-h, h)].map(function (q) { return q[0] + "," + q[1]; }).join(" ");
+    el("polygon", { points: corners, "class": rotated ? "elem rot" : "elem" }, svg);
+
+    // skip arrows for stresses that display as zero
+    var eps = Math.max(Math.max(Math.abs(s.sx), Math.abs(s.sy), Math.abs(s.txy), 1e-300) * 1e-9,
+                       0.5 * Math.pow(10, -decimals));
+    var faces = [ { n: [1, 0], t: [0, 1], sig: s.sx, lab: true },
+                  { n: [-1, 0], t: [0, -1], sig: s.sx, lab: false },
+                  { n: [0, 1], t: [1, 0], sig: s.sy, lab: true },
+                  { n: [0, -1], t: [-1, 0], sig: s.sy, lab: false } ];
+    faces.forEach(function (f, i) {
+      var nx = f.n[0], ny = f.n[1], tx = f.t[0], ty = f.t[1];
+      if (Math.abs(f.sig) > eps) {
+        var a0 = h + gap, a1 = h + gap + L;
+        var p0 = P(nx * a0, ny * a0), p1 = P(nx * a1, ny * a1);
+        if (f.sig > 0) arrow(svg, p0[0], p0[1], p1[0], p1[1], "arw", "arwh", 8);
+        else arrow(svg, p1[0], p1[1], p0[0], p0[1], "arw", "arwh", 8);
+        if (f.lab) {
+          var lp = P(nx * (a1 + 6), ny * (a1 + 6)), dir = [(lp[0] - cx), (lp[1] - cy)], dl = Math.hypot(dir[0], dir[1]);
+          label(svg, lp[0] + dir[0] / dl * 4, lp[1] + dir[1] / dl * 6, fmt(Math.abs(f.sig)), "val", anchorFor(dir[0] / dl));
+        }
+      }
+      if (Math.abs(s.txy) > eps) {
+        var sgn = s.txy > 0 ? 1 : -1, off = h + sg;
+        var q0 = P(nx * off - tx * sgn * S / 2, ny * off - ty * sgn * S / 2);
+        var q1 = P(nx * off + tx * sgn * S / 2, ny * off + ty * sgn * S / 2);
+        arrow(svg, q0[0], q0[1], q1[0], q1[1], "arw", "arwh", 7);
+        if (i === 0) {   // label the shear once, past the arrowhead on the +x' face
+          var lq = P(nx * off + tx * sgn * (S / 2 + 10), ny * off + ty * sgn * (S / 2 + 10));
+          var ddx = (lq[0] - cx), ddl = Math.hypot(ddx, lq[1] - cy);
+          label(svg, lq[0] + 3 * ddx / ddl, lq[1], fmt(Math.abs(s.txy)), "val", anchorFor(ddx / ddl));
+        }
+      }
+    });
+
+    // axes glyph in the corner
+    // (origin sits mid-height in the free space so x' has room for -90..+90 deg)
+    var ox = 24, oy = 246, al = 26;
+    arrow(svg, ox, oy, ox + al, oy, "ax", "axh", 7);
+    arrow(svg, ox, oy, ox, oy - al, "ax", "axh", 7);
+    label(svg, ox + al + 6, oy, "x", "lblm", "start");
+    label(svg, ox - 7, oy - al + 2, "y", "lblm", "end");
+    if (rotated && Math.abs(thDeg) > 0.05) {
+      var ex = ox + (al + 6) * c, ey = oy - (al + 6) * sn;
+      arrow(svg, ox, oy, ex, ey, "arw1", "arwh1", 7);
+      // put the x' label past the tip, nudged sideways away from the x axis
+      var side = thDeg >= 0 ? 1 : -1, px = -sn * side, py = c * side;   // perpendicular (math coords)
+      label(svg, ox + 42 * c + 10 * px, oy - (42 * sn + 10 * py), "x′", "lbl1", anchorFor(c));
+      var pts = [], n = 24, rr = 14;
+      for (var j = 0; j <= n; j++) { var a = th * j / n; pts.push((ox + rr * Math.cos(a)).toFixed(2) + "," + (oy - rr * Math.sin(a)).toFixed(2)); }
+      el("polyline", { points: pts.join(" "), "class": "arc" }, svg);
+    }
+  }
+
+  // ---------- results table ----------
+  function row(sym, desc, val, ang, key) {
+    return "<tr" + (key ? ' data-k="' + key + '"' : "") + "><td>" + sym + '<span class="d">' + desc +
+           '</span></td><td class="n">' + val + '</td><td class="n">' + ang + "</td></tr>";
+  }
+  function renderTable(r, rot) {
+    var th = state.th, tyAng = norm90(th + 90);
+    var html = "";
+    html += row("<i>σ</i><sub>x′</sub>", "normal stress on x′ face", fmt(rot.sx), fmtA(th));
+    html += row("<i>σ</i><sub>y′</sub>", "normal stress on y′ face", fmt(rot.sy), fmtA(tyAng));
+    html += row("<i>τ</i><sub>x′y′</sub>", "shear stress on rotated element", fmt(rot.txy), fmtA(th));
+    html += '<tr class="grp"><td colspan="3" style="font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600">Principal stresses and max shear</td></tr>';
+    html += row("<i>σ</i><sub>1</sub>", "max principal stress, at θ<sub>p1</sub>", fmt(r.s1), fmtA(r.p1), "p1");
+    html += row("<i>σ</i><sub>2</sub>", "min principal stress, at θ<sub>p2</sub>", fmt(r.s2), fmtA(r.p2), "p2");
+    html += row("<i>τ</i><sub>max</sub>", "max shear stress, at θ<sub>s</sub>", fmt(r.R), fmtA(r.s), "s");
+    html += row("−<i>τ</i><sub>max</sub>", "same plane type, opposite sign: θ<sub>s</sub> ± 90°", fmt(r.degenerate ? 0 : -r.R), fmtA(r.sNeg), "sn");
+    html += row("<i>σ</i><sub>avg</sub>", "circle centre; normal stress on max-shear planes", fmt(r.avg), "");
+    html += row("<i>R</i>", "circle radius", fmt(r.R), "");
+    $("res").innerHTML = html;
+    var at = { p1: r.p1, p2: r.p2, s: r.s, sn: r.sNeg };
+    Array.prototype.forEach.call($("res").querySelectorAll("tr[data-k]"), function (tr) {
+      var a = at[tr.getAttribute("data-k")];
+      tr.classList.toggle("on", isFinite(a) && Math.abs(norm90(th - a)) < 0.02 || isFinite(a) && Math.abs(Math.abs(norm90(th - a)) - 180) < 0.02);
+    });
+  }
+
+  // ---------- update everything ----------
+  function update(fromInputs) {
+    var r = analyze(state.sx, state.sy, state.txy);
+    setFormat(r);
+    var rot = rotate(r, state.th);
+    drawMohr(r, rot);
+    drawElement($("el0"), 0, { sx: state.sx, sy: state.sy, txy: state.txy }, false);
+    drawElement($("el1"), state.th, rot, true);
+    renderTable(r, rot);
+    $("capth").textContent = fmtA(state.th);
+    Array.prototype.forEach.call(document.querySelectorAll(".u"), function (e) { e.textContent = state.unit; });
+    $("bp1").innerHTML = "θ<sub>p1</sub> = " + fmtA(r.p1);
+    $("bp2").innerHTML = "θ<sub>p2</sub> = " + fmtA(r.p2);
+    $("bs").innerHTML = "θ<sub>s</sub> = " + fmtA(r.s);
+    ["bp1", "bp2", "bs"].forEach(function (id) { $(id).disabled = r.degenerate; });
+    var snaps = { zero: 0, p1: r.p1, p2: r.p2, s: r.s };
+    Array.prototype.forEach.call(document.querySelectorAll("[data-snap]"), function (b) {
+      var a = snaps[b.getAttribute("data-snap")];
+      b.classList.toggle("on", isFinite(a) && Math.abs(state.th - a) < 0.02);
+    });
+    if (document.activeElement !== $("thn")) $("thn").value = round(state.th, 2);
+    $("thr").value = state.th;
+    $("thr").style.setProperty("--pct", ((state.th + 90) / 180 * 100) + "%");
+    writeURL();
+    current = r;
+  }
+  var current = null;
+
+  function syncInputs() {
+    $("sx").value = state.sx; $("sy").value = state.sy; $("txy").value = state.txy;
+    $("unit").value = state.unit; $("thn").value = round(state.th, 2); $("thr").value = state.th;
+  }
+
+  // ---------- events ----------
+  ["sx", "sy", "txy"].forEach(function (k) {
+    $(k).addEventListener("input", function () {
+      var v = parseFloat($(k).value);
+      if ($(k).value.trim() === "") v = 0;
+      if (!isFinite(v)) { $(k).classList.add("bad"); return; }
+      $(k).classList.remove("bad");
+      state[k] = v; update();
+    });
+  });
+  $("unit").addEventListener("change", function () { state.unit = $("unit").value; update(); });
+  $("thr").addEventListener("input", function () { state.th = parseFloat($("thr").value); update(); });
+  $("thn").addEventListener("input", function () {
+    var v = parseFloat($("thn").value);
+    if (!isFinite(v)) return;
+    state.th = clampTheta(v); update();
+  });
+  $("thn").addEventListener("change", function () { $("thn").value = round(state.th, 2); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-snap]"), function (b) {
+    b.addEventListener("click", function () {
+      if (!current) return;
+      var a = { zero: 0, p1: current.p1, p2: current.p2, s: current.s }[b.getAttribute("data-snap")];
+      if (isFinite(a)) { state.th = a; update(); }
+    });
+  });
+  $("example").addEventListener("click", function () {
+    state.sx = EXAMPLE.sx; state.sy = EXAMPLE.sy; state.txy = EXAMPLE.txy; state.unit = EXAMPLE.unit; state.th = 0;
+    ["sx", "sy", "txy"].forEach(function (k) { $(k).classList.remove("bad"); });
+    syncInputs(); update();
+  });
+
+  // dragging on the circle
+  var svgM = $("mohr"), dragging = false;
+  function thetaFromPointer(ev) {
+    if (!view || !current) return;
+    var pt = svgM.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+    var p = pt.matrixTransform(svgM.getScreenCTM().inverse());
+    var psi = Math.atan2(-(p.y - view.cy), p.x - view.cx);
+    var th = norm90((psi - view.psi0) * DEG / 2);
+    th = Math.round(th * 2) / 2;
+    [0, current.p1, current.p2, current.s, current.sNeg].forEach(function (a) {   // gentle snapping
+      if (isFinite(a) && Math.abs(norm90(th - a)) < 1.25) th = norm90(a);
+    });
+    if (th === -90) th = 90;
+    state.th = clampTheta(th); update();
+  }
+  svgM.addEventListener("pointerdown", function (ev) {
+    var t = ev.target;
+    if (!t.classList || !(t.classList.contains("hit") || t.classList.contains("handle"))) return;
+    dragging = true; svgM.classList.add("dragging");
+    try { svgM.setPointerCapture(ev.pointerId); } catch (e) {}
+    ev.preventDefault(); thetaFromPointer(ev);
+  });
+  svgM.addEventListener("pointermove", function (ev) { if (dragging) { ev.preventDefault(); thetaFromPointer(ev); } });
+  function stop(ev) { dragging = false; svgM.classList.remove("dragging"); try { svgM.releasePointerCapture(ev.pointerId); } catch (e) {} }
+  svgM.addEventListener("pointerup", stop);
+  svgM.addEventListener("pointercancel", stop);
+
+  var lastW = 0, pending = false;
+  window.addEventListener("resize", function () {
+    if (pending) return; pending = true;
+    requestAnimationFrame(function () {
+      pending = false;
+      var w = Math.round($("mohr").getBoundingClientRect().width);
+      if (w !== lastW) { lastW = w; update(); }
+    });
+  });
+
+  readURL(); syncInputs(); update();
+  lastW = Math.round($("mohr").getBoundingClientRect().width);
+  window.__mohr = { state: state, analyze: analyze, rotate: rotate };   // for testing
+})();
+</script>
+</body>
+</html>
