@@ -1,0 +1,531 @@
+% Lecture notes: Week 10, Lecture 3 -- Stress Transformations with Mohr's Circle (asynchronous)
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ------------------------------------------------------------------
+% Lecture-local helpers (defined inside the document so they also work
+% in the combined notes; names are unique to this lecture).
+%
+% \WTenLThreeMohr{n}: Mohr's circle for Problem 1 after stage n, with the
+% piece added at stage n drawn in red.
+% Scale: 0.3 cm per ksi; tau is plotted positive DOWNWARD.
+%   A  = (sigma_x, tau_xy)   = (6, -4)    -> (1.8, 1.2)
+%   G  = (sigma_y, -tau_xy)  = (-10, 4)   -> (-3, -1.2)
+%   C  = (sigma_avg, 0)      = (-2, 0)    -> (-0.6, 0),  R = 2.6833
+%   X' = (sigma_x', tau_x'y'): NOT to scale. The true 2*theta = 150 deg would put X'
+%   only 3.4 deg above the sigma-axis; it is drawn at 2*theta ~ 135 deg (screen angle
+%   162 deg) so that the small angle alpha (~18 deg as drawn) is visible.
+%        -> X' = (-3.152, 0.829),  Y' = (1.952, -0.829)
+% ------------------------------------------------------------------
+\newcommand{\WTenLThreeCol}[2]{\ifnum#1=#2\def\wtlc{red!75!black}\else\def\wtlc{black}\fi}
+\newcommand{\WTenLThreeMohr}[1]{%
+  \ifnum#1>1
+    \WTenLThreeCol{#1}{2}%
+    \draw[axis, \wtlc] (-4.5,0) -- (3.5,0) node[right] {$\sigma$};
+    \draw[axis, \wtlc] (0,3.1) -- (0,-3.3) node[below] {$\tau$};
+    \foreach \s in {-3.6,-2.4,-1.2,1.2,2.4} \draw[thin, \wtlc] (\s,0.07) -- (\s,-0.07);
+  \fi
+  \ifnum#1>5
+    \WTenLThreeCol{#1}{6}%
+    \draw[semithick, \wtlc] (-0.6,0) circle (2.6833);
+  \fi
+  \ifnum#1>4
+    \WTenLThreeCol{#1}{5}%
+    \draw[thick, \wtlc] (-3,-1.2) -- (1.8,1.2);
+    \node[pin, \wtlc] at (-0.6,0) {};
+    \node[below right, \wtlc] at (-0.6,0) {$\sigma_{\text{avg}}$};
+  \fi
+  \ifnum#1>2
+    \WTenLThreeCol{#1}{3}%
+    \node[pin, \wtlc] at (1.8,1.2) {};
+    \node[above right, \wtlc] at (1.8,1.2) {$A\,(\sigma_x, \tau_{xy})$};
+  \fi
+  \ifnum#1>3
+    \WTenLThreeCol{#1}{4}%
+    \node[pin, \wtlc] at (-3,-1.2) {};
+    \node[below left, \wtlc] at (-3,-1.2) {$G\,(\sigma_y, -\tau_{xy})$};
+  \fi
+  \ifnum#1>6
+    \WTenLThreeCol{#1}{7}%
+    \draw[thick, \wtlc] (-0.6,0) -- (-0.6,-2.6833);
+    \node[right, \wtlc] at (-0.6,-1.9) {$R = \tau_{\max}$};
+  \fi
+  \ifnum#1>7
+    \WTenLThreeCol{#1}{8}%
+    \draw[thinarrow, \wtlc] (-0.6,0) ++(26.565:1.15) arc (26.565:162:1.15);
+    \node[\wtlc] at ($(-0.6,0)+(100:1.5)$) {$2\theta$};
+    \draw[very thick, \wtlc] (-3.152,0.829) -- (1.952,-0.829);
+    \node[pin, \wtlc] at (-3.152,0.829) {};
+    \node[above left, \wtlc] at (-3.152,0.829) {$X'(\sigma_{x'}, \tau_{x'y'})$};
+  \fi
+  \ifnum#1>8
+    \WTenLThreeCol{#1}{9}%
+    \draw[thinarrow, \wtlc] (-0.6,0) ++(26.565:0.75) arc (26.565:0:0.75);
+    \node[\wtlc] at ($(-0.6,0)+(12:1.25)$) {$2\theta_{p1}$};
+    \draw[densely dotted, \wtlc] (-3.152,0.829) -- (-3.152,0);
+    \node[pin, \wtlc] at (-3.2833,0) {};
+    \draw[thick, \wtlc] (-0.6,0) ++(162:1.75) arc (162:180:1.75);
+    \node[\wtlc] at ($(-0.6,0)+(171:2.1)$) {$\alpha$};
+  \fi
+}
+\newcommand{\WTenLThreePanel}[1]{%
+  \begin{tikzpicture}[scale=0.85, every node/.style={font=\scriptsize}]
+    \WTenLThreeMohr{#1}
+  \end{tikzpicture}}
+
+% ##################################################################
+%  WEEK 10, LECTURE 3
+% ##################################################################
+\lecture{10}{3}{Stress Transformations with Mohr's Circle}
+
+\begin{center}
+\fbox{\parbox{0.9\textwidth}{\centering
+  \textbf{Asynchronous session.} Work through Problem~1 below step by step, then try
+  Problems~2 and~3 on your own and check your answers.}}
+\end{center}
+
+\noindent
+$\rightarrow$ \textbf{Question for today:} how do we use Mohr's circle to compute the
+stresses acting on a \emph{particular} plane, cut at a given angle through the material?
+
+\subsection*{What you will need (from Week~10, Lectures~1--2)}
+
+\noindent
+\begin{minipage}[t]{0.5\textwidth}
+\begin{align*}
+  \sigma_{\text{avg}} &= \frac{\sigma_x + \sigma_y}{2} \\
+  R = \tau_{\max} &= \sqrt{\left(\frac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2} \\
+  \theta_{p1} &= \frac12 \tan^{-1}\!\left(\frac{2\tau_{xy}}{\sigma_x - \sigma_y}\right)
+\end{align*}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.46\textwidth}
+\textbf{Key rule:} rotating the element by an angle $\theta$
+(counterclockwise $= $ positive) corresponds to rotating by $2\theta$ \emph{in the same
+direction} on Mohr's circle (with $\tau$ plotted positive \emph{downward}).
+
+\medskip
+The point $A = (\sigma_x, \tau_{xy})$ represents the $x$-face, i.e.\ $\theta = \ang{0}$.
+\end{minipage}
+
+% ==================================================================
+\section*{Problem 1}
+% ==================================================================
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\textbf{Setup:} The stress state shown acts on a piece of solid material.
+
+\smallskip
+\textbf{Find:} The normal stress $\sigma_{x'}$ and shear stress $\tau_{x'y'}$ on the
+inclined (cut) face shown.
+
+\smallskip
+\textbf{Steps:}
+\begin{enumerate}[itemsep=1pt]
+  \item Draw Mohr's circle.
+  \item What angle $\theta$ does the rotation shown correspond to?
+  \item Draw a diameter oriented at $2\theta$ on your Mohr's circle.
+  \item Use that diameter to determine $\sigma_{x'}$ and $\tau_{x'y'}$.
+\end{enumerate}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (2,2);
+  \draw[thick] (0,2) -- (2,1.4641);
+  \draw[thinarrow] (0,1.45) arc (270:345:0.55);
+  \node at (0.45,1.3) {\small$\ang{75}$};
+  % sigma_x = +6 ksi
+  \draw[force] (2.05,1) -- (2.8,1) node[above right] {$\SI{6}{ksi}$};
+  \draw[force] (-0.05,1) -- (-0.8,1);
+  % sigma_y = -10 ksi (compression)
+  \draw[force] (1,2.8) node[above] {$\SI{10}{ksi}$} -- (1,2.05);
+  \draw[force] (1,-0.8) -- (1,-0.05);
+  % tau_xy = -4 ksi
+  \draw[force] (2.25,1.6) -- (2.25,0.4) node[below right] {$\SI{4}{ksi}$};
+  \draw[force] (-0.25,0.4) -- (-0.25,1.6);
+  \draw[force] (1.6,2.25) -- (0.4,2.25);
+  \draw[force] (0.4,-0.25) -- (1.6,-0.25);
+\end{tikzpicture}
+\end{minipage}
+
+% ------------------------------------------------------------------
+\subsection*{Step 0: What are $\sigma_{x'}$ and $\tau_{x'y'}$?}
+% ------------------------------------------------------------------
+
+\noindent
+Before drawing anything, let's be clear about what we are looking for. Imagine cutting the
+element along the inclined line and keeping the lower piece. The stresses we want act on
+the newly exposed cut face:
+
+\noindent
+\begin{minipage}[c]{0.5\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.45]
+  % lower piece; cut face midpoint M = (1, 1.732); outward normal n at 75 deg
+  \coordinate (M) at (1,1.732);
+  \draw[thick, fill=gray!12] (0,0) -- (2,0) -- (2,1.4641) -- (0,2) -- cycle;
+  % stresses on the original faces
+  \draw[force] (2.05,0.73) -- (2.7,0.73) node[right] {\small$\SI{6}{ksi}$};
+  \draw[force] (-0.05,1) -- (-0.7,1);
+  \draw[force] (1,-0.7) node[below] {\small$\SI{10}{ksi}$} -- (1,-0.05);
+  \draw[force] (2.22,1.25) -- (2.22,0.3) node[below right] {\small$\SI{4}{ksi}$};
+  \draw[force] (-0.22,0.4) -- (-0.22,1.6);
+  \draw[force] (0.4,-0.22) -- (1.6,-0.22);
+  % local axes (dashed) along the normal and along the face
+  \draw[thin, dashed] ($(M)+(75:1.05)$) -- ($(M)+(75:1.5)$) node[above] {$x'$};
+  \draw[thin, dashed] ($(M)+(165:0.75)$) -- ($(M)+(165:1.4)$) node[left] {$y'$};
+  % unknowns on the cut face (drawn in their positive directions)
+  \draw[force, red!75!black] ($(M)+(75:0.05)$) -- ($(M)+(75:1.0)$);
+  \node[red!75!black, right] at ($(M)+(75:0.7)$) {$\sigma_{x'}$};
+  \draw[force, red!75!black] ($(M)+(75:0.22)+(165:-0.1)$) -- ($(M)+(75:0.22)+(165:0.7)$);
+  \node[red!75!black, above] at ($(M)+(75:0.3)+(165:0.55)$) {$\tau_{x'y'}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.47\textwidth}
+\begin{itemize}
+  \item The $x'$ axis is the \emph{outward normal} to the cut face.
+  \item The $y'$ axis lies \emph{along} the cut face ($x'$ rotated $\ang{90}$
+        counterclockwise).
+  \item $\sigma_{x'}$ acts along $x'$, perpendicular to the face. It is positive in
+        \emph{tension} (pulling away from the face).
+  \item $\tau_{x'y'}$ acts along the face. It is positive when it points in the $+y'$
+        direction (on a face whose outward normal is $+x'$).
+\end{itemize}
+The red arrows show both unknowns in their \emph{positive} directions. If an answer comes
+out negative, the stress actually points the other way.
+\end{minipage}
+
+% ------------------------------------------------------------------
+\subsection*{Step 1: Draw Mohr's circle}
+% ------------------------------------------------------------------
+
+\noindent
+We build the circle in small pieces. Each panel shows the circle after that piece; the piece
+just added is in \textcolor{red!75!black}{red}. (Scale: one tick $= \SI{4}{ksi}$.)
+
+\medskip
+\noindent
+\textbf{1a. Read off the stress state} from the element (watch the signs!):
+\begin{itemize}
+  \item $\sigma_x = +\SI{6}{ksi}$: the arrows on the $x$-faces point \emph{away} from the
+        element (tension).
+  \item $\sigma_y = -\SI{10}{ksi}$: the arrows on the $y$-faces point \emph{into} the
+        element (compression).
+  \item $\tau_{xy} = -\SI{4}{ksi}$: on the right ($+x$) face the shear points \emph{down}
+        ($-y$), and on the top ($+y$) face it points \emph{left} ($-x$). Both are opposite
+        to the positive convention, so $\tau_{xy}$ is negative.
+\end{itemize}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{1b. Draw the axes.}
+\begin{itemize}
+  \item Horizontal: $\sigma$, positive to the right.
+  \item Vertical: $\tau$, positive \emph{downward}.
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{2}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{1c. Draw a dot at $(\sigma_x, \tau_{xy})$:}
+\[ A = (6,\ -4)\ \si{ksi} \]
+Because $\tau_{xy} < 0$ and $\tau$ is plotted positive downward, point $A$ lies
+\emph{above} the $\sigma$-axis.
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{3}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{1d. Draw a dot at $(\sigma_y, -\tau_{xy})$:}
+\[ G = (-10,\ 4)\ \si{ksi} \]
+This one lies \emph{below} the $\sigma$-axis.
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{4}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{1e. Draw a line between the two dots.} Where it crosses the $\sigma$-axis is
+$\sigma_{\text{avg}}$:
+\[ \sigma_{\text{avg}} = \frac{\sigma_x + \sigma_y}{2} = \frac{6 + (-10)}{2} \]
+\[ \boxed{\sigma_{\text{avg}} = -\SI{2}{ksi}} \]
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{5}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{1f. Draw the circle} centered at $(\sigma_{\text{avg}}, 0)$ and passing through
+$A$ and $G$.
+\begin{itemize}[label=\then]
+  \item Every point on this circle is the stress state on some rotated face.
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{6}
+\end{minipage}
+
+\bigskip
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{1g. What is the radius of the circle?} This radius is $\tau_{\max}$:
+\begin{align*}
+  R &= \sqrt{\left(\frac{6 - (-10)}{2}\right)^2 + (-4)^2} \\
+    &= \sqrt{8^2 + 4^2}
+\end{align*}
+\[ \boxed{R = \tau_{\max} = \SI{8.94}{ksi}} \]
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{7}
+\end{minipage}
+
+% ------------------------------------------------------------------
+\subsection*{Step 2: What angle $\theta$ does the rotation shown correspond to?}
+% ------------------------------------------------------------------
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.3]
+  \draw[thick, fill=gray!12] (0,0) rectangle (2,2);
+  \draw[thick] (0,2) -- (2,1.4641);
+  \draw[thinarrow] (0,1.5) arc (270:345:0.5);
+  \node at (0.42,1.33) {\scriptsize$\ang{75}$};
+  % local axes at a point P on the cut
+  \coordinate (P) at (1,1.732);
+  \draw[axis] (P) -- ++(1.35,0) node[right] {$x$};
+  \draw[axis, red!75!black] (P) -- ++(75:1.25) node[above] {$x'$};
+  \draw[thinarrow, red!75!black] ($(P)+(0.75,0)$) arc (0:75:0.75);
+  \node[red!75!black] at ($(P)+(38:1.05)$) {$\theta$};
+  \draw ($(P)+(1.05,0)$) arc (0:-15:1.05);
+  \node at ($(P)+(-8:1.35)$) {\scriptsize$\ang{15}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\begin{itemize}
+  \item The cut makes $\ang{75}$ with the vertical left edge, so it sits
+        $\ang{90} - \ang{75} = \ang{15}$ \emph{below} the horizontal.
+  \item The outward normal $x'$ is perpendicular to the cut, so it sits
+        $\ang{90} - \ang{15} = \ang{75}$ \emph{above} the $x$ axis.
+  \item Going from $x$ to $x'$ is a \emph{counterclockwise} rotation, so $\theta$ is
+        positive:
+\end{itemize}
+\[
+  \boxed{\theta = +\ang{75}}
+  \qquad\Rightarrow\qquad
+  \boxed{2\theta = \ang{150}}
+\]
+\end{minipage}
+
+% ------------------------------------------------------------------
+\subsection*{Step 3: Draw a diameter oriented at $2\theta$ on your Mohr's circle}
+% ------------------------------------------------------------------
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\begin{itemize}
+  \item Start from point $A$ (the $x$-face, $\theta = \ang{0}$).
+  \item Rotate by $2\theta = \ang{150}$ around the center, \emph{counterclockwise}
+        (the same direction as the element rotation).
+  \item The point you land on is $X' = (\sigma_{x'}, \tau_{x'y'})$, the stress state on
+        the cut face. Draw the new diameter through $X'$ and the center.
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{8}
+\end{minipage}
+
+% ------------------------------------------------------------------
+\subsection*{Step 4: Use that diameter to determine $\sigma_{x'}$ and $\tau_{x'y'}$}
+% ------------------------------------------------------------------
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\textbf{4a. Find where the original diameter sits.} The angle from $A$ down to the
+$\sigma$-axis is $2\theta_{p1}$:
+\[
+  \theta_{p1} = \frac12\tan^{-1}\!\left(\frac{2(-4)}{6-(-10)}\right) = -\ang{13.28}
+\]
+so $|2\theta_{p1}| = \ang{26.57}$.
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\centering\WTenLThreePanel{9}
+\end{minipage}
+
+\bigskip
+\noindent
+\textbf{4b. Find the small angle $\alpha$} between the new diameter and the $\sigma$-axis.
+Going all the way around the top of the circle from $A$ to the left end of the
+$\sigma$-axis is $\ang{180}$, made up of $|2\theta_{p1}|$, then $2\theta$, then $\alpha$:
+\[
+  \alpha = \ang{180} - |2\theta| - |2\theta_{p1}| = \ang{180} - \ang{150} - \ang{26.57}
+  \qquad\Rightarrow\qquad
+  \boxed{\alpha = \ang{3.43}}
+\]
+
+\noindent
+\textbf{4c. Read $\sigma_{x'}$ and $\tau_{x'y'}$ off the triangle} formed by the center,
+$X'$, and the $\sigma$-axis:
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.1]
+  % not to scale: alpha exaggerated for clarity
+  \draw[axis] (-0.6,0) -- (4.0,0) node[right] {$\sigma$};
+  \draw[axis] (3.4,0.9) -- (3.4,-0.7) node[below] {$\tau$};
+  \coordinate (C) at (3,0);
+  \coordinate (X) at (0,0.8);
+  \draw[very thick, red!75!black] (C) -- (X) node[midway, above, black] {$R$};
+  \node[pin] at (C) {}; \node[below] at (C) {$\sigma_{\text{avg}}$};
+  \node[pin, red!75!black] at (X) {}; \node[above] at (X) {$X'$};
+  \draw[densely dotted] (X) -- (0,0);
+  \draw (2.2,0) arc (180:165.07:0.8);
+  \node at (1.95,0.11) {\small$\alpha$};
+  \draw[dim] (0,-0.45) -- (3,-0.45) node[midway, below] {$R\cos\alpha$};
+  \draw[dim] (-0.35,0) -- (-0.35,0.8) node[midway, left] {$R\sin\alpha$};
+\end{tikzpicture}\\[-0.2em]
+{\scriptsize (not to scale: $\alpha$ is exaggerated)}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\begin{itemize}
+  \item $X'$ is a distance $R\cos\alpha$ to the \emph{left} of the center:
+        \[
+          \sigma_{x'} = \sigma_{\text{avg}} - R\cos\alpha
+          = -2 - 8.94\cos(\ang{3.43})
+        \]
+  \item $X'$ is a distance $R\sin\alpha$ \emph{above} the $\sigma$-axis. Since $\tau$ is
+        plotted positive downward, this is a \emph{negative} shear stress:
+        \[
+          \tau_{x'y'} = -R\sin\alpha = -8.94\sin(\ang{3.43})
+        \]
+\end{itemize}
+\end{minipage}
+
+\begin{center}
+\fbox{\fbox{$\sigma_{x'} = -\SI{10.93}{ksi}, \qquad \tau_{x'y'} = -\SI{0.536}{ksi}$}}
+\end{center}
+
+% ------------------------------------------------------------------
+\subsection*{What does the answer mean?}
+% ------------------------------------------------------------------
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.45]
+  \coordinate (M) at (1,1.732);
+  \draw[thick, fill=gray!12] (0,0) -- (2,0) -- (2,1.4641) -- (0,2) -- cycle;
+  \draw[thin, dashed] ($(M)+(75:1.3)$) -- ($(M)+(75:1.6)$) node[above] {$x'$};
+  \draw[thin, dashed] ($(M)+(165:0.7)$) -- ($(M)+(165:1.3)$) node[left] {$y'$};
+  % sigma_x' < 0: compression, the arrow pushes INTO the face
+  \draw[force, red!75!black] ($(M)+(75:1.25)$) -- ($(M)+(75:0.05)$);
+  \node[red!75!black, right, align=left] at ($(M)+(75:1.0)$) {\small$\SI{10.93}{ksi}$\\[-2pt]\scriptsize(compression)};
+  % tau_x'y' < 0: points in the -y' direction (down and to the right along the face)
+  \draw[force, red!75!black] ($(M)+(75:0.22)+(165:0.1)$) -- ($(M)+(75:0.22)+(165:-0.65)$);
+  \node[red!75!black, right] at ($(M)+(75:0.22)+(165:-0.68)$) {\small$\SI{0.536}{ksi}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\begin{itemize}
+  \item $\sigma_{x'} < 0$: the cut face is in \emph{compression}, so the arrow pushes into
+        the face.
+  \item $\tau_{x'y'} < 0$: the shear points in the $-y'$ direction, down and to the
+        right along the face. It is small.
+\end{itemize}
+\end{minipage}
+
+\bigskip
+\noindent
+\textbf{Sanity checks.}
+\begin{itemize}
+  \item $\sigma_{x'}$ must lie between the principal stresses
+        $\sigma_2 = \sigma_{\text{avg}} - R = -\SI{10.94}{ksi}$ and
+        $\sigma_1 = \sigma_{\text{avg}} + R = \SI{6.94}{ksi}$. \checkmark
+  \item $|\tau_{x'y'}|$ must be no larger than $R = \SI{8.94}{ksi}$. \checkmark
+  \item The second principal direction is
+        $\theta_{p2} = \ang{90} - |\theta_{p1}| = \ang{76.72}$, only $\ang{1.72}$ away from
+        our cut at $\theta = \ang{75}$. So the cut face is \emph{almost} a principal plane,
+        which is exactly why $\sigma_{x'} \approx \sigma_2$ and $\tau_{x'y'} \approx 0$.
+        (On the circle, $X'$ sits just $\alpha = 2 \times \ang{1.72}$ away from $\sigma_2$.)
+\end{itemize}
+
+% ==================================================================
+\section*{Practice: Problems 2 and 3}
+% ==================================================================
+
+\noindent
+Use the same four steps to find $\sigma_{x'}$ and $\tau_{x'y'}$ on the inclined faces
+shown. Start with Step~0: sketch the $x'$ (outward normal) and $y'$ directions on each cut.
+
+\begin{center}
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\textbf{Problem 2}\\[0.6em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (2,2);
+  \draw[thick] (0.6,2) -- (2,0);
+  \draw[thinarrow] (1.45,0) arc (180:125:0.55);
+  \node at (1.05,0.22) {\small$\ang{55}$};
+  % sigma_x = -6 ksi (compression), sigma_y = +12 ksi (tension), no shear
+  \draw[force] (-0.8,1) -- (-0.05,1);
+  \draw[force] (2.8,1) node[above] {$\SI{6}{ksi}$} -- (2.05,1);
+  \draw[force] (1,2.05) -- (1,2.8) node[right] {$\SI{12}{ksi}$};
+  \draw[force] (1,-0.05) -- (1,-0.8);
+\end{tikzpicture}\\[0.6em]
+\textbf{Answer:} $\sigma_{x'} = -\SI{0.078}{ksi}$,\; $\tau_{x'y'} = \SI{8.457}{ksi}$
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\textbf{Problem 3}\\[0.6em]
+\begin{tikzpicture}
+  \draw[thick, fill=gray!12] (0,0) rectangle (2,2);
+  \draw[thick] (0,2) -- (0.728,0);
+  \draw[thinarrow] (0.55,2) arc (0:-70:0.55);
+  \node at (0.85,1.55) {\small$\ang{70}$};
+  % sigma_x = 120 MPa, sigma_y = 60 MPa, tau_xy = +45 MPa
+  \draw[force] (2.05,1) -- (2.8,1) node[below right] {$\SI{120}{MPa}$};
+  \draw[force] (-0.05,1) -- (-0.8,1);
+  \draw[force] (1,2.05) -- (1,2.8) node[right] {$\SI{60}{MPa}$};
+  \draw[force] (1,-0.05) -- (1,-0.8);
+  \draw[force] (2.25,0.4) -- (2.25,1.6);
+  \draw[force] (-0.25,1.6) -- (-0.25,0.4);
+  \draw[force] (0.4,2.25) -- (1.6,2.25) node[right] {$\SI{45}{MPa}$};
+  \draw[force] (1.6,-0.25) -- (0.4,-0.25);
+\end{tikzpicture}\\[0.6em]
+\textbf{Answer:} $\sigma_{x'} = \SI{141.90}{MPa}$,\; $\tau_{x'y'} = \SI{15.18}{MPa}$
+\end{minipage}
+\end{center}
+
+\end{document}
