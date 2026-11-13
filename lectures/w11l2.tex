@@ -1,0 +1,235 @@
+% Lecture notes: Week 11, Lecture 2 -- Strain Transformations
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 11, LECTURE 2
+% ##################################################################
+\lecture{11}{2}{Strain Transformations}
+
+\noindent
+Just like we have 2D \emph{stress} states which combine shear and normal stresses, we can
+also have 2D \emph{strain} states which combine shear and normal strains.
+
+\begin{center}
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\textbf{2D stress state} (plane stress)\\[0.6em]
+\begin{tikzpicture}[scale=1.1]
+  \draw[thick, fill=gray!12] (-0.7,-0.7) rectangle (0.7,0.7);
+  \draw[axis] (0,0) -- (0.45,0) node[right] {\scriptsize$x$};
+  \draw[axis] (0,0) -- (0,0.45) node[left] {\scriptsize$y$};
+  \draw[force] (0.75,0) -- (1.4,0) node[right] {$\sigma_x$};
+  \draw[force] (-0.75,0) -- (-1.4,0) node[left] {$\sigma_x$};
+  \draw[force] (0,0.75) -- (0,1.4) node[above] {$\sigma_y$};
+  \draw[force] (0,-0.75) -- (0,-1.4) node[below] {$\sigma_y$};
+  \draw[force] (0.9,-0.45) -- (0.9,0.45);
+  \draw[force] (-0.9,0.45) -- (-0.9,-0.45);
+  \draw[force] (-0.45,0.9) -- (0.45,0.9) node[right] {$\tau_{xy}$};
+  \draw[force] (0.45,-0.9) -- (-0.45,-0.9) node[left] {$\tau_{xy}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\textbf{2D strain state} (plane strain)\\[0.6em]
+\begin{tikzpicture}[scale=1.1]
+  \draw[thick, fill=gray!12] (-0.7,-0.7) rectangle (0.7,0.7);
+  \draw[axis] (0,0) -- (0.45,0) node[right] {\scriptsize$x$};
+  \draw[axis] (0,0) -- (0,0.45) node[left] {\scriptsize$y$};
+  \draw[force] (0.75,0) -- (1.4,0) node[right] {$\epsilon_x$};
+  \draw[force] (-0.75,0) -- (-1.4,0) node[left] {$\epsilon_x$};
+  \draw[force] (0,0.75) -- (0,1.4) node[above] {$\epsilon_y$};
+  \draw[force] (0,-0.75) -- (0,-1.4) node[below] {$\epsilon_y$};
+  \draw[force] (0.9,-0.45) -- (0.9,0.45);
+  \draw[force] (-0.9,0.45) -- (-0.9,-0.45);
+  \draw[force] (-0.45,0.9) -- (0.45,0.9) node[right] {$\gamma_{xy}$};
+  \draw[force] (0.45,-0.9) -- (-0.45,-0.9) node[left] {$\gamma_{xy}$};
+\end{tikzpicture}
+\end{minipage}
+\end{center}
+
+% ==================================================================
+\section*{Strain Transformation Equations}
+% ==================================================================
+
+\noindent
+The 2D strain transformation relations are \emph{almost} the same as the 2D stress
+transformation relations (Week~11, Lecture~1), with \textbf{one important difference}.
+The difference is just due to the particular definition of the shear strain we use.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.6}
+\textbf{Substitute:}\qquad
+\begin{tabular}{c @{\quad$\Longleftrightarrow$\quad} c}
+  $\sigma_{x'}$ & $\epsilon_{x'}$ \\
+  $\sigma_{y'}$ & $\epsilon_{y'}$ \\
+  \multicolumn{2}{c}{\fcolorbox{red!70!black}{red!8}{%
+    $\tau_{x'y'} \quad\Longleftrightarrow\quad \dfrac{\gamma_{x'y'}}{2}$}}
+\end{tabular}
+\end{center}
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{General 2D stress transformation equations:}
+\begin{align*}
+  \sigma_{x'} &= \frac{\sigma_x + \sigma_y}{2} + \frac{\sigma_x - \sigma_y}{2}\cos 2\theta
+                 + \tau_{xy}\sin 2\theta \\
+  \sigma_{y'} &= \frac{\sigma_x + \sigma_y}{2} - \frac{\sigma_x - \sigma_y}{2}\cos 2\theta
+                 - \tau_{xy}\sin 2\theta \\
+  \tau_{x'y'} &= -\frac{\sigma_x - \sigma_y}{2}\sin 2\theta + \tau_{xy}\cos 2\theta
+\end{align*}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{General 2D strain transformation equations:}\\[0.4em]
+\fbox{\fbox{\begin{minipage}{0.93\textwidth}
+\vspace{-0.6em}
+\begin{align*}
+  \epsilon_{x'} &= \frac{\epsilon_x + \epsilon_y}{2} + \frac{\epsilon_x - \epsilon_y}{2}\cos 2\theta
+                   + \frac{\gamma_{xy}}{2}\sin 2\theta \\
+  \epsilon_{y'} &= \frac{\epsilon_x + \epsilon_y}{2} - \frac{\epsilon_x - \epsilon_y}{2}\cos 2\theta
+                   - \frac{\gamma_{xy}}{2}\sin 2\theta \\
+  \frac{\gamma_{x'y'}}{2} &= -\frac{\epsilon_x - \epsilon_y}{2}\sin 2\theta
+                             + \frac{\gamma_{xy}}{2}\cos 2\theta
+\end{align*}
+\end{minipage}}}
+\end{minipage}
+
+% ==================================================================
+\section*{Mohr's Circle for Strains}
+% ==================================================================
+
+\noindent
+This means \emph{you can also draw Mohr's circle for strains} instead of stresses, using the
+same substitutions. The same substitutions also apply to the expressions for the principal
+stresses/strains and the maximum shear:
+
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Stresses:}
+\begin{align*}
+  \sigma_{\text{avg}} &= \frac{\sigma_x + \sigma_y}{2} \\
+  R = \tau_{\max} &= \sqrt{\left(\frac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2} \\
+  \sigma_1 &= \sigma_{\text{avg}} + R \\
+  \sigma_2 &= \sigma_{\text{avg}} - R
+\end{align*}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\textbf{Strains:}\\[0.4em]
+\fbox{\fbox{\begin{minipage}{0.93\textwidth}
+\vspace{-0.6em}
+\begin{align*}
+  \epsilon_{\text{avg}} &= \frac{\epsilon_x + \epsilon_y}{2} \\
+  R = \frac{\gamma_{\max}}{2} &= \sqrt{\left(\frac{\epsilon_x - \epsilon_y}{2}\right)^2
+                                  + \left(\frac{\gamma_{xy}}{2}\right)^2} \\
+  \epsilon_1 &= \epsilon_{\text{avg}} + R \\
+  \epsilon_2 &= \epsilon_{\text{avg}} - R
+\end{align*}
+\end{minipage}}}
+\end{minipage}
+
+% ==================================================================
+\section*{Strain Gauge Rosettes}
+% ==================================================================
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+The 2D strain transformations have an important practical use in measuring shear strains.
+\begin{itemize}
+  \item Strain gauges can measure \emph{normal} strains directly, but \emph{not} shear
+        strains.
+  \item Shear strains are instead computed using a \emph{strain gauge rosette}: several
+        gauges bonded at a point, each oriented in a different direction.
+\end{itemize}
+For the 3-element rosette shown, clearly we have
+\[
+  \epsilon_a = \epsilon_x, \qquad \epsilon_b = \epsilon_y.
+\]
+\begin{itemize}[label=$\rightarrow$]
+  \item How do we calculate $\gamma_{xy}$?
+\end{itemize}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\centering
+\begin{tikzpicture}
+  \draw[axis] (0,0) -- (3.0,0) node[right] {$x$};
+  \draw[axis] (0,0) -- (0,3.0) node[above] {$y$};
+  \fill (0,0) circle (0.06);
+  \draw[thin, dashed] (0,0) -- (45:3.0);
+  % gauge 1 along x
+  \draw[thick, fill=white] (1.0,-0.09) rectangle (1.9,0.09);
+  \node[below] at (1.45,-0.1) {$\epsilon_a$};
+  % gauge 2 along y
+  \draw[thick, fill=white] (-0.09,1.0) rectangle (0.09,1.9);
+  \node[left] at (-0.1,1.45) {$\epsilon_b$};
+  % gauge 3 at 45 deg
+  \begin{scope}[rotate=45]
+    \draw[thick, fill=white] (1.1,-0.09) rectangle (2.0,0.09);
+  \end{scope}
+  \node[above left] at (45:1.6) {$\epsilon_c$};
+  \draw[thinarrow] (2.45,0) arc (0:45:2.45);
+  \node at (22:2.75) {$\ang{45}$};
+\end{tikzpicture}
+\end{minipage}
+
+% ==================================================================
+\section*{Example}
+% ==================================================================
+
+\noindent
+\textbf{Measurement:} The rosette above measures
+\[
+  \left\{
+  \begin{aligned}
+    \epsilon_a &= 100\,\mu\epsilon \quad (= 100 \times 10^{-6}) \\
+    \epsilon_b &= 900\,\mu\epsilon \\
+    \epsilon_c &= 200\,\mu\epsilon
+  \end{aligned}
+  \right.
+\]
+\textbf{Q:} What is $\gamma_{xy}$?
+
+\bigskip
+\noindent
+$\rightarrow$ Clearly,
+\[
+  \left\{
+  \begin{aligned}
+    \epsilon_x &= \epsilon_a = 100\,\mu\epsilon \\
+    \epsilon_y &= \epsilon_b = 900\,\mu\epsilon
+  \end{aligned}
+  \right.
+\]
+
+\noindent
+$\rightarrow$ Then, $\epsilon_c$ is $\epsilon_{x'}$ at $\theta = \ang{45}$:
+\[
+  \epsilon_c = \epsilon_{x'}(\theta = \ang{45})
+  = \frac{\epsilon_a + \epsilon_b}{2}
+    + \frac{\epsilon_a - \epsilon_b}{2}\underbrace{\cos(\ang{90})}_{=\,0}
+    + \frac{\gamma_{xy}}{2}\underbrace{\sin(\ang{90})}_{=\,1}
+\]
+\[
+  \hookrightarrow\quad
+  \epsilon_c = \frac{\epsilon_a + \epsilon_b}{2} + \frac{\gamma_{xy}}{2}
+\]
+Solving for $\gamma_{xy}$:
+\begin{align*}
+  \gamma_{xy} &= 2\left(\epsilon_c - \frac{\epsilon_a + \epsilon_b}{2}\right) \\
+  \gamma_{xy} &= 2\left(200 - \frac{100 + 900}{2}\right)\mu\epsilon
+\end{align*}
+\[
+  \fbox{\fbox{$\gamma_{xy} = -600\,\mu\epsilon$}}
+\]
+
+\end{document}
