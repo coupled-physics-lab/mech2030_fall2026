@@ -1,0 +1,156 @@
+% Lecture notes: Week 11, Lecture 3 -- Solving Statically Indeterminate Problems
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 11, LECTURE 3
+% ##################################################################
+\lecture{11}{3}{Solving Statically Indeterminate Problems}
+
+\section*{Example}
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\centering
+\begin{tikzpicture}
+  % scale: 1 cm per m
+  \lwall{0}{-0.9}{0.9}
+  \rwall{5}{-0.9}{0.9}
+  \draw[beam] (0,-0.3) rectangle (5,0.3);
+  \node[left] at (-0.4,0) {$A$};
+  \node[right] at (5.4,0) {$B$};
+  \node[pin] at (2,0) {}; \node[below] at (2,-0.02) {$C$};
+  \draw[force] (2.05,0) -- (3.1,0);
+  \node[above] at (2.6,0.3) {$\SI{500}{N}$};
+  \draw[dim] (0,-1.3) -- (2,-1.3) node[midway, fill=white] {$\SI{2}{m}$};
+  \draw[dim] (2,-1.3) -- (5,-1.3) node[midway, fill=white] {$\SI{3}{m}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+A bar is fixed to walls at both ends and loaded axially by $\SI{500}{N}$ at $C$.
+
+\smallskip
+\textbf{Q:} Find the reactions at the walls.
+\end{minipage}
+
+\subsection*{FBD}
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (2,0) {}; \node[pin] at (5,0) {};
+  \node[below] at (2,-0.05) {$C$};
+  \draw[force] (-1.2,0) node[left] {$A_x$} -- (-0.08,0);
+  \draw[force] (2,0.3) -- (3.0,0.3) node[right] {$\SI{500}{N}$};
+  \draw[force] (5.08,0) -- (6.2,0) node[right] {$B_x$};
+\end{tikzpicture}
+\end{center}
+
+\[
+  \textstyle\sum F_x = 0 \quad\rightarrow\quad \boxed{A_x + \SI{500}{N} + B_x = 0}
+\]
+\begin{itemize}[label=\then]
+  \item 2 unknown reactions.
+  \item 1 statics equation ($\sum F_x = 0$).
+  \begin{itemize}[label=\then]
+    \item \emph{Statically indeterminate!}
+  \end{itemize}
+\end{itemize}
+
+\noindent
+$\rightarrow$ Introduce an \emph{additional} governing equation:
+\[
+  \boxed{\delta_B = 0} \qquad \text{(no displacement at the wall)}
+\]
+\begin{itemize}[label=\then]
+  \item Now we have 2 unknowns with 2 equations (solvable!).
+  \item An extra equation involving displacement is called a
+        ``\emph{compatibility condition}.''
+\end{itemize}
+
+\subsection*{Superposition}
+
+\noindent
+$\rightarrow$ Use \emph{superposition} to find an expression for $\delta_B$. Remove the wall
+at $B$ and replace it with the (unknown) reaction force $B_x$:
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  \lwall{0}{-0.9}{0.9}
+  \rwall{5}{-0.9}{0.9}
+  \draw[beam] (0,-0.3) rectangle (5,0.3);
+  \node[pin] at (2,0) {};
+  \draw[force] (2.05,0) -- (3.1,0);
+  \node[above] at (2.6,0.3) {$\SI{500}{N}$};
+\end{tikzpicture}
+
+\vspace{1em}
+{\Large $=$}\quad
+\begin{tikzpicture}[baseline=(b), scale=0.85]
+  \coordinate (b) at (0,0);
+  \lwall{0}{-0.9}{0.9}
+  \draw[beam] (0,-0.3) rectangle (5,0.3);
+  \node[pin] at (2,0) {};
+  \draw[force] (2.05,0) -- (3.1,0);
+  \node[above] at (2.6,0.3) {$\SI{500}{N}$};
+  \node[pin] at (5,0) {}; \node[above right] at (5,0.3) {$B$};
+  \node at (2.5,-1.0) {\circnum{I}};
+  \draw[dim] (0,-1.6) -- (2,-1.6) node[midway, fill=white] {$\SI{2}{m}$};
+\end{tikzpicture}
+\quad{\Large $+$}\quad
+\begin{tikzpicture}[baseline=(b), scale=0.85]
+  \coordinate (b) at (0,0);
+  \lwall{0}{-0.9}{0.9}
+  \draw[beam] (0,-0.3) rectangle (5,0.3);
+  \node[pin] at (5,0) {}; \node[above right] at (5,0.3) {$B$};
+  \draw[force] (5.05,0) -- (6.1,0) node[below] {$B_x$};
+  \node at (2.5,-1.0) {\circnum{II}};
+  \draw[dim] (0,-1.6) -- (5,-1.6) node[midway, fill=white] {$\SI{5}{m}$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+Using $\delta = \frac{NL}{EA}$ for each case (only the loaded length stretches in case
+\circnum{I}):
+\[
+  \delta_B = \delta_B^{\text{I}} + \delta_B^{\text{II}}
+  = \frac{(\SI{500}{N})(\SI{2}{m})}{EA} + \frac{B_x\,(\SI{5}{m})}{EA}
+\]
+
+\noindent
+$\hookrightarrow$ Also, from the compatibility condition:
+\[
+  \delta_B = 0 = \frac{(\SI{500}{N})(\SI{2}{m})}{EA} + \frac{B_x\,(\SI{5}{m})}{EA}
+  \qquad (EA \text{ cancels})
+\]
+\[
+  B_x = -(\SI{500}{N})\left(\frac{\SI{2}{m}}{\SI{5}{m}}\right)
+  \qquad\Rightarrow\qquad
+  \fbox{\fbox{$B_x = -\SI{200}{N}$}}
+\]
+
+\noindent
+$\rightarrow$ From the global FBD:
+\[
+  A_x = -B_x - \SI{500}{N} = \SI{200}{N} - \SI{500}{N}
+  \qquad\Rightarrow\qquad
+  \fbox{\fbox{$A_x = -\SI{300}{N}$}}
+\]
+
+\subsection*{Summary}
+
+\noindent
+We can solve statically indeterminate problems by:
+\begin{enumerate}
+  \item Introducing ``\emph{compatibility conditions}'' involving \emph{deformation} of the
+        body as \emph{additional equations}.
+  \item Using \emph{superposition} to find displacement expressions, and solving for the
+        unknown reactions.
+\end{enumerate}
+
+\end{document}
