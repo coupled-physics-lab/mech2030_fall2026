@@ -1,0 +1,177 @@
+% Lecture notes: Week 12, Lecture 2 -- Statically Indeterminate Torsion: Example
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 12, LECTURE 2
+% ##################################################################
+\lecture{12}{2}{Statically Indeterminate Torsion: Example}
+
+\noindent
+(This is the worked solution to Problem~1 of the W12L2 in-class problems.)
+
+\section*{Example}
+
+\noindent
+\textbf{Setup:} The steel shaft ($G = \SI{75}{GPa}$) has a diameter of $\SI{40}{mm}$ and is
+fixed at ends $A$ and $B$. It is subjected to a torque exerted by the couple shown (two
+$\SI{3}{kN}$ forces, each acting $\SI{50}{mm}$ from the shaft axis).
+
+\begin{center}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  % scale: 6 cm per m
+  \lwall{0}{-1.0}{1.0}
+  \rwall{6}{-1.0}{1.0}
+  \draw[beam] (0,-0.3) rectangle (6,0.3);
+  \node[left] at (-0.4,0) {$A$};
+  \node[right] at (6.4,0) {$B$};
+  % arm at C carrying the couple
+  \draw[thick, fill=gray!30] (2.3,-0.9) rectangle (2.5,0.9);
+  \node[below] at (2.4,-0.9) {$C$};
+  \draw[torque] (2.55,-0.6) -- (3.7,-0.6) node[right] {$T_C$};
+  \draw[dim] (0,1.4) -- (2.4,1.4) node[midway, fill=white] {$\SI{0.4}{m}$};
+  \draw[dim] (2.4,1.4) -- (6,1.4) node[midway, fill=white] {$\SI{0.6}{m}$};
+  \draw[axis] (0,-1.5) -- (1.0,-1.5) node[right] {$x$};
+\end{tikzpicture}
+\hspace{1.2cm}
+\begin{tikzpicture}[baseline=(b)]
+  \coordinate (b) at (0,0);
+  % end view at C, looking from B toward A (x points out of the page)
+  \draw[thick, fill=gray!30] (-1.25,-0.1) rectangle (1.25,0.1);
+  \draw[thick, fill=gray!12] (0,0) circle (0.4);
+  \draw[semithick] (0,0) circle (0.08); \fill (0,0) circle (0.025);
+  \node[below left] at (-0.05,-0.05) {\scriptsize$x$};
+  \draw[force] (1.1,0.12) -- (1.1,1.0) node[above] {$\SI{3}{kN}$};
+  \draw[force] (-1.1,-0.12) -- (-1.1,-1.0) node[below] {$\SI{3}{kN}$};
+  \draw[dim] (0,-0.75) -- (1.1,-0.75) node[midway, below] {\scriptsize$\SI{50}{mm}$};
+  \draw[dim] (-1.1,0.75) -- (0,0.75) node[midway, above] {\scriptsize$\SI{50}{mm}$};
+  \node[font=\small] at (0,-1.75) {end view at $C$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+\textbf{Find:} Determine the maximum shear stress in regions $AC$ and $CB$ of the shaft.
+
+% ------------------------------------------------------------------
+\subsection*{FBD}
+% ------------------------------------------------------------------
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (2,0) {}; \node[pin] at (5,0) {};
+  \node[above] at (0,0.05) {$A$};
+  \node[above] at (2,0.05) {$C$};
+  \node[above] at (5,0.05) {$B$};
+  \draw[torque] (-1.2,0) node[left] {$T_A$} -- (-0.08,0);
+  \draw[torque] (1.5,-0.45) -- (2.6,-0.45) node[right] {$T_C$};
+  \draw[torque] (5.08,0) -- (6.2,0) node[right] {$T_B$};
+  \draw[dim] (0,0.8) -- (2,0.8) node[midway, fill=white] {$\SI{0.4}{m}$};
+  \draw[dim] (2,0.8) -- (5,0.8) node[midway, fill=white] {$\SI{0.6}{m}$};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+The applied torque is the couple at $C$:
+\[
+  T_C = 2\,(\SI{3e3}{N})(\SI{0.05}{m}) = \SI{300}{N.m}
+\]
+
+\noindent
+Equilibrium:
+\[
+  \textstyle\sum T_x = 0 \quad\rightarrow\quad T_A + T_C + T_B = 0
+\]
+\begin{itemize}[label=\then]
+  \item 2 unknowns ($T_A$, $T_B$), but only 1 equation! The problem is
+        \emph{statically indeterminate}.
+\end{itemize}
+
+% ------------------------------------------------------------------
+\subsection*{Compatibility constraint (the extra equation)}
+% ------------------------------------------------------------------
+
+\noindent
+Both ends are fixed, so end $B$ cannot rotate relative to end $A$:
+\[
+  \boxed{\phi_B = 0}
+\]
+
+\noindent
+Thus, summing the twist at $B$ due to $T_C$ (which twists only segment $AC$) and due to
+$T_B$ (which twists the whole shaft $AB$):
+\[
+  \phi_B = \frac{T_C\,(\SI{0.4}{m})}{GJ} + \frac{T_B\,(\SI{1.0}{m})}{GJ} = 0
+\]
+\[
+  \Rightarrow\quad 0.4\,T_C + T_B = 0
+  \qquad (GJ \text{ cancels})
+\]
+
+\noindent
+Solving:
+\[
+  \boxed{T_B = -0.4\,T_C = -\SI{120}{N.m}}
+  \qquad\qquad
+  \boxed{T_A = -T_B - T_C = -\SI{180}{N.m}}
+\]
+
+% ------------------------------------------------------------------
+\subsection*{``Cut'' in $AC$}
+% ------------------------------------------------------------------
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+  \cutbar{0}{1.8}{0.3}{2}
+  \node[pin] at (0,0) {};
+  \draw[torque] (-1.2,0) node[left] {$T_A$} -- (-0.08,0);
+  \draw[torque] (1.9,0) -- (3.0,0) node[right] {$T_{AC}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\[
+  T_{AC} = -T_A = \SI{180}{N.m}
+\]
+\[
+  \hookrightarrow\quad
+  \fbox{\fbox{$\displaystyle \tau_{AC}^{\max} = \frac{T_{AC}\,c}{J} = \SI{14.32}{MPa}$}}
+\]
+\end{minipage}
+
+% ------------------------------------------------------------------
+\subsection*{``Cut'' in $CB$}
+% ------------------------------------------------------------------
+
+\noindent
+\begin{minipage}[c]{0.45\textwidth}
+\centering
+\begin{tikzpicture}
+  \cutbar{0}{1.8}{0.3}{1}
+  \node[pin] at (1.8,0) {};
+  \draw[torque] (-0.1,0) -- (-1.2,0) node[left] {$T_{CB}$};
+  \draw[torque] (1.88,0) -- (3.0,0) node[right] {$T_B$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.52\textwidth}
+\[
+  T_{CB} = T_B = -\SI{120}{N.m}
+\]
+\[
+  \hookrightarrow\quad
+  \fbox{\fbox{$\displaystyle \tau_{CB}^{\max} = \frac{T_{CB}\,c}{J} = -\SI{9.55}{MPa}$}}
+\]
+\end{minipage}
+
+\bigskip
+\noindent
+(Here $c = \SI{20}{mm}$ and $J = \frac{\pi}{2}c^4$ for the solid shaft.)
+
+\end{document}
