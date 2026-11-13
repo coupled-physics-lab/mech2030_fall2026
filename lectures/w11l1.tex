@@ -1,0 +1,242 @@
+% Lecture notes: Week 11, Lecture 1 -- Stress Transformation Equations
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 11, LECTURE 1
+% ##################################################################
+\lecture{11}{1}{Stress Transformation Equations}
+
+% ==================================================================
+\section*{Recap: Stress Transformations and Mohr's Circle}
+% ==================================================================
+
+\noindent
+\begin{minipage}[c]{0.48\textwidth}
+\centering
+\textbf{Original $(x,y)$ coordinate system}\\[0.5em]
+\begin{tikzpicture}[scale=1.1]
+  \draw[thick, fill=gray!12] (-0.7,-0.7) rectangle (0.7,0.7);
+  \draw[axis] (0,0) -- (0.45,0) node[right] {\scriptsize$x$};
+  \draw[axis] (0,0) -- (0,0.45) node[left] {\scriptsize$y$};
+  \draw[force] (0.75,0) -- (1.4,0) node[right] {$\sigma_x$};
+  \draw[force] (-0.75,0) -- (-1.4,0) node[left] {$\sigma_x$};
+  \draw[force] (0,0.75) -- (0,1.4) node[above] {$\sigma_y$};
+  \draw[force] (0,-0.75) -- (0,-1.4) node[below] {$\sigma_y$};
+  \draw[force] (0.9,-0.45) -- (0.9,0.45);
+  \draw[force] (-0.9,0.45) -- (-0.9,-0.45);
+  \draw[force] (-0.45,0.9) -- (0.45,0.9) node[right] {$\tau_{xy}$};
+  \draw[force] (0.45,-0.9) -- (-0.45,-0.9) node[left] {$\tau_{xy}$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.48\textwidth}
+\centering
+\textbf{Transformed $(x',y')$ coordinate system}\\[0.5em]
+\begin{tikzpicture}[scale=1.1]
+  \begin{scope}[rotate=30]
+    \draw[thick, fill=gray!12] (-0.7,-0.7) rectangle (0.7,0.7);
+    \draw[axis] (0,0) -- (0.5,0) node[above left] {\scriptsize$x'$};
+    \draw[axis] (0,0) -- (0,0.5) node[left] {\scriptsize$y'$};
+    \draw[force] (0.75,0) -- (1.4,0) node[right] {$\sigma_{x'}$};
+    \draw[force] (-0.75,0) -- (-1.4,0) node[left] {$\sigma_{x'}$};
+    \draw[force] (0,0.75) -- (0,1.4) node[above] {$\sigma_{y'}$};
+    \draw[force] (0,-0.75) -- (0,-1.4) node[below] {$\sigma_{y'}$};
+    \draw[force] (0.9,-0.45) -- (0.9,0.45);
+    \draw[force] (-0.9,0.45) -- (-0.9,-0.45);
+    \draw[force] (-0.45,0.9) -- (0.45,0.9) node[above right] {$\tau_{x'y'}$};
+    \draw[force] (0.45,-0.9) -- (-0.45,-0.9) node[below left] {$\tau_{x'y'}$};
+  \end{scope}
+  \draw[thin, dashed] (0,0) -- (0.65,0);
+  \draw[thinarrow] (0.38,0) arc (0:30:0.38);
+  \node at (-12:0.6) {\scriptsize$\theta$};
+\end{tikzpicture}
+\end{minipage}
+
+\bigskip
+\noindent
+\emph{Mohr's circle} is a useful way to visualize \emph{all equivalent stress states} to a
+given stress state. It tells us about:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l @{\qquad} l @{\quad} l}
+  $(\sigma_1, \sigma_2)$ & at orientations & $(\theta_{p1}, \theta_{p2})$ \\
+  $\tau_{\max}$ & at orientation & $\theta_s$ \\
+  $(\sigma_{x'}, \tau_{x'y'})$ & at \emph{any} orientation & $\theta$
+\end{tabular}
+\end{center}
+
+\noindent
+So we can use it to determine principal stresses, the max shear, and the stresses in a
+rotated coordinate system.
+
+\begin{itemize}[label=$\rightarrow$]
+  \item But where does Mohr's circle come from? And do we always have to draw the circle?
+\end{itemize}
+
+% ==================================================================
+\section*{Deriving the Stress Transformation Equations}
+% ==================================================================
+
+\noindent
+$\rightarrow$ Start from the general 2D stress state $(\sigma_x, \sigma_y, \tau_{xy})$, and
+make a ``cut'' at an angle $\theta$. If the inclined face has area $\Delta A$, the other two
+faces have areas $\Delta A\cos\theta$ and $\Delta A\sin\theta$.
+
+% wedge geometry: theta = 35 deg (drawing), hypotenuse 3 cm
+%   top (0, 2.457), corner (0,0), right (1.721, 0); outward normal of the cut at theta
+\noindent
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+\textbf{Areas}\\[0.5em]
+\begin{tikzpicture}
+  \coordinate (T) at (0,2.457);
+  \coordinate (O) at (0,0);
+  \coordinate (Rt) at (1.721,0);
+  \coordinate (M) at (0.8605,1.2285);
+  \draw[thick, fill=gray!12] (T) -- (O) -- (Rt) -- cycle;
+  % axes at the middle of the cut
+  \draw[axis] (M) -- ++(1.3,0) node[right] {$x$};
+  \draw[axis] (M) -- ++(0,1.3) node[above] {$y$};
+  \draw[axis, red!75!black] (M) -- ++(35:1.3) node[above right] {$x'$};
+  \draw[axis, red!75!black] (M) -- ++(125:1.3) node[above left] {$y'$};
+  \draw[thinarrow] ($(M)+(0.75,0)$) arc (0:35:0.75);
+  \node at ($(M)+(17:1.0)$) {\scriptsize$\theta$};
+  \draw[thinarrow] ($(M)+(0,0.75)$) arc (90:125:0.75);
+  \node at ($(M)+(107:1.0)$) {\scriptsize$\theta$};
+  \draw ($(T)+(0,-0.5)$) arc (270:305:0.5);
+  \node at ($(T)+(-0.08,-0.75)$) {\scriptsize$\theta$};
+  % face areas
+  \node[left] at (-0.05,1.2) {$\Delta A\cos\theta$};
+  \node[below] at (0.86,-0.05) {$\Delta A\sin\theta$};
+  \node[right] at (1.42,0.38) {$\Delta A$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.52\textwidth}
+\centering
+\textbf{Forces}\\[0.5em]
+\begin{tikzpicture}
+  \coordinate (T) at (0,2.457);
+  \coordinate (O) at (0,0);
+  \coordinate (Rt) at (1.721,0);
+  \coordinate (M) at (0.8605,1.2285);
+  \draw[thick, fill=gray!12] (T) -- (O) -- (Rt) -- cycle;
+  % left face (outward normal -x)
+  \draw[force] (-0.05,1.0) -- (-0.95,1.0) node[left] {$\sigma_x \Delta A\cos\theta$};
+  \draw[force] (-0.2,1.85) -- (-0.2,1.3);
+  \node[left] at (-0.25,1.9) {$\tau_{xy}\Delta A\cos\theta$};
+  % bottom face (outward normal -y)
+  \draw[force] (0.86,-0.05) -- (0.86,-0.95) node[below] {$\sigma_y \Delta A\sin\theta$};
+  \draw[force] (1.35,-0.2) -- (0.95,-0.2);
+  \node[right] at (1.4,-0.3) {$\tau_{xy}\Delta A\sin\theta$};
+  % inclined face (outward normal x')
+  \draw[force, red!75!black] ($(M)+(125:-0.45)+(35:0.05)$) -- ($(M)+(125:-0.45)+(35:1.1)$)
+       node[right] {$\sigma_{x'}\Delta A$};
+  \draw[force, red!75!black] ($(M)+(35:0.35)+(125:-0.2)$) -- ($(M)+(35:0.35)+(125:0.75)$)
+       node[above right] {$\tau_{x'y'}\Delta A$};
+\end{tikzpicture}
+\end{minipage}
+
+\bigskip
+\noindent
+Summing forces in the $x'$ direction (each force is projected onto $x'$):
+\begin{align*}
+  \textstyle\sum F_{x'} = 0 \quad\rightarrow\quad
+  \sigma_{x'}\Delta A
+  &- \sigma_x(\Delta A\cos\theta)\cos\theta
+   - \tau_{xy}(\Delta A\cos\theta)\sin\theta \\
+  &- \tau_{xy}(\Delta A\sin\theta)\cos\theta
+   - \sigma_y(\Delta A\sin\theta)\sin\theta = 0
+\end{align*}
+Dividing out $\Delta A$:
+\[
+  \sigma_{x'} = \sigma_x\cos^2\theta + \sigma_y\sin^2\theta
+               + \tau_{xy}\,(2\sin\theta\cos\theta)
+\]
+Then use the identities
+\[
+  \cos^2\theta = \frac{1 + \cos 2\theta}{2}, \qquad
+  \sin^2\theta = \frac{1 - \cos 2\theta}{2}, \qquad
+  2\sin\theta\cos\theta = \sin 2\theta
+\]
+to get
+\[
+  \fbox{\fbox{$\displaystyle
+    \sigma_{x'} = \frac{\sigma_x + \sigma_y}{2} + \frac{\sigma_x - \sigma_y}{2}\cos 2\theta
+                  + \tau_{xy}\sin 2\theta$}}
+\]
+
+\noindent
+$\rightarrow$ Using $\sum F_{y'} = 0$ and the same identities, we can show:
+\[
+  \fbox{\fbox{$\displaystyle
+    \tau_{x'y'} = -\frac{\sigma_x - \sigma_y}{2}\sin 2\theta + \tau_{xy}\cos 2\theta$}}
+\]
+
+\noindent
+$\rightarrow$ And plugging in $\theta + \ang{90}$ in place of $\theta$ in the expression for
+$\sigma_{x'}$ gives:
+\[
+  \fbox{\fbox{$\displaystyle
+    \sigma_{y'} = \frac{\sigma_x + \sigma_y}{2} - \frac{\sigma_x - \sigma_y}{2}\cos 2\theta
+                  - \tau_{xy}\sin 2\theta$}}
+\]
+
+\noindent
+$\rightarrow$ These are \emph{general equations} for the \emph{stress transformation}:
+\[
+  (\sigma_x,\ \sigma_y,\ \tau_{xy})
+  \ \xrightarrow{\ \text{rotation } \theta\ }\
+  (\sigma_{x'},\ \sigma_{y'},\ \tau_{x'y'})
+\]
+
+% ==================================================================
+\section*{Where Mohr's Circle Comes From}
+% ==================================================================
+
+\noindent
+Move $\sigma_{\text{avg}} = \frac{\sigma_x + \sigma_y}{2}$ to the left side of the
+$\sigma_{x'}$ equation, and write the $\tau_{x'y'}$ equation next to it:
+\begin{align*}
+  \sigma_{x'} - \sigma_{\text{avg}} &= \frac{\sigma_x - \sigma_y}{2}\cos 2\theta
+                                       + \tau_{xy}\sin 2\theta \\
+  \tau_{x'y'} &= -\frac{\sigma_x - \sigma_y}{2}\sin 2\theta + \tau_{xy}\cos 2\theta
+\end{align*}
+Squaring both equations and adding them, the cross terms cancel and
+$\cos^2 2\theta + \sin^2 2\theta = 1$, leaving:
+\[
+  \left(\sigma_{x'} - \sigma_{\text{avg}}\right)^2 + \tau_{x'y'}^2
+  = \underbrace{\left(\frac{\sigma_x - \sigma_y}{2}\right)^2 + \tau_{xy}^2}_{=\,R^2}
+\]
+
+\begin{itemize}
+  \item This is the equation for a \emph{circle} in the $(\sigma_{x'}, \tau_{x'y'})$
+        coordinate system, centered at $(\sigma_{\text{avg}}, 0)$ with radius $R$:
+        \emph{Mohr's circle}.
+  \item We define $\tau_{x'y'}$ \emph{positive downwards} so that a counterclockwise
+        rotation $2\theta$ on Mohr's circle corresponds to a counterclockwise rotation
+        $\theta$ of the stress element.
+  \item So we don't \emph{have} to draw the circle: the transformation equations give
+        $(\sigma_{x'}, \sigma_{y'}, \tau_{x'y'})$ directly for any $\theta$.
+\end{itemize}
+
+\subsection*{Summary: general 2D stress transformation equations}
+
+\begin{center}
+\fbox{\fbox{\begin{minipage}{0.56\textwidth}
+\begin{align*}
+  \sigma_{x'} &= \frac{\sigma_x + \sigma_y}{2} + \frac{\sigma_x - \sigma_y}{2}\cos 2\theta
+                 + \tau_{xy}\sin 2\theta \\
+  \sigma_{y'} &= \frac{\sigma_x + \sigma_y}{2} - \frac{\sigma_x - \sigma_y}{2}\cos 2\theta
+                 - \tau_{xy}\sin 2\theta \\
+  \tau_{x'y'} &= -\frac{\sigma_x - \sigma_y}{2}\sin 2\theta + \tau_{xy}\cos 2\theta
+\end{align*}
+\end{minipage}}}
+\end{center}
+
+\end{document}
