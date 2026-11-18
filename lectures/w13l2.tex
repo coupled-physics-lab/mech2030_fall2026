@@ -1,0 +1,256 @@
+% Lecture notes: Week 13, Lecture 2 -- Thermal Expansion: Examples
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 13, LECTURE 2
+% ##################################################################
+\lecture{13}{2}{Thermal Expansion: Examples}
+
+\noindent
+(These are the worked solutions to Problems~2 and~3 of the W13L1 in-class problems.)
+
+\subsection*{Useful relations}
+\begin{align*}
+  \delta_T &= \alpha\,\Delta T\,L && \text{(thermal expansion, constant $\Delta T$)} \\
+  \delta &= \frac{NL}{EA} && \text{(axial load, constant $N$, $E$, $A$)}
+\end{align*}
+
+% ==================================================================
+\section*{Problem 2}
+% ==================================================================
+
+\noindent
+\begin{minipage}[c]{0.55\textwidth}
+\textbf{Setup:} The $\SI{50}{mm}$ diameter steel rod ($E = \SI{200}{GPa}$,
+$\alpha = 12 \times 10^{-6}\ /{}^\circ\mathrm{C}$) is fixed at both ends. There is no load
+in the members when $T_1 = \SI{80}{\celsius}$ and no load is applied.
+
+\smallskip
+\textbf{Find:} Determine the reactions at $A$ and $B$ when the load $P = \SI{200}{kN}$ is
+applied and the temperature is reduced to $T_2 = \SI{20}{\celsius}$.
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.42\textwidth}
+\centering
+\begin{tikzpicture}
+  \lwall{0}{-0.8}{0.8}
+  \rwall{5}{-0.8}{0.8}
+  \draw[beam] (0,-0.3) rectangle (5,0.3);
+  \node[above left] at (-0.35,0.3) {$A$};
+  \node[above right] at (5.35,0.3) {$B$};
+  \node[pin] at (2.5,0) {}; \node[above] at (2.5,0.3) {$C$};
+  \draw[force] (1.5,0) -- (2.45,0);
+  \node[above] at (1.8,0.3) {$P$};
+  \draw[dim] (0,-1.2) -- (2.5,-1.2) node[midway, fill=white] {$\SI{0.5}{m}$};
+  \draw[dim] (2.5,-1.2) -- (5,-1.2) node[midway, fill=white] {$\SI{0.5}{m}$};
+\end{tikzpicture}
+\end{minipage}
+
+\subsection*{FBD}
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (2.5,0) {}; \node[pin] at (5,0) {};
+  \draw[force] (-1.2,0) node[left] {$A_x$} -- (-0.08,0);
+  \draw[force] (2.5,-0.35) -- (3.5,-0.35) node[right] {$P = \SI{200}{kN}$};
+  \draw[force] (5.08,0) -- (6.2,0) node[right] {$B_x$};
+\end{tikzpicture}
+\end{center}
+
+\[
+  \textstyle\sum F_x = 0 \quad\rightarrow\quad A_x + P + B_x = 0
+  \qquad\Rightarrow\qquad
+  \boxed{A_x = -P - B_x}
+\]
+
+\noindent
+$\rightarrow$ Compatibility condition: \quad $\boxed{\delta_B = 0}$
+
+\subsection*{Superposition}
+
+\noindent
+Remove the wall at $B$, and add up the displacement of $B$ due to each effect separately:
+
+\begin{center}
+\begin{tikzpicture}[scale=0.72, every node/.style={scale=0.9}]
+  % original
+  \begin{scope}
+    \lwall{0}{-0.7}{0.7}
+    \rwall{5}{-0.7}{0.7}
+    \draw[beam] (0,-0.3) rectangle (5,0.3);
+    \node[pin] at (2.5,0) {};
+    \draw[force] (2.55,0) -- (3.5,0) node[right] {$P$};
+  \end{scope}
+  % (I) B_x
+  \begin{scope}[shift={(0,-2.0)}]
+    \node at (-1.0,0) {\Large$=$};
+    \lwall{0}{-0.7}{0.7}
+    \draw[beam] (0,-0.3) rectangle (5,0.3);
+    \draw[thin, dashed] (5,0.3) -- (5.6,0.3) -- (5.6,-0.3) -- (5,-0.3);
+    \node[pin] at (5,0) {};
+    \draw[force] (5.05,0) -- (6.1,0) node[right] {$B_x$};
+    \draw[{Bar[width=2mm]}-{Stealth[length=2mm]}, thin] (5,0.6) -- (5.6,0.6) node[right] {$\delta_B^{B_x}$};
+    \draw[dim] (0,-0.75) -- (5,-0.75) node[midway, fill=white] {$L$};
+    \node at (8.6,0) {$\left(\dfrac{B_x L}{EA}\right)$};
+  \end{scope}
+  % (II) thermal
+  \begin{scope}[shift={(0,-4.2)}]
+    \node at (-1.0,0) {\Large$+$};
+    \lwall{0}{-0.7}{0.7}
+    \draw[beam] (0,-0.3) rectangle (5,0.3);
+    \draw[thin, dashed] (5,0.3) -- (5.6,0.3) -- (5.6,-0.3) -- (5,-0.3);
+    \draw[{Bar[width=2mm]}-{Stealth[length=2mm]}, thin] (5,0.6) -- (5.6,0.6) node[right] {$\delta_B^{T}$};
+    \node[below] at (2.5,-0.3) {\small$\Delta T = T_2 - T_1 = -\SI{60}{\celsius}$};
+    \node at (8.6,0) {$\left(\alpha\,\Delta T\,L\right)$};
+  \end{scope}
+  % (III) P
+  \begin{scope}[shift={(0,-6.4)}]
+    \node at (-1.0,0) {\Large$+$};
+    \lwall{0}{-0.7}{0.7}
+    \draw[beam] (0,-0.3) rectangle (5,0.3);
+    \draw[thin, dashed] (5,0.3) -- (5.6,0.3) -- (5.6,-0.3) -- (5,-0.3);
+    \node[pin] at (2.5,0) {};
+    \draw[force] (2.55,0) -- (3.5,0) node[right] {$P$};
+    \draw[{Bar[width=2mm]}-{Stealth[length=2mm]}, thin] (5,0.6) -- (5.6,0.6) node[right] {$\delta_B^{P}$};
+    \draw[dim] (0,-0.75) -- (2.5,-0.75) node[midway, fill=white] {$L/2$};
+    \node at (8.6,0) {$\left(\dfrac{P\,(L/2)}{EA}\right)$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\noindent
+$\rightarrow$ So,
+\[
+  \delta_B = \delta_B^{B_x} + \delta_B^{T} + \delta_B^{P}
+  = \frac{B_x L}{EA} + \alpha\,\Delta T\,L + \frac{P\,(L/2)}{EA} = 0
+\]
+Dividing through by $L$:
+\[
+  \frac{B_x}{EA} = -\alpha\,\Delta T - \frac12\,\frac{P}{EA}
+  \qquad\Rightarrow\qquad
+  \boxed{B_x = -\alpha(\Delta T)\,EA - \tfrac12 P}
+\]
+\begin{align*}
+  B_x &= -\left(12 \times 10^{-6}\ /{}^\circ\mathrm{C}\right)(-\SI{60}{\celsius})
+         (\SI{200e9}{Pa})\left(\pi(\SI{0.025}{m})^2\right)
+         - \tfrac12(\SI{200e3}{N})
+\end{align*}
+\[
+  \fbox{\fbox{$B_x = \SI{182.7}{kN}$}}
+\]
+\[
+  A_x = -P - B_x = -\SI{200}{kN} - \SI{182.7}{kN}
+  \qquad\Rightarrow\qquad
+  \fbox{\fbox{$A_x = -\SI{382.7}{kN}$}}
+\]
+
+\noindent
+\textbf{Final FBD} (forces in their actual directions):
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (2.5,0) {}; \node[pin] at (5,0) {};
+  \draw[force] (-0.08,0) -- (-1.2,0) node[left] {$\SI{382.7}{kN}$};
+  \draw[force] (2.5,-0.35) -- (3.5,-0.35) node[right] {$\SI{200}{kN}$};
+  \draw[force] (5.08,0) -- (6.2,0) node[right] {$\SI{182.7}{kN}$};
+\end{tikzpicture}\\[0.3em]
+(All segments are in \emph{tension}, due to $\Delta T < 0$.)
+\end{center}
+
+% ==================================================================
+\section*{Problem 3}
+% ==================================================================
+
+\noindent
+\textbf{Setup:} Use the same setup as Problem~2, but with $P$ unknown.
+
+\smallskip
+\noindent
+\textbf{Find:} (a) What value of the applied load $P$ results in $B_x = 0$?
+(b) What is $\delta_C$ in that case?
+
+\subsection*{(a) Load for zero reaction at $B$}
+
+\noindent
+From Problem~2:
+\[
+  B_x = 0 = -\alpha(\Delta T)\,EA - \tfrac12 P
+  \qquad\Rightarrow\qquad
+  P = -2\,\alpha(\Delta T)\,EA
+\]
+\[
+  \fbox{\fbox{$P = \SI{565}{kN}$}}
+\]
+
+\subsection*{(b) Displacement of $C$}
+
+\noindent
+$\rightarrow$ Superposition for $\delta_C$:
+
+\begin{center}
+\begin{tikzpicture}
+  % thermal
+  \begin{scope}
+    \node at (-1.0,0) {$\delta_C \;=$};
+    \lwall{0}{-0.7}{0.7}
+    \draw[beam] (0,-0.3) rectangle (2.5,0.3);
+    \draw[thin, dashed] (2.5,0.3) -- (5,0.3) -- (5,-0.3) -- (2.5,-0.3);
+    \node[pin] at (2.5,0) {}; \node[left] at (2.45,0) {$C$};
+    \draw[{Bar[width=2mm]}-{Stealth[length=2mm]}, thin] (2.5,-0.6) -- (3.1,-0.6) node[right] {$\delta_C^{T}$};
+    \draw[dim] (0,0.65) -- (2.5,0.65) node[midway, fill=white] {$L/2$};
+    \node[below] at (1.25,-0.3) {\small$\Delta T$};
+    \node at (7.6,0) {$\left(\alpha(\Delta T)(L/2)\right)$};
+  \end{scope}
+  % P
+  \begin{scope}[shift={(0,-2.2)}]
+    \node at (-1.0,0) {\Large$+$};
+    \lwall{0}{-0.7}{0.7}
+    \draw[beam] (0,-0.3) rectangle (2.5,0.3);
+    \draw[thin, dashed] (2.5,0.3) -- (5,0.3) -- (5,-0.3) -- (2.5,-0.3);
+    \node[pin] at (2.5,0) {}; \node[left] at (2.45,0) {$C$};
+    \draw[force] (2.55,0) -- (3.5,0) node[right] {$P$};
+    \draw[{Bar[width=2mm]}-{Stealth[length=2mm]}, thin] (2.5,-0.6) -- (3.1,-0.6) node[right] {$\delta_C^{P}$};
+    \draw[dim] (0,0.65) -- (2.5,0.65) node[midway, fill=white] {$L/2$};
+    \node at (7.6,0) {$\left(\dfrac{P\,(L/2)}{EA}\right)$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\begin{itemize}[label=\then]
+  \item No $\delta_C^{B_x}$ term, since $B_x = 0$.
+\end{itemize}
+
+\noindent
+$\rightarrow$ So,
+\begin{align*}
+  \delta_C &= \alpha\,\Delta T\left(\frac{L}{2}\right) + \frac{P\,(L/2)}{EA} \\
+  &= \left(12 \times 10^{-6}\ /{}^\circ\mathrm{C}\right)(-\SI{60}{\celsius})(\SI{0.5}{m})
+   + \frac{(\SI{565e3}{N})(\SI{0.5}{m})}{(\SI{200e9}{Pa})\left(\pi(\SI{0.025}{m})^2\right)}
+\end{align*}
+\[
+  \fbox{\fbox{$\delta_C = \SI{0.00036}{m} = \SI{0.36}{mm}$}} \quad \text{(rightwards)}
+\]
+
+\noindent
+\textbf{Final FBD:}
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[thick] (0,0) -- (5,0);
+  \node[pin] at (0,0) {}; \node[pin] at (2.5,0) {}; \node[pin] at (5,0) {};
+  \node[above] at (0,0.05) {$A$};
+  \node[above] at (2.5,0.05) {$C$};
+  \node[above] at (5,0.05) {$B$};
+  \draw[force] (-0.08,0) -- (-1.2,0) node[left] {$\SI{565}{kN}$};
+  \draw[force] (2.5,-0.35) -- (3.5,-0.35) node[right] {$\SI{565}{kN}$};
+\end{tikzpicture}\\[0.3em]
+(No stress in segment $CB$!)
+\end{center}
+
+\end{document}
