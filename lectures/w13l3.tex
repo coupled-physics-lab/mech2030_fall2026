@@ -1,0 +1,337 @@
+% Lecture notes: Week 13, Lecture 3 -- Thin-Walled Pressure Vessels
+% To hide this lecture from the website, add a line containing only:  % draft
+% To set the date shown on the website, add a line like:  % posted: 2026-09-02
+\documentclass[11pt]{article}
+\usepackage{mech2030notes}
+\begin{document}
+
+% ##################################################################
+%  WEEK 13, LECTURE 3
+% ##################################################################
+\lecture{13}{3}{Thin-Walled Pressure Vessels}
+
+\noindent
+(The summary below is what was presented in lecture. The full derivations are given
+afterwards, in \hyperref[w13l3:deriv]{Detailed derivations}.)
+
+% ==================================================================
+\section*{Summary}
+% ==================================================================
+
+\subsection*{Cylindrical vessel}
+
+\noindent
+\begin{minipage}[c]{0.62\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.95]
+  % 3D triad
+  \begin{scope}[shift={(-1.9,0.2)}]
+    \draw[axis] (0,0) -- (0,1.0) node[above] {$z$};
+    \draw[axis] (0,0) -- (1.0,0) node[right] {$y$};
+    \draw[axis] (0,0) -- (-0.6,-0.6) node[below left=-2pt] {$x$};
+  \end{scope}
+  % cylinder body
+  \fill[gray!10] (0,-1.1) -- (4.6,-1.1) arc[start angle=-90, end angle=90,
+       x radius=0.35, y radius=1.1] -- (0,1.1) arc[start angle=90, end angle=270,
+       x radius=0.35, y radius=1.1] -- cycle;
+  \draw[thick] (0,1.1) -- (4.6,1.1);
+  \draw[thick] (0,-1.1) -- (4.6,-1.1);
+  \draw[thick] (0,1.1) arc[start angle=90, end angle=270, x radius=0.35, y radius=1.1];
+  \draw[thick, dashed, gray] (0,-1.1) arc[start angle=-90, end angle=90,
+       x radius=0.35, y radius=1.1];
+  \draw[thick] (4.6,0) ellipse[x radius=0.35, y radius=1.1];
+  % radius
+  \draw[thinarrow] (4.6,0) -- (4.6,1.08);
+  \fill (4.6,0) circle (0.03);
+  \node[left] at (4.6,0.55) {$r$};
+  \node at (3.7,-0.75) {$p$};
+  % stress element
+  \draw[thick, fill=white] (1.95,-0.2) rectangle (2.35,0.2);
+  \draw[force] (2.15,0.2) -- (2.15,0.75) node[above] {$\sigma_h$};
+  \draw[force] (2.15,-0.2) -- (2.15,-0.75) node[below] {$\sigma_h$};
+  \draw[force] (2.35,0) -- (2.95,0) node[right] {$\sigma_\ell$};
+  \draw[force] (1.95,0) -- (1.35,0) node[left] {$\sigma_\ell$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.34\textwidth}
+\begin{itemize}[leftmargin=1.2em, itemsep=1pt]
+  \item radius $r$
+  \item wall thickness $t$
+  \item \emph{gauge} pressure $p$
+\end{itemize}
+\end{minipage}
+
+\medskip
+\begin{itemize}[label=$\rightarrow$, itemsep=2pt]
+  \item $\sigma_h$ is the circumferential ``\emph{hoop stress}.''
+  \item $\sigma_\ell$ is the ``\emph{longitudinal stress}.''
+  \item The stress in the through-thickness direction is \emph{negligible} if the wall is
+        \emph{thin} ($r/t \ge 10$).
+\end{itemize}
+
+\noindent
+$\rightarrow$ It can be shown that (see the
+\hyperref[w13l3:deriv]{detailed derivations} below)
+\begin{center}
+\fbox{\fbox{$\displaystyle
+  \sigma_h = \frac{pr}{t}, \qquad \sigma_\ell = \frac{pr}{2t}
+$}}
+\qquad
+\begin{tabular}{@{}l@{}}
+  thin-walled cylindrical \\ pressure vessel \\ ($r/t \ge 10$)
+\end{tabular}
+\end{center}
+
+\begin{itemize}[label=$\rightarrow$, itemsep=2pt]
+  \item Importantly, the \emph{hoop} stress is \emph{twice} the \emph{longitudinal}
+        stress.
+  \item Also, since $\sigma_t \approx 0$, the stress state is 2D, with
+        \emph{principal stresses}
+\end{itemize}
+\begin{center}
+\fbox{\fbox{$\displaystyle
+  \sigma_1 = \sigma_h = \frac{pr}{t}, \qquad \sigma_2 = \sigma_\ell = \frac{pr}{2t}
+$}}
+\end{center}
+
+\subsection*{Spherical vessel}
+
+\noindent
+\begin{minipage}[c]{0.36\textwidth}
+\centering
+\begin{tikzpicture}[scale=1.15]
+  \fill[gray!10] (0,0) circle (1.4);
+  \draw[thick] (0,0) circle (1.4);
+  % equator and meridian
+  \draw[semithick] (-1.4,0) arc[start angle=180, end angle=360, x radius=1.4, y radius=0.35];
+  \draw[semithick, dashed, gray] (1.4,0) arc[start angle=0, end angle=180, x radius=1.4, y radius=0.35];
+  \draw[semithick] (0,1.4) arc[start angle=90, end angle=270, x radius=0.35, y radius=1.4];
+  \draw[semithick, dashed, gray] (0,-1.4) arc[start angle=-90, end angle=90, x radius=0.35, y radius=1.4];
+  % stress element
+  \draw[thick, fill=white] (-0.2,-0.2) rectangle (0.2,0.2);
+  \draw[force] (0,0.2) -- (0,0.75) node[above, fill=gray!10, inner sep=1pt] {$\sigma_h$};
+  \draw[force] (0,-0.2) -- (0,-0.75) node[below, fill=gray!10, inner sep=1pt] {$\sigma_h$};
+  \draw[force] (0.2,0) -- (0.8,0) node[right, fill=gray!10, inner sep=1pt] {$\sigma_\ell$};
+  \draw[force] (-0.2,0) -- (-0.8,0) node[left, fill=gray!10, inner sep=1pt] {$\sigma_\ell$};
+\end{tikzpicture}
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.6\textwidth}
+$\rightarrow$ In this case, $\sigma_h = \sigma_\ell$ and $\sigma_t \approx 0$:
+\begin{center}
+\fbox{\fbox{$\displaystyle
+  \sigma_1 = \sigma_h = \frac{pr}{2t}, \qquad \sigma_2 = \sigma_\ell = \frac{pr}{2t}
+$}}
+
+\smallskip
+thin-walled spherical pressure vessel ($r/t \ge 10$)
+\end{center}
+\end{minipage}
+
+% ==================================================================
+\clearpage
+\phantomsection\label{w13l3:deriv}
+\section*{Detailed derivations}
+% ==================================================================
+
+\noindent
+(Supplementary material for the online notes.)
+
+\subsection*{Cylindrical vessel: hoop stress}
+
+Consider a cylinder of radius $r$ and wall thickness $t$, under gauge pressure $p$, with
+coordinates $x$, $y$ (along the axis), and $z$. Cut a slice of length $dy$ out of the
+cylinder, and then cut that slice in half with the $yz$-plane. The free body is the half
+ring \emph{plus} the pressurized fluid it contains:
+
+\begin{center}
+\begin{tikzpicture}[scale=0.95]
+  % fluid (half disk)
+  \fill[blue!6] (0,-1.6) arc[start angle=-90, end angle=90, radius=1.6] -- cycle;
+  % wall (half annulus)
+  \fill[gray!15] (0,1.6) arc[start angle=90, end angle=-90, radius=1.6]
+                 -- (0,-1.95) arc[start angle=-90, end angle=90, radius=1.95] -- cycle;
+  \draw[thick] (0,1.6) arc[start angle=90, end angle=-90, radius=1.6];
+  \draw[thick] (0,1.95) arc[start angle=90, end angle=-90, radius=1.95];
+  \draw[thick] (0,1.95) -- (0,-1.95);
+  % pressure on the cut face of the fluid
+  \foreach \zz in {-1.3,-0.9,-0.5,-0.1,0.3,0.7,1.1}
+    \draw[thinarrow] (-0.65,\zz+0.1) -- (-0.03,\zz+0.1);
+  \node[left] at (-0.7,0) {$p$};
+  % hoop stress on the cut wall faces
+  \draw[force] (0,1.775) -- (-0.9,1.775) node[left] {$\sigma_h$};
+  \draw[force] (0,-1.775) -- (-0.9,-1.775) node[left] {$\sigma_h$};
+  % dimensions
+  \fill (0,0) circle (0.035);
+  \draw[thinarrow] (0,0) -- (35:1.58);
+  \node at (35:0.95) [above left=-3pt] {$r$};
+  \draw[dim] (2.25,1.6) -- (2.25,1.95);
+  \node[right] at (2.3,1.775) {$t$};
+  \draw[dim] (2.25,-1.6) -- (2.25,-1.95);
+  \node[right] at (2.3,-1.775) {$t$};
+  % triad
+  \begin{scope}[shift={(3.4,-1.5)}]
+    \draw[axis] (0,0) -- (0.8,0) node[right] {$x$};
+    \draw[axis] (0,0) -- (0,0.8) node[above] {$z$};
+    \draw[semithick] (0,0) circle (0.1);
+    \draw[semithick] (-0.07,-0.07) -- (0.07,0.07) (-0.07,0.07) -- (0.07,-0.07);
+    \node[below left] at (0,-0.05) {$y$};
+  \end{scope}
+  \node[align=center, font=\small] at (3.9,0.4) {slice length $dy$\\(into page)};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+The pressure acts over the projected rectangle $(2r)(dy)$, and the hoop stress acts over
+the two cut wall faces, each of area $t\,dy$:
+\begin{align*}
+  \textstyle\sum F_x = 0
+  \quad\rightarrow\quad
+  -p\,(2r)\,dy + 2\,\sigma_h\,(t)\,dy = 0
+  \quad\Rightarrow\quad
+  \sigma_h = \dfrac{2pr}{2t}
+\end{align*}
+\begin{center}
+\fbox{\fbox{$\displaystyle \sigma_h = \frac{pr}{t}$}}
+\qquad (hoop stress)
+\end{center}
+
+\subsection*{Cylindrical vessel: longitudinal stress}
+
+Now cut the vessel with the $xz$-plane. The free body is the closed end of the vessel plus
+the fluid it contains (side view):
+
+\begin{center}
+\begin{tikzpicture}[scale=0.95]
+  % fluid
+  \fill[blue!6] (0,-1.2) rectangle (3.6,1.2);
+  % walls: top, bottom, end cap
+  \fill[gray!15] (-0.3,1.2) rectangle (3.6,1.5);
+  \fill[gray!15] (-0.3,-1.5) rectangle (3.6,-1.2);
+  \fill[gray!15] (-0.3,-1.2) rectangle (0,1.2);
+  \draw[thick] (3.6,1.5) -- (-0.3,1.5) -- (-0.3,-1.5) -- (3.6,-1.5);
+  \draw[thick] (3.6,1.2) -- (0,1.2) -- (0,-1.2) -- (3.6,-1.2);
+  \draw[thick] (3.6,1.5) -- (3.6,-1.5);
+  % pressure on the fluid cut face
+  \foreach \zz in {-0.95,-0.57,-0.19,0.19,0.57,0.95}
+    \draw[thinarrow] (4.25,\zz) -- (3.63,\zz);
+  \node[right] at (4.3,0) {$p$};
+  % longitudinal stress on cut wall faces
+  \draw[force] (3.6,1.35) -- (4.6,1.35) node[right] {$\sigma_\ell$};
+  \draw[force] (3.6,-1.35) -- (4.6,-1.35) node[right] {$\sigma_\ell$};
+  % dimensions
+  \draw[dim] (6.0,1.2) -- (6.0,1.5);   \node[right] at (6.05,1.35) {$t$};
+  \draw[dim] (6.0,-1.2) -- (6.0,-1.5); \node[right] at (6.05,-1.35) {$t$};
+  \draw[dim] (6.0,-1.2) -- (6.0,1.2);  \node[right] at (6.05,0) {$2r$};
+  % triad
+  \begin{scope}[shift={(-1.6,-0.5)}]
+    \draw[axis] (0,0) -- (0.8,0) node[right] {$y$};
+    \draw[axis] (0,0) -- (0,0.8) node[above] {$z$};
+    \draw[semithick] (0,0) circle (0.1);
+    \fill (0,0) circle (0.03);
+    \node[below left] at (0,-0.05) {$x$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\noindent
+The pressure acts on the circular fluid face, of area $\pi r^2$, and the longitudinal
+stress acts on the ring-shaped wall face, of area $\approx 2\pi r t$ (thin wall):
+\begin{align*}
+  \textstyle\sum F_y = 0
+  \quad\rightarrow\quad
+  -p\,(\pi r^2) + \sigma_\ell\,(2\pi r t) = 0
+\end{align*}
+\begin{center}
+\fbox{\fbox{$\displaystyle \sigma_\ell = \frac{pr}{2t}$}}
+\qquad (longitudinal stress)
+\end{center}
+
+\subsection*{Thin-walled assumption}
+
+At the inner wall there is also a stress in the thickness direction, since the fluid
+pushes on the wall:
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[gray!15] (0,0) rectangle (1.1,0.7);
+  \draw[thick] (0,0) rectangle (1.1,0.7);
+  \foreach \zz in {0.15,0.35,0.55}
+    \draw[thinarrow] (-0.8,\zz) -- (-0.03,\zz);
+  \node[left] at (-0.85,0.35) {$p$};
+  \foreach \zz in {0.15,0.35,0.55}
+    \draw[thinarrow] (1.9,\zz) -- (1.13,\zz);
+  \node[right] at (1.95,0.35) {$\sigma_t$};
+  \node[font=\small, gray] at (-0.4,-0.3) {fluid side};
+\end{tikzpicture}
+\end{center}
+
+\noindent
+$|\sigma_t| = p$ (compressive) at the inner wall, decaying to zero at the outer wall.
+
+\medskip\noindent
+\then\ However, for \emph{thin-walled} pressure vessels ($r/t \ge 10$),
+\[
+  \left.
+  \begin{aligned}
+    |\sigma_t| &= p \\
+    \sigma_h = 2\sigma_\ell &= p\left(\frac{r}{t}\right)
+  \end{aligned}
+  \ \right\}
+  \quad\rightarrow\quad
+  \boxed{\sigma_h,\ \sigma_\ell \gg |\sigma_t|}
+\]
+\then\ and as a result, $\sigma_t$ is usually \emph{ignored}.
+
+\subsection*{Principal stresses}
+
+$\rightarrow$ If $\sigma_t \approx 0$, then the hoop and longitudinal stresses are the
+principal stresses (there is no shear on the $h$--$\ell$ element):
+\begin{center}
+\fbox{\fbox{$\displaystyle
+  \sigma_1 = \sigma_h = \frac{pr}{t}, \qquad \sigma_2 = \sigma_\ell = \frac{pr}{2t}
+$}}
+\end{center}
+
+\subsection*{Spherical vessel}
+
+Cut the sphere through its center. By symmetry every such cut looks the same, so
+$\sigma_h = \sigma_\ell$. The free body is the hemisphere plus its fluid:
+
+\begin{center}
+\begin{tikzpicture}[scale=0.95]
+  % fluid
+  \fill[blue!6] (0,-1.4) arc[start angle=270, end angle=90, radius=1.4] -- cycle;
+  % wall
+  \fill[gray!15] (0,1.4) arc[start angle=90, end angle=270, radius=1.4]
+                 -- (0,-1.7) arc[start angle=270, end angle=90, radius=1.7] -- cycle;
+  \draw[thick] (0,1.4) arc[start angle=90, end angle=270, radius=1.4];
+  \draw[thick] (0,1.7) arc[start angle=90, end angle=270, radius=1.7];
+  \draw[thick] (0,1.7) -- (0,-1.7);
+  % pressure
+  \foreach \zz in {-1.0,-0.6,-0.2,0.2,0.6,1.0}
+    \draw[thinarrow] (0.65,\zz) -- (0.03,\zz);
+  \node[right] at (0.7,0) {$p$};
+  % stresses
+  \draw[force] (0,1.55) -- (1.0,1.55) node[right] {$\sigma_h = \sigma_\ell$};
+  \draw[force] (0,-1.55) -- (1.0,-1.55) node[right] {$\sigma_h = \sigma_\ell$};
+  % radius
+  \fill (0,0) circle (0.035);
+  \draw[thinarrow] (0,0) -- (215:1.38);
+  \node at (215:0.8) [below right=-2pt] {$r$};
+\end{tikzpicture}
+\end{center}
+
+\begin{align*}
+  \textstyle\sum F = 0
+  \quad\rightarrow\quad
+  -p\,(\pi r^2) + \sigma_h\,(2\pi r t) = 0
+\end{align*}
+\begin{center}
+\fbox{\fbox{$\displaystyle
+  \sigma_1 = \sigma_h = \frac{pr}{2t}, \qquad \sigma_2 = \sigma_\ell = \frac{pr}{2t}
+$}}
+\end{center}
+
+\end{document}
